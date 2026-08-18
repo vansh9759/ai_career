@@ -1,0 +1,60 @@
+{% extends 'layout.html' %}
+
+{% block title %}Recruiter & Talent Matcher Dashboard | CareerOS AI{% endblock %}
+
+{% block content %}
+<div style="margin-bottom: 24px; display:flex; justify-content:space-between; align-items:center;">
+    <div>
+        <h2>Recruiter <span class="gradient-text">AI Talent Matcher</span></h2>
+        <p style="color:var(--text-muted);">Discover candidates ranked by verified skills, coding score, and live Employability Index.</p>
+    </div>
+    <span class="badge badge-purple" style="font-size:14px; padding:8px 16px;">Enterprise Hiring Portal</span>
+</div>
+
+<div class="glass-panel" style="padding:24px; margin-bottom:32px;">
+    <div style="display:flex; gap:16px; align-items:center;">
+        <div style="flex:1;">
+            <label class="form-label">Search Candidates by Verified Skills</label>
+            <input type="text" class="form-control" placeholder="e.g. Verified Python Developer, SQL Specialist..." value="Python, SQL">
+        </div>
+        <div style="margin-top:24px;">
+            <button class="btn btn-gradient"><i class="bi bi-search"></i> Rank Top Candidates</button>
+        </div>
+    </div>
+</div>
+
+<div class="dashboard-grid">
+    <div class="col-span-12 glass-card">
+        <h3>Top AI-Ranked Candidates</h3>
+
+        <div style="display:flex; flex-direction:column; gap:16px; margin-top:20px;">
+            {% for item in top_candidates %}
+            <div style="background:var(--bg-surface-elevated); padding:20px; border-radius:var(--radius-md); border:1px solid var(--glass-border); display:flex; justify-content:space-between; align-items:center;">
+                <div style="display:flex; align-items:center; gap:16px;">
+                    <div class="avatar" style="width:50px; height:50px; font-size:20px;">{{ item.user.name[0] }}</div>
+                    <div>
+                        <h4 style="font-size:18px;">{{ item.user.name }}</h4>
+                        <div style="font-size:13px; color:var(--text-muted);">
+                            {{ item.user.degree }} • {{ item.user.college }}
+                        </div>
+                        <div style="display:flex; gap:8px; margin-top:8px;">
+                            {% for badge in item.verified_skills %}
+                            <span class="badge badge-verified"><i class="bi bi-shield-check"></i> {{ badge }}</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+
+                <div style="text-align:right;">
+                    <div style="font-size:11px; color:var(--text-muted); font-weight:700;">AI EMPLOYABILITY INDEX</div>
+                    <div style="font-size:36px; font-weight:800; color:var(--brand-primary);">{{ item.employability_score }}<span style="font-size:14px;">/100</span></div>
+                    <button class="btn btn-primary" style="margin-top:6px; padding:6px 14px; font-size:12px;">
+                        <i class="bi bi-calendar-check"></i> Schedule Interview
+                    </button>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

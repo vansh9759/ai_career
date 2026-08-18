@@ -1,0 +1,77 @@
+{% extends 'layout.html' %}
+
+{% block title %}University Placement Analytics | CareerOS AI{% endblock %}
+
+{% block content %}
+<div style="margin-bottom: 24px; display:flex; justify-content:space-between; align-items:center;">
+    <div>
+        <h2>University <span class="gradient-text">Placement Dashboard</span></h2>
+        <p style="color:var(--text-muted);">Real-time placement statistics, department employability metrics, and hiring trends.</p>
+    </div>
+    <span class="badge badge-purple" style="font-size:14px; padding:8px 16px;">Stanford University Admin</span>
+</div>
+
+<div class="dashboard-grid">
+    <div class="col-span-3 stat-card">
+        <div>
+            <div class="stat-label">TOTAL STUDENTS</div>
+            <div class="stat-val">{{ metrics.total_students }}</div>
+            <div class="stat-trend trend-up"><i class="bi bi-arrow-up"></i> Active batch</div>
+        </div>
+        <div class="stat-icon-wrapper"><i class="bi bi-people-fill"></i></div>
+    </div>
+
+    <div class="col-span-3 stat-card">
+        <div>
+            <div class="stat-label">PLACEMENT RATE</div>
+            <div class="stat-val" style="color:var(--brand-secondary);">{{ metrics.placement_rate }}</div>
+            <div class="stat-trend trend-up"><i class="bi bi-arrow-up"></i> +4.2% YoY</div>
+        </div>
+        <div class="stat-icon-wrapper" style="color:var(--brand-secondary); background:rgba(16,185,129,0.12);"><i class="bi bi-graph-up-arrow"></i></div>
+    </div>
+
+    <div class="col-span-3 stat-card">
+        <div>
+            <div class="stat-label">AVG EMPLOYABILITY INDEX</div>
+            <div class="stat-val" style="color:var(--brand-primary);">{{ metrics.avg_employability_index }}</div>
+            <div class="stat-trend trend-up"><i class="bi bi-arrow-up"></i> Top 10% Tier</div>
+        </div>
+        <div class="stat-icon-wrapper"><i class="bi bi-speedometer2"></i></div>
+    </div>
+
+    <div class="col-span-3 stat-card">
+        <div>
+            <div class="stat-label">AVG ATS RESUME SCORE</div>
+            <div class="stat-val" style="color:var(--brand-accent);">{{ metrics.avg_ats_score }}</div>
+            <div class="stat-trend trend-up"><i class="bi bi-check-all"></i> High Pass Rate</div>
+        </div>
+        <div class="stat-icon-wrapper" style="color:var(--brand-accent); background:rgba(139,92,246,0.12);"><i class="bi bi-file-earmark-check-fill"></i></div>
+    </div>
+</div>
+
+<div class="dashboard-grid">
+    <div class="col-span-12 glass-card">
+        <h3>Department Breakdown & Performance</h3>
+        <table style="width:100%; border-collapse:collapse; margin-top:16px;">
+            <thead>
+                <tr style="border-bottom:1px solid var(--glass-border); text-align:left; font-size:12px; color:var(--text-subtle);">
+                    <th style="padding:12px;">DEPARTMENT</th>
+                    <th style="padding:12px;">ENROLLED STUDENTS</th>
+                    <th style="padding:12px;">PLACEMENT RATE</th>
+                    <th style="padding:12px;">AVG EMPLOYABILITY INDEX</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for dept in metrics.department_stats %}
+                <tr style="border-bottom:1px solid var(--glass-border); font-size:14px;">
+                    <td style="padding:16px; font-weight:700;">{{ dept.dept }}</td>
+                    <td style="padding:16px;">{{ dept.students }}</td>
+                    <td style="padding:16px; color:var(--brand-secondary); font-weight:700;">{{ dept.placed }}</td>
+                    <td style="padding:16px;"><span class="badge badge-purple">{{ dept.avg_index }} / 100</span></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

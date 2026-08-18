@@ -1,0 +1,99 @@
+{% extends 'layout.html' %}
+
+{% block title %}Edit Student Profile & Career Goals | CareerOS AI{% endblock %}
+
+{% block content %}
+<div style="margin-bottom: 24px; display:flex; justify-content:space-between; align-items:center;">
+    <div>
+        <h2>Student <span class="gradient-text">Profile & Career Goals</span></h2>
+        <p style="color:var(--text-muted);">Manage your personal information, target company goals, portfolio handles, and social links.</p>
+    </div>
+    <span class="badge badge-verified"><i class="bi bi-person-check-fill"></i> Editable Profile</span>
+</div>
+
+<form action="{{ url_for('student.profile') }}" method="POST">
+    <div class="dashboard-grid">
+        <!-- Basic Information & Career Target (Span 6) -->
+        <div class="col-span-6 glass-card">
+            <h3><i class="bi bi-person-badge-fill" style="color:var(--brand-primary);"></i> Basic & Target Info</h3>
+            
+            <div style="margin-top:16px;">
+                <div class="form-group">
+                    <label class="form-label">Full Name</label>
+                    <input type="text" name="name" class="form-control" value="{{ user.name }}" required>
+                </div>
+
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:16px;">
+                    <div class="form-group">
+                        <label class="form-label">Dream Target Company</label>
+                        <select name="dream_company" class="form-control">
+                            <option value="Google" {% if user.dream_company == 'Google' %}selected{% endif %}>Google</option>
+                            <option value="Microsoft" {% if user.dream_company == 'Microsoft' %}selected{% endif %}>Microsoft</option>
+                            <option value="Amazon" {% if user.dream_company == 'Amazon' %}selected{% endif %}>Amazon</option>
+                            <option value="Meta" {% if user.dream_company == 'Meta' %}selected{% endif %}>Meta</option>
+                            <option value="NVIDIA" {% if user.dream_company == 'NVIDIA' %}selected{% endif %}>NVIDIA</option>
+                            <option value="Apple" {% if user.dream_company == 'Apple' %}selected{% endif %}>Apple</option>
+                            <option value="Adobe" {% if user.dream_company == 'Adobe' %}selected{% endif %}>Adobe</option>
+                            <option value="TCS" {% if user.dream_company == 'TCS' %}selected{% endif %}>TCS</option>
+                            <option value="Infosys" {% if user.dream_company == 'Infosys' %}selected{% endif %}>Infosys</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Dream Job Role</label>
+                        <input type="text" name="dream_job" class="form-control" value="{{ user.dream_job or 'Software Engineer' }}">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Career Goal Target</label>
+                    <input type="text" name="career_goal" class="form-control" value="{{ user.career_goal or 'Full Stack AI Engineer' }}">
+                </div>
+
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:16px;">
+                    <div class="form-group">
+                        <label class="form-label">University / College</label>
+                        <input type="text" name="college" class="form-control" value="{{ user.college or 'Stanford University' }}">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Degree & Branch</label>
+                        <input type="text" name="degree" class="form-control" value="{{ user.degree or 'B.S. Computer Science' }}">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Social Handles & Portfolios (Span 6) -->
+        <div class="col-span-6 glass-card">
+            <h3><i class="bi bi-link-45deg" style="color:var(--brand-secondary);"></i> Social Handles & Coding Profiles</h3>
+
+            <div style="margin-top:16px;">
+                <div class="form-group">
+                    <label class="form-label"><i class="bi bi-github"></i> GitHub Profile Link</label>
+                    <input type="text" name="github" class="form-control" value="{{ user.github or '' }}" placeholder="github.com/yourusername">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label"><i class="bi bi-linkedin"></i> LinkedIn Profile Link</label>
+                    <input type="text" name="linkedin" class="form-control" value="{{ user.linkedin or '' }}" placeholder="linkedin.com/in/yourusername">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label"><i class="bi bi-code-slash"></i> LeetCode Profile</label>
+                    <input type="text" name="leetcode" class="form-control" value="{{ user.leetcode or '' }}" placeholder="leetcode.com/yourusername">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label"><i class="bi bi-cpu"></i> HackerRank Profile</label>
+                    <input type="text" name="hackerrank" class="form-control" value="{{ user.hackerrank or '' }}" placeholder="hackerrank.com/yourusername">
+                </div>
+
+                <button type="submit" class="btn btn-gradient" style="width:100%; padding:12px; margin-top:8px;">
+                    <i class="bi bi-save-fill"></i> Save & Sync Profile Changes
+                </button>
+            </div>
+        </div>
+    </div>
+</form>
+{% endblock %}

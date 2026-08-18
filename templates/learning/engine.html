@@ -1,0 +1,74 @@
+{% extends 'layout.html' %}
+
+{% block title %}AI Learning Engine & LMS | CareerOS AI{% endblock %}
+
+{% block content %}
+<div style="margin-bottom: 24px;">
+    <h2>AI Learning <span class="gradient-text">Engine & LMS</span></h2>
+    <p style="color:var(--text-muted);">Personalized learning roadmaps automatically calculated based on your career goal and skill gaps.</p>
+</div>
+
+<!-- Personalized Visual Roadmap -->
+<div class="glass-card" style="margin-bottom:32px;">
+    <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--glass-border); padding-bottom:16px; margin-bottom:24px;">
+        <div>
+            <span class="badge badge-purple">PERSONALIZED ROADMAP</span>
+            <h3 style="margin-top:4px;">Target Goal: {{ user.career_goal if user else 'AI Engineer' }}</h3>
+        </div>
+        <span class="badge badge-verified">Progress: 45% Unlocked</span>
+    </div>
+
+    <div class="roadmap-timeline">
+        {% for step in roadmap %}
+        <div class="timeline-step {% if step.status == 'Completed' %}completed{% elif step.status == 'In Progress' %}active{% endif %}">
+            <div class="timeline-node">
+                {% if step.status == 'Completed' %}
+                <i class="bi bi-check-lg" style="font-size:12px;"></i>
+                {% else %}
+                {{ step.step }}
+                {% endif %}
+            </div>
+
+            <div style="background:var(--bg-surface-elevated); padding:16px; border-radius:var(--radius-sm); border:1px solid var(--glass-border);">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <strong style="font-size:15px;">{{ step.title }}</strong>
+                    <span class="badge {% if step.status == 'Completed' %}badge-verified{% elif step.status == 'In Progress' %}badge-purple{% else %}badge-orange{% endif %}">
+                        {{ step.status }}
+                    </span>
+                </div>
+                <p style="font-size:13px; color:var(--text-muted); margin-top:6px;">{{ step.desc }}</p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Course Marketplace Catalog -->
+<div>
+    <h3 style="margin-bottom:16px;">Recommended LMS Courses</h3>
+    <div class="dashboard-grid">
+        {% for course in courses %}
+        <div class="col-span-4 glass-card" style="display:flex; flex-direction:column; justify-content:space-between;">
+            <div>
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+                    <span class="badge badge-purple">{{ course.category }}</span>
+                    <span style="font-size:12px; color:#f59e0b; font-weight:700;"><i class="bi bi-star-fill"></i> {{ course.rating }}</span>
+                </div>
+
+                <h4 style="font-size:16px; margin-bottom:8px;">{{ course.title }}</h4>
+                <p style="font-size:13px; color:var(--text-muted); margin-bottom:16px;">{{ course.description }}</p>
+            </div>
+
+            <div>
+                <div style="font-size:12px; color:var(--text-subtle); margin-bottom:12px;">
+                    Mapped Skills: <strong>{{ course.skills_mapped }}</strong>
+                </div>
+                <a href="{{ url_for('learning.course_detail', course_id=course.id) }}" class="btn btn-primary" style="width:100%;">
+                    Start Learning <i class="bi bi-play-circle-fill"></i>
+                </a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

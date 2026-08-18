@@ -1,0 +1,106 @@
+{% extends 'layout.html' %}
+
+{% block title %}AI Resume & ATS Score Analyzer | CareerOS AI{% endblock %}
+
+{% block content %}
+<div style="margin-bottom: 24px;">
+    <h2>AI Resume & <span class="gradient-text">ATS Analyzer</span></h2>
+    <p style="color:var(--text-muted);">Powered by Google Gemini AI. Extract text from PDF/DOCX, analyze grammar, formatting, industry keywords, and ATS compatibility.</p>
+</div>
+
+<div class="dashboard-grid">
+    <!-- Form Upload Section -->
+    <div class="col-span-5 glass-card">
+        <h3>Submit Resume Content</h3>
+        <form action="{{ url_for('resume.analyzer') }}" method="POST" enctype="multipart/form-data" style="margin-top:16px;">
+            <div class="form-group">
+                <label class="form-label">Upload Resume File (PDF / DOCX / TXT)</label>
+                <input type="file" name="file" accept=".pdf,.docx,.txt" class="form-control">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Or Paste Plain Resume Text</label>
+                <textarea name="resume_text" rows="8" class="form-control" placeholder="Paste your resume text here..."></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-gradient" style="width:100%;">
+                <i class="bi bi-cpu-fill"></i> Run Gemini AI Analysis
+            </button>
+        </form>
+
+        <div style="margin-top:20px; border-top:1px solid var(--glass-border); padding-top:16px;">
+            <a href="{{ url_for('resume.match_jd') }}" class="btn btn-secondary" style="width:100%;">
+                <i class="bi bi-diagram-3-fill"></i> Compare Resume vs Job Description
+            </a>
+        </div>
+    </div>
+
+    <!-- Report Display Section -->
+    <div class="col-span-7 glass-card">
+        {% if report %}
+            {% if report.error %}
+            <div style="background:rgba(239, 68, 68, 0.15); border:1px solid rgba(239, 68, 68, 0.3); color:#fca5a5; padding:16px; border-radius:var(--radius-sm);">
+                <i class="bi bi-exclamation-triangle-fill"></i> <strong>Notice:</strong> {{ report.error }}
+            </div>
+            {% else %}
+            <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--glass-border); padding-bottom:16px; margin-bottom:20px;">
+                <div>
+                    <h3>Gemini AI Analysis Report</h3>
+                    <span class="badge badge-verified"><i class="bi bi-check-circle-fill"></i> Extracted {{ report.word_count }} Words</span>
+                </div>
+                <div style="text-align:right;">
+                    <div style="font-size:44px; font-weight:800; color:var(--brand-primary);">{{ report.ats_score }}<span style="font-size:14px; color:var(--text-muted);">/100</span></div>
+                    <div style="font-size:12px; color:var(--text-muted);">ATS Compatibility Score</div>
+                </div>
+            </div>
+
+            <div style="background:var(--bg-surface-elevated); padding:16px; border-radius:var(--radius-sm); margin-bottom:20px;">
+                <div style="font-size:12px; font-weight:700; color:var(--brand-secondary); margin-bottom:4px;">STRENGTH SUMMARY</div>
+                <p style="font-size:14px; color:var(--text-main);">{{ report.strength_summary }}</p>
+            </div>
+
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:20px;">
+                <div style="background:var(--bg-surface-elevated); padding:14px; border-radius:var(--radius-sm);">
+                    <div style="font-size:12px; font-weight:700; color:var(--text-subtle);">FORMATTING ANALYSIS</div>
+                    <p style="font-size:13px; margin-top:4px;">{{ report.formatting_analysis }}</p>
+                </div>
+
+                <div style="background:var(--bg-surface-elevated); padding:14px; border-radius:var(--radius-sm);">
+                    <div style="font-size:12px; font-weight:700; color:var(--text-subtle);">GRAMMAR & TONE</div>
+                    <p style="font-size:13px; margin-top:4px;">{{ report.grammar_analysis }}</p>
+                </div>
+            </div>
+
+            <div style="margin-bottom:20px;">
+                <strong>Suggested AI Objective Rewrite:</strong>
+                <div style="background:rgba(59,130,246,0.1); border-left:3px solid var(--brand-primary); padding:12px; font-size:13px; margin-top:6px; border-radius:0 8px 8px 0;">
+                    "{{ report.suggested_summary }}"
+                </div>
+            </div>
+
+            <div style="margin-bottom:20px;">
+                <strong>Extracted Industry Keywords:</strong>
+                <div style="margin-top:6px; font-size:13px; color:var(--brand-secondary);">
+                    {{ report.keyword_analysis }}
+                </div>
+            </div>
+
+            <div>
+                <strong>Missing Industry Keywords to Add:</strong>
+                <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:8px;">
+                    {% for skill in report.missing_skills %}
+                    <span class="badge badge-orange">+ {{ skill }}</span>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+        {% else %}
+        <div style="text-align:center; padding:80px 20px; color:var(--text-muted);">
+            <i class="bi bi-file-earmark-pdf-fill" style="font-size:56px; opacity:0.3; color:var(--brand-primary);"></i>
+            <h4 style="margin-top:16px; color:var(--text-main);">Upload Resume File or Paste Text</h4>
+            <p style="font-size:13px; max-width:400px; margin:8px auto 0 auto;">Select a PDF or DOCX file on the left and click <strong>"Run Gemini AI Analysis"</strong> to generate your real-time report.</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

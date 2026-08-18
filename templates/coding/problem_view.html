@@ -1,0 +1,104 @@
+{% extends 'layout.html' %}
+
+{% block title %}{{ challenge.title }} | AI Coding Arena{% endblock %}
+
+{% block content %}
+<div style="margin-bottom: 16px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+    <div>
+        <div style="display:flex; align-items:center; gap:10px;">
+            <h2>{{ challenge.title }}</h2>
+            <span class="badge {% if challenge.difficulty == 'Easy' %}badge-verified{% elif challenge.difficulty == 'Medium' %}badge-purple{% else %}badge-orange{% endif %}">
+                {{ challenge.difficulty }}
+            </span>
+            <span class="badge badge-purple"><i class="bi bi-building"></i> {{ challenge.company_tag }}</span>
+        </div>
+        <div style="font-size:13px; color:var(--text-muted); margin-top:4px;">Category: <strong>{{ challenge.category }}</strong> • Points: <strong>+{{ challenge.points }} XP</strong></div>
+    </div>
+
+    <a href="{{ url_for('coding.arena') }}" class="btn btn-secondary"><i class="bi bi-arrow-left"></i> Back to Arena</a>
+</div>
+
+<div class="code-editor-container" style="display:grid; grid-template-columns: 5fr 7fr; gap:20px;">
+    <!-- Problem Description & AI Execution Review Panel -->
+    <div class="problem-description-panel glass-card" style="padding:24px;">
+        <h3>Problem Description</h3>
+        <p style="font-size:14px; color:var(--text-muted); margin-top:12px; line-height:1.7;">
+            {{ challenge.description }}
+        </p>
+
+        <!-- Test Case Specification -->
+        <div style="margin-top:20px; background:var(--bg-surface-elevated); padding:14px; border-radius:var(--radius-sm); border:1px solid var(--glass-border);">
+            <strong style="font-size:12px; color:var(--text-subtle);">SAMPLE TEST CASES:</strong>
+            <pre style="margin-top:6px; font-family:'JetBrains Mono', monospace; font-size:12px; color:var(--brand-primary); white-space:pre-wrap; word-break:break-word;">{{ challenge.test_cases_json }}</pre>
+        </div>
+
+        <!-- Real Code Output & AI Complexity Terminal -->
+        <div style="margin-top:24px; border-top:1px solid var(--glass-border); padding-top:16px;">
+            <h4><i class="bi bi-terminal-fill" style="color:var(--brand-primary);"></i> Execution Console & AI Complexity</h4>
+            
+            <div id="ai-review-box" style="margin-top:12px; background:#0d1117; padding:16px; border-radius:var(--radius-sm); font-family:'JetBrains Mono', monospace; font-size:13px; color:#c9d1d9; border:1px solid rgba(255,255,255,0.1); min-height:140px;">
+                <span style="color:#8b949e;">// Console stdout output will display here when you click "Run Code & Submit"...</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Code Editor Workspace Panel -->
+    <div class="editor-workspace-panel glass-card" style="padding:24px; display:flex; flex-direction:column;">
+        <div class="editor-header" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; padding-bottom:12px; border-bottom:1px solid var(--glass-border);">
+            <div style="display:flex; align-items:center; gap:8px;">
+                <i class="bi bi-filetype-py" style="color:var(--brand-primary); font-size:20px;"></i>
+                <span style="font-size:14px; font-weight:700; color:var(--text-main);">Python 3 Interpreter</span>
+            </div>
+            <button id="run-btn" class="btn btn-gradient" style="padding:8px 20px; font-size:13px;">
+                <i class="bi bi-play-fill"></i> Run Code & Submit
+            </button>
+        </div>
+
+        <textarea id="code-input" class="code-textarea" style="width:100%; height:450px; background:#0d1117; color:#f0f6fc; font-family:'JetBrains Mono', monospace; font-size:13px; padding:16px; border-radius:var(--radius-sm); border:1px solid rgba(255,255,255,0.1); resize:vertical; outline:none; line-height:1.6;">{{ challenge.starter_code }}</textarea>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.getElementById('run-btn').addEventListener('click', async () => {
+    const code = document.getElementById('code-input').value;
+    const reviewBox = document.getElementById('ai-review-box');
+    reviewBox.innerHTML = '<span style="color:#e3b341;"><i class="bi bi-hourglass-split"></i> Executing Python interpreter & analyzing runtime complexity...</span>';
+
+    try {
+        const res = await fetch('/coding/run-code', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({code: code, challenge_id: {{ challenge.id }}})
+        });
+        const data = await res.json();
+        
+        const isSuccess = data.status === 'Passed';
+        const statusColor = isSuccess ? '#3fb950' : '#f85149';
+        
+        reviewBox.innerHTML = `
+            <div style="color:${statusColor}; font-weight:700; font-size:14px; margin-bottom:8px;">
+                <i class="bi ${isSuccess ? 'bi-check-circle-fill' : 'bi-x-circle-fill'}"></i> Execution Status: ${data.status}
+            </div>
+            
+            <div style="background:#161b22; padding:10px 12px; border-radius:4px; margin-bottom:10px; border-left:3px solid ${statusColor};">
+                <div style="color:#8b949e; font-size:11px; margin-bottom:4px;">STDOUT CONSOLE OUTPUT:</div>
+                <pre style="margin:0; color:#c9d1d9; font-size:12px; white-space:pre-wrap;">${data.executed_output}</pre>
+            </div>
+
+            <div style="display:flex; gap:16px; font-size:12px; color:#8b949e; margin-bottom:8px;">
+                <span>Time: <strong style="color:#f0f6fc;">${data.time_complexity}</strong> (${data.time_ms} ms)</span>
+                <span>Space: <strong style="color:#f0f6fc;">${data.space_complexity}</strong> (${data.memory_kb} KB)</span>
+            </div>
+
+            <div style="border-top:1px solid rgba(255,255,255,0.1); padding-top:8px; font-size:12px; color:#8b949e;">
+                <strong style="color:#58a6ff;">AI Performance Review:</strong> ${data.ai_feedback}
+            </div>
+        `;
+    } catch (err) {
+        reviewBox.innerHTML = '<span style="color:#f85149;"><i class="bi bi-exclamation-triangle-fill"></i> Server error executing Python code.</span>';
+    }
+});
+</script>
+{% endblock %}

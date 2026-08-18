@@ -1,0 +1,86 @@
+{% extends 'layout.html' %}
+
+{% block title %}AI Resume Builder | CareerOS AI{% endblock %}
+
+{% block content %}
+<div style="margin-bottom: 24px;">
+    <h2>AI ATS <span class="gradient-text">Resume Builder</span></h2>
+    <p style="color:var(--text-muted);">Build company-specific, ATS-tested resumes with live themes and AI text enhancement.</p>
+</div>
+
+<form action="{{ url_for('resume.builder') }}" method="POST">
+    <div class="dashboard-grid">
+        <div class="col-span-6 glass-card">
+            <h3>Personal & Contact Info</h3>
+            <div style="margin-top:16px;">
+                <div class="form-group">
+                    <label class="form-label">Full Name</label>
+                    <input type="text" name="full_name" class="form-control" value="{{ resume.full_name if resume else '' }}" placeholder="Alex Rivera">
+                </div>
+
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+                    <div class="form-group">
+                        <label class="form-label">Email</label>
+                        <input type="email" name="email" class="form-control" value="{{ resume.email if resume else '' }}" placeholder="alex@stanford.edu">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Phone</label>
+                        <input type="text" name="phone" class="form-control" value="{{ resume.phone if resume else '' }}" placeholder="+1 (555) 019-2834">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Professional Summary (AI Suggested)</label>
+                    <textarea name="summary" rows="3" class="form-control">{{ resume.summary if resume else '' }}</textarea>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Technical Skills (Comma separated)</label>
+                    <input type="text" name="skills" class="form-control" value="{{ resume.skills if resume else '' }}" placeholder="Python, SQL, React, Flask, AWS">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Key Projects</label>
+                    <textarea name="projects" rows="4" class="form-control" placeholder="Project 1: Built AI Customer Engine using Python..."></textarea>
+                </div>
+
+                <button type="submit" class="btn btn-gradient" style="width:100%;">
+                    <i class="bi bi-save-fill"></i> Save Resume & Update ATS Index
+                </button>
+            </div>
+        </div>
+
+        <div class="col-span-6 glass-card" style="background:#ffffff; color:#0f172a; min-height:500px; padding:32px;">
+            <div style="border-bottom:2px solid #2563eb; padding-bottom:12px; margin-bottom:16px;">
+                <h2 style="color:#0f172a; font-size:24px;">{{ resume.full_name if resume and resume.full_name else 'Alex Rivera' }}</h2>
+                <div style="font-size:12px; color:#475569;">
+                    {{ resume.email if resume and resume.email else 'alex@stanford.edu' }} • 
+                    {{ resume.phone if resume and resume.phone else '+1 (555) 019-2834' }}
+                </div>
+            </div>
+
+            <div style="margin-bottom:16px;">
+                <h4 style="color:#2563eb; font-size:13px; text-transform:uppercase; letter-spacing:1px; margin-bottom:4px;">Professional Summary</h4>
+                <p style="font-size:13px; color:#334155;">
+                    {{ resume.summary if resume and resume.summary else 'Results-driven Software Engineer with expertise in building scalable web applications and AI microservices.' }}
+                </p>
+            </div>
+
+            <div style="margin-bottom:16px;">
+                <h4 style="color:#2563eb; font-size:13px; text-transform:uppercase; letter-spacing:1px; margin-bottom:4px;">Technical Skills</h4>
+                <p style="font-size:13px; color:#334155;">
+                    {{ resume.skills if resume and resume.skills else 'Python, SQL, React, Flask, Docker, PostgreSQL, Machine Learning' }}
+                </p>
+            </div>
+
+            <div>
+                <h4 style="color:#2563eb; font-size:13px; text-transform:uppercase; letter-spacing:1px; margin-bottom:4px;">Projects & Experience</h4>
+                <p style="font-size:13px; color:#334155;">
+                    • Built AI Career Operating System backend using Python, Flask, and SQLAlchemy.<br>
+                    • Implemented real-time ATS score calculator & Gemini AI resume analyzer.
+                </p>
+            </div>
+        </div>
+    </div>
+</form>
+{% endblock %}

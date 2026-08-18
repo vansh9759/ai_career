@@ -1,0 +1,281 @@
+{% extends 'layout.html' %}
+
+{% block title %}AI Coding Arena & Student Solved Dashboard | CareerOS AI{% endblock %}
+
+{% block content %}
+<div style="margin-bottom: 20px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;">
+    <div>
+        <h2>AI Coding <span class="gradient-text">Arena</span></h2>
+        <p style="color:var(--text-muted);">Solve company-tagged LeetCode & HackerRank challenges with real-time AI $O(N)$ space & time complexity evaluation.</p>
+    </div>
+    <div style="display:flex; gap:12px;">
+        <span class="badge badge-purple" style="font-size:13px; padding:8px 16px;"><i class="bi bi-code-slash"></i> {{ challenges|length }} Problem Trackers</span>
+    </div>
+</div>
+
+<!-- Student Coding Stats Dashboard Banner -->
+<div class="dashboard-grid" style="margin-bottom:24px;">
+    <div class="col-span-12 glass-card" style="background:linear-gradient(135deg, rgba(30,27,75,0.6) 0%, rgba(15,23,42,0.8) 100%); border:1px solid var(--glass-border);">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:20px;">
+            <div>
+                <span class="badge badge-verified" style="font-size:12px;"><i class="bi bi-person-check-fill"></i> CANDIDATE PROGRESS DASHBOARD</span>
+                <h3 style="font-size:24px; margin-top:6px;">Coding Performance Metrics</h3>
+                <div style="font-size:13px; color:var(--text-muted);">Track your solved LeetCode challenges, accuracy rates, and XP growth.</div>
+            </div>
+
+            <div style="display:flex; gap:24px; text-align:center; flex-wrap:wrap;">
+                <div>
+                    <div style="font-size:28px; font-weight:800; color:var(--brand-primary);">{{ stats.total_solved }} / {{ stats.total_problems }}</div>
+                    <div style="font-size:11px; color:var(--text-subtle);">TOTAL SOLVED</div>
+                </div>
+
+                <div>
+                    <div style="font-size:28px; font-weight:800; color:var(--brand-secondary);">{{ stats.easy_count }}</div>
+                    <div style="font-size:11px; color:var(--text-subtle);">EASY SOLVED</div>
+                </div>
+
+                <div>
+                    <div style="font-size:28px; font-weight:800; color:#a855f7;">{{ stats.medium_count }}</div>
+                    <div style="font-size:11px; color:var(--text-subtle);">MEDIUM SOLVED</div>
+                </div>
+
+                <div>
+                    <div style="font-size:28px; font-weight:800; color:var(--state-danger);">{{ stats.hard_count }}</div>
+                    <div style="font-size:11px; color:var(--text-subtle);">HARD SOLVED</div>
+                </div>
+
+                <div>
+                    <div style="font-size:28px; font-weight:800; color:var(--brand-primary);">{{ stats.accuracy_rate }}%</div>
+                    <div style="font-size:11px; color:var(--text-subtle);">ACCEPTANCE RATE</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Solved Problems Pill Tracker -->
+        {% if submissions %}
+        <div style="margin-top:20px; border-top:1px solid var(--glass-border); padding-top:14px;">
+            <div style="font-size:12px; font-weight:700; color:var(--text-subtle); margin-bottom:8px;">RECENT SUBMISSION HISTORY LOG:</div>
+            <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                {% for sub in submissions %}
+                {% set ch = ch_map.get(sub.challenge_id) %}
+                {% if ch %}
+                <span class="badge {% if sub.status == 'Passed' %}badge-verified{% else %}badge-orange{% endif %}" style="font-size:11px; padding:6px 12px;">
+                    {% if sub.status == 'Passed' %}<i class="bi bi-check-circle-fill"></i>{% else %}<i class="bi bi-x-circle-fill"></i>{% endif %}
+                    {{ ch.title }} ({{ sub.status }})
+                </span>
+                {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Controls Bar: Search, Category Tabs, Sort & Refresh -->
+<div class="glass-panel" style="padding:16px 20px; margin-bottom:24px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;">
+    <!-- Category Tabs -->
+    <div style="display:flex; gap:8px; flex-wrap:wrap;">
+        <button class="coding-tab-btn active" data-filter="all">All Problems</button>
+        <button class="coding-tab-btn" data-filter="Easy">Easy</button>
+        <button class="coding-tab-btn" data-filter="Medium">Medium</button>
+        <button class="coding-tab-btn" data-filter="Hard">Hard</button>
+        <button class="coding-tab-btn" data-filter="Google">Google</button>
+        <button class="coding-tab-btn" data-filter="Amazon">Amazon</button>
+        <button class="coding-tab-btn" data-filter="Microsoft">Microsoft</button>
+        <button class="coding-tab-btn" data-filter="Meta">Meta</button>
+    </div>
+
+    <!-- Action Controls: Sort, Search, Refresh -->
+    <div style="display:flex; gap:12px; align-items:center; flex-wrap:wrap;">
+        <!-- Sort Dropdown -->
+        <select id="sort-select" class="form-control" style="padding:8px 12px; font-size:12px; width:160px; cursor:pointer;">
+            <option value="default">Sort By: Default</option>
+            <option value="easy-hard">Sort: Easy to Hard</option>
+            <option value="hard-easy">Sort: Hard to Easy</option>
+            <option value="xp-desc">Sort: Highest XP</option>
+            <option value="title-asc">Sort: Title (A-Z)</option>
+        </select>
+
+        <!-- Search Input -->
+        <div style="position:relative; width:220px;">
+            <input type="text" id="coding-search" class="form-control" placeholder="Search problems..." style="padding:8px 12px 8px 34px; font-size:12px;">
+            <i class="bi bi-search" style="position:absolute; left:12px; top:50%; transform:translateY(-50%); color:var(--text-subtle); font-size:12px;"></i>
+        </div>
+
+        <!-- Refresh Shuffle Button -->
+        <button id="refresh-shuffle-btn" class="btn btn-secondary" style="padding:8px 14px; font-size:12px;" title="Shuffle Problem Order">
+            <i class="bi bi-shuffle"></i> Refresh Shuffle
+        </button>
+    </div>
+</div>
+
+<!-- Problems Table -->
+<div class="glass-card" style="padding:0; overflow:hidden;">
+    <table style="width:100%; border-collapse:collapse; text-align:left; font-size:14px;">
+        <thead>
+            <tr style="background:var(--bg-surface-elevated); border-bottom:1px solid var(--glass-border); color:var(--text-subtle); font-size:12px; text-transform:uppercase;">
+                <th style="padding:16px 20px;">Status</th>
+                <th style="padding:16px 20px;"># Title</th>
+                <th style="padding:16px;">Category</th>
+                <th style="padding:16px;">Target Company</th>
+                <th style="padding:16px;">Difficulty</th>
+                <th style="padding:16px;">XP Points</th>
+                <th style="padding:16px 20px; text-align:right;">Action</th>
+            </tr>
+        </thead>
+        <tbody id="problem-rows">
+            {% for item in challenges %}
+            {% set diff_rank = 1 if item.difficulty == 'Easy' else (2 if item.difficulty == 'Medium' else 3) %}
+            <tr class="problem-row-item" 
+                data-title="{{ item.title.lower() }}" 
+                data-category="{{ item.category }}" 
+                data-difficulty="{{ item.difficulty }}" 
+                data-diff-rank="{{ diff_rank }}"
+                data-company="{{ item.company_tag }}"
+                data-points="{{ item.points }}"
+                style="border-bottom:1px solid var(--glass-border); transition:var(--transition-fast);">
+                
+                <!-- Status Icon -->
+                <td style="padding:16px 20px; text-align:center;">
+                    {% if item.id in passed_challenge_ids %}
+                    <i class="bi bi-patch-check-fill" style="color:var(--brand-secondary); font-size:18px;" title="Solved Correctly"></i>
+                    {% else %}
+                    <i class="bi bi-dash-circle" style="color:var(--text-subtle); font-size:18px;" title="Unsolved"></i>
+                    {% endif %}
+                </td>
+
+                <td style="padding:16px 20px; font-weight:700;">
+                    <a href="{{ url_for('coding.problem_view', challenge_id=item.id) }}" style="color:var(--text-main); text-decoration:none;">
+                        {{ item.title }}
+                    </a>
+                </td>
+
+                <td style="padding:16px; color:var(--text-muted); font-size:13px;">
+                    {{ item.category }}
+                </td>
+
+                <td style="padding:16px;">
+                    <span class="badge badge-purple"><i class="bi bi-building"></i> {{ item.company_tag }}</span>
+                </td>
+
+                <td style="padding:16px;">
+                    <span class="badge {% if item.difficulty == 'Easy' %}badge-verified{% elif item.difficulty == 'Medium' %}badge-purple{% else %}badge-orange{% endif %}">
+                        {{ item.difficulty }}
+                    </span>
+                </td>
+
+                <td style="padding:16px; font-family:'JetBrains Mono', monospace; font-weight:700; color:var(--brand-primary);">
+                    +{{ item.points }} XP
+                </td>
+
+                <td style="padding:16px 20px; text-align:right;">
+                    <a href="{{ url_for('coding.problem_view', challenge_id=item.id) }}" class="btn {% if item.id in passed_challenge_ids %}btn-secondary{% else %}btn-primary{% endif %}" style="padding:6px 14px; font-size:12px;">
+                        {% if item.id in passed_challenge_ids %}Solve Again{% else %}Solve Challenge <i class="bi bi-code-slash"></i>{% endif %}
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<style>
+.coding-tab-btn {
+    background: var(--bg-surface-elevated);
+    border: 1px solid var(--glass-border);
+    color: var(--text-muted);
+    border-radius: var(--radius-full);
+    padding: 6px 14px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition-fast);
+}
+.coding-tab-btn.active, .coding-tab-btn:hover {
+    background: var(--brand-primary);
+    color: #fff;
+    border-color: var(--brand-primary);
+}
+.problem-row-item:hover {
+    background: rgba(255, 255, 255, 0.03);
+}
+</style>
+{% endblock %}
+
+{% block scripts %}
+<script>
+const searchInput = document.getElementById('coding-search');
+const sortSelect = document.getElementById('sort-select');
+const refreshBtn = document.getElementById('refresh-shuffle-btn');
+const tabBtns = document.querySelectorAll('.coding-tab-btn');
+const tbody = document.getElementById('problem-rows');
+
+let activeFilter = 'all';
+
+// 1. Filtering Logic
+function filterTable() {
+    const q = searchInput.value.toLowerCase().trim();
+    const rows = Array.from(tbody.querySelectorAll('.problem-row-item'));
+
+    rows.forEach(row => {
+        const title = row.getAttribute('data-title') || '';
+        const category = row.getAttribute('data-category') || '';
+        const difficulty = row.getAttribute('data-difficulty') || '';
+        const company = row.getAttribute('data-company') || '';
+
+        const matchesSearch = title.includes(q) || category.toLowerCase().includes(q) || company.toLowerCase().includes(q);
+        
+        let matchesFilter = false;
+        if (activeFilter === 'all') {
+            matchesFilter = true;
+        } else if (activeFilter === difficulty || activeFilter === company) {
+            matchesFilter = true;
+        }
+
+        row.style.display = (matchesSearch && matchesFilter) ? 'table-row' : 'none';
+    });
+}
+
+// 2. Sorting Logic (Easy to Hard, Hard to Easy, XP High to Low, Title A-Z)
+sortSelect?.addEventListener('change', () => {
+    const mode = sortSelect.value;
+    const rows = Array.from(tbody.querySelectorAll('.problem-row-item'));
+
+    rows.sort((a, b) => {
+        if (mode === 'easy-hard') {
+            return parseInt(a.getAttribute('data-diff-rank')) - parseInt(b.getAttribute('data-diff-rank'));
+        } else if (mode === 'hard-easy') {
+            return parseInt(b.getAttribute('data-diff-rank')) - parseInt(a.getAttribute('data-diff-rank'));
+        } else if (mode === 'xp-desc') {
+            return parseInt(b.getAttribute('data-points')) - parseInt(a.getAttribute('data-points'));
+        } else if (mode === 'title-asc') {
+            return a.getAttribute('data-title').localeCompare(b.getAttribute('data-title'));
+        }
+        return 0;
+    });
+
+    rows.forEach(row => tbody.appendChild(row));
+});
+
+// 3. Refresh Shuffle Logic
+refreshBtn?.addEventListener('click', () => {
+    const rows = Array.from(tbody.querySelectorAll('.problem-row-item'));
+    for (let i = rows.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [rows[i], rows[j]] = [rows[j], rows[i]];
+    }
+    rows.forEach(row => tbody.appendChild(row));
+});
+
+searchInput?.addEventListener('input', filterTable);
+
+tabBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+        tabBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        activeFilter = btn.getAttribute('data-filter');
+        filterTable();
+    });
+});
+</script>
+{% endblock %}

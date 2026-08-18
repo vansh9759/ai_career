@@ -1,0 +1,54 @@
+{% extends 'layout.html' %}
+
+{% block title %}Verify {{ skill_name }} Badge | CareerOS AI{% endblock %}
+
+{% block content %}
+<div style="max-width:780px; margin:20px auto;" class="glass-panel">
+    <div style="padding:32px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--glass-border); padding-bottom:16px; margin-bottom:24px;">
+            <div>
+                <span class="badge badge-purple"><i class="bi bi-shield-lock-fill"></i> PROCTORED AI ASSESSMENT</span>
+                <h2 style="margin-top:6px;">{{ skill_name }} Skill Verification Exam</h2>
+                <div style="font-size:13px; color:var(--text-muted);">
+                    Category: <strong>{{ test_data.category }}</strong> • Difficulty: <strong>{{ test_data.level }}</strong>
+                </div>
+            </div>
+            <div style="text-align:right;">
+                <span class="badge badge-orange" style="font-size:13px;"><i class="bi bi-clock-fill"></i> {{ test_data.duration }}</span>
+                <div style="font-size:11px; color:var(--text-muted); margin-top:4px;">Passing Score: {{ test_data.pass_threshold }}%</div>
+            </div>
+        </div>
+
+        <p style="color:var(--text-muted); font-size:14px; margin-bottom:24px;">
+            Answer the technical assessment questions below. Passing with <strong>75%+ score</strong> issues an official immutable <strong>Verified {{ skill_name }} Badge</strong> directly into your Skill Passport and boosts your live Employability Index.
+        </p>
+
+        <form action="{{ url_for('skills.verify_skill', skill_name=skill_name) }}" method="POST">
+            {% for q in test_data.questions %}
+            <div style="background:var(--bg-surface-elevated); padding:20px; border-radius:var(--radius-sm); margin-bottom:20px; border:1px solid var(--glass-border);">
+                <div style="display:flex; gap:10px; align-items:flex-start;">
+                    <span class="badge badge-purple" style="font-size:12px;">Q{{ loop.index }}</span>
+                    <strong style="font-size:15px; flex:1;">{{ q.question }}</strong>
+                </div>
+
+                <div style="margin-top:14px; display:flex; flex-direction:column; gap:10px;">
+                    {% for key, val in q.options.items() %}
+                    <label style="display:flex; align-items:center; gap:10px; background:var(--bg-base); padding:10px 14px; border-radius:var(--radius-sm); cursor:pointer; border:1px solid var(--glass-border); font-size:14px;">
+                        <input type="radio" name="{{ q.id }}" value="{{ key }}" required style="accent-color:var(--brand-primary);">
+                        <span><strong>{{ key.upper() }})</strong> {{ val }}</span>
+                    </label>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endfor %}
+
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-top:28px;">
+                <a href="{{ url_for('skills.passport') }}" class="btn btn-secondary"><i class="bi bi-arrow-left"></i> Cancel</a>
+                <button type="submit" class="btn btn-gradient" style="padding:14px 28px;">
+                    Submit Assessment & Issue Badge <i class="bi bi-patch-check-fill"></i>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

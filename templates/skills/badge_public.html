@@ -1,0 +1,58 @@
+{% extends 'layout.html' %}
+
+{% block title %}Public Credential Verification | CareerOS AI{% endblock %}
+
+{% block content %}
+<div style="max-width:700px; margin:40px auto;" class="glass-panel">
+    <div style="padding:40px; text-align:center;">
+        {% if badge %}
+        <div style="width:90px; height:90px; border-radius:50%; background:linear-gradient(135deg, rgba(16,185,129,0.2) 0%, rgba(59,130,246,0.2) 100%); border:3px solid var(--brand-secondary); display:flex; align-items:center; justify-content:center; margin:0 auto 20px auto; font-size:48px; color:var(--brand-secondary); box-shadow:var(--glow-shadow);">
+            <i class="bi bi-patch-check-fill"></i>
+        </div>
+
+        <span class="badge badge-verified" style="font-size:14px; padding:6px 18px; margin-bottom:12px;">OFFICIALLY VERIFIED CREDENTIAL</span>
+
+        <h1 style="font-size:36px; font-weight:800; margin-top:8px;">Verified {{ badge.skill_name }}</h1>
+        <p style="color:var(--text-muted); font-size:16px; margin-top:6px;">
+            Issued to <strong style="color:var(--text-main);">{{ student.name if student else 'Student Candidate' }}</strong>
+        </p>
+
+        <div style="background:var(--bg-surface-elevated); padding:20px; border-radius:var(--radius-md); margin:28px 0; border:1px solid var(--glass-border); text-align:left;">
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:16px; font-size:14px;">
+                <div>
+                    <span style="color:var(--text-subtle); font-size:12px;">CREDENTIAL BADGE CODE</span>
+                    <div style="font-family:'JetBrains Mono', monospace; font-weight:700; color:var(--brand-primary); margin-top:2px;">{{ badge.badge_code }}</div>
+                </div>
+
+                <div>
+                    <span style="color:var(--text-subtle); font-size:12px;">PROFICIENCY LEVEL</span>
+                    <div style="font-weight:700; color:var(--brand-secondary); margin-top:2px;">{{ badge.proficiency }}</div>
+                </div>
+
+                <div>
+                    <span style="color:var(--text-subtle); font-size:12px;">VERIFICATION METHOD</span>
+                    <div style="font-weight:600; color:var(--text-main); margin-top:2px;">{{ badge.verification_method }}</div>
+                </div>
+
+                <div>
+                    <span style="color:var(--text-subtle); font-size:12px;">VERIFIED DATE</span>
+                    <div style="font-weight:600; color:var(--text-main); margin-top:2px;">{{ badge.verified_at.strftime('%B %d, %Y') if badge.verified_at else '2026' }}</div>
+                </div>
+            </div>
+        </div>
+
+        <div style="font-size:13px; color:var(--text-subtle);">
+            Authenticated by <strong>CareerOS AI Credential Passport Engine</strong> for verified recruiter search.
+        </div>
+
+        {% else %}
+        <div style="padding:20px;">
+            <i class="bi bi-shield-x" style="font-size:64px; color:var(--state-danger);"></i>
+            <h2 style="margin-top:16px; color:var(--text-main);">Credential Verification Failed</h2>
+            <p style="color:var(--text-muted); margin-top:8px;">{{ error }}</p>
+            <a href="{{ url_for('skills.passport') }}" class="btn btn-primary" style="margin-top:20px;">Return to Skill Passport</a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

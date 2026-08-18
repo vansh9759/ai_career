@@ -1,0 +1,62 @@
+{% extends 'layout.html' %}
+
+{% block title %}AI LinkedIn Profile Optimizer | CareerOS AI{% endblock %}
+
+{% block content %}
+<div style="margin-bottom: 24px;">
+    <h2>AI LinkedIn <span class="gradient-text">Profile Optimizer</span></h2>
+    <p style="color:var(--text-muted);">Rewrite your headline, about section, and experience bullet points into high-converting corporate tone.</p>
+</div>
+
+<div class="dashboard-grid">
+    <div class="col-span-6 glass-card">
+        <h3>Submit Your Current LinkedIn Copy</h3>
+        <form action="{{ url_for('portfolio.linkedin_optimizer') }}" method="POST" style="margin-top:16px;">
+            <div class="form-group">
+                <label class="form-label">Current Headline</label>
+                <input type="text" name="headline" class="form-control" placeholder="Computer Science Student at Stanford" required>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Current About / Summary</label>
+                <textarea name="about" rows="5" class="form-control" placeholder="I am a CS student passionate about programming..." required></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-gradient" style="width:100%;">
+                <i class="bi bi-magic"></i> Generate Optimized Copy
+            </button>
+        </form>
+    </div>
+
+    <div class="col-span-6 glass-card">
+        {% if optimized %}
+        <h3>Gemini AI Optimized Profile</h3>
+
+        <div style="margin-top:16px; background:var(--bg-surface-elevated); padding:16px; border-radius:var(--radius-sm);">
+            <div style="font-size:12px; font-weight:700; color:var(--brand-primary); margin-bottom:4px;">OPTIMIZED HEADLINE</div>
+            <strong style="font-size:14px; color:var(--text-main);">{{ optimized.headline }}</strong>
+        </div>
+
+        <div style="margin-top:16px; background:var(--bg-surface-elevated); padding:16px; border-radius:var(--radius-sm);">
+            <div style="font-size:12px; font-weight:700; color:var(--brand-primary); margin-bottom:4px;">OPTIMIZED ABOUT SECTION</div>
+            <p style="font-size:13px; color:var(--text-muted); line-height:1.6;">{{ optimized.about }}</p>
+        </div>
+
+        <div style="margin-top:16px;">
+            <strong>Recruiter Visibility Tips:</strong>
+            <ul style="padding-left:18px; margin-top:6px; font-size:13px; color:var(--text-muted);">
+                {% for tip in optimized.tips %}
+                <li>{{ tip }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% else %}
+        <div style="text-align:center; padding:60px 20px; color:var(--text-muted);">
+            <i class="bi bi-linkedin" style="font-size:48px; opacity:0.3; color:#0a66c2;"></i>
+            <h4 style="margin-top:16px; color:var(--text-main);">No Copy Optimized Yet</h4>
+            <p style="font-size:13px;">Enter your headline and about section on the left to transform your LinkedIn presence.</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

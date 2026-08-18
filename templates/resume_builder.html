@@ -1,0 +1,1267 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>AI Resume Builder</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<!-- Your CSS -->
+<link rel="stylesheet" href="{{ url_for('static', filename='css/resume_builder.css') }}">
+
+
+</head>
+
+<body class="bg-light">
+
+<div class="container mt-5 mb-5">
+
+<div class="card shadow-lg">
+
+<div class="card-body">
+
+<h2 class="text-center text-primary">
+
+📝 AI Resume Builder
+
+</h2>
+
+<p class="text-center text-muted">
+
+Create an ATS-friendly, professional resume powered by AI.
+
+</p>
+
+<hr>
+
+<form method="POST" action="/generate_resume">
+
+<!-- ================= CAREER INFORMATION ================= -->
+
+<div class="alert alert-primary">
+
+<h4 class="mb-3">
+
+🎓 Career Information
+
+</h4>
+
+<div class="row">
+
+<div class="col-md-4">
+
+<label class="fw-bold">
+
+Career
+
+</label>
+
+<input
+type="text"
+class="form-control"
+value="{{ career }}"
+readonly>
+
+</div>
+
+<div class="col-md-4">
+
+<label class="fw-bold">
+
+Course
+
+</label>
+
+<input
+type="text"
+class="form-control"
+value="{{ course }}"
+readonly>
+
+</div>
+
+<div class="col-md-4">
+
+<label class="fw-bold">
+
+Current Status
+
+</label>
+
+<input
+type="text"
+class="form-control"
+value="{{ status }}"
+readonly>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- ================= PERSONAL INFORMATION ================= -->
+
+<h3 class="text-primary mt-4">
+
+👤 Personal Information
+
+</h3>
+
+<hr>
+
+<div class="row">
+
+<div class="col-md-6 mb-3">
+
+<label class="form-label">
+
+Full Name
+<span class="text-danger">*</span>
+
+</label>
+
+<input
+type="text"
+name="name"
+class="form-control"
+placeholder="Enter your full name"
+required>
+
+</div>
+
+<div class="col-md-6 mb-3">
+
+<label class="form-label">
+
+Professional Email
+<span class="text-danger">*</span>
+
+</label>
+
+<input
+type="email"
+name="email"
+class="form-control"
+placeholder="example@gmail.com"
+required>
+
+</div>
+
+<div class="col-md-6 mb-3">
+
+<label class="form-label">
+
+Mobile Number
+<span class="text-danger">*</span>
+
+</label>
+
+<input
+type="tel"
+name="phone"
+class="form-control"
+placeholder="+91 XXXXX XXXXX"
+required>
+
+</div>
+
+<div class="col-md-6 mb-3">
+
+<label class="form-label">
+
+Current City
+<span class="text-danger">*</span>
+
+</label>
+
+<input
+type="text"
+name="city"
+class="form-control"
+placeholder="Enter City"
+required>
+
+</div>
+
+<div class="col-md-6 mb-3">
+
+<label class="form-label">
+
+State
+<span class="text-danger">*</span>
+
+</label>
+
+<input
+type="text"
+name="state"
+class="form-control"
+placeholder="Enter State"
+required>
+
+</div>
+
+<div class="col-md-6 mb-3">
+
+<label class="form-label">
+
+Country
+<span class="text-danger">*</span>
+
+</label>
+
+<input
+type="text"
+name="country"
+class="form-control"
+value="India"
+required>
+
+</div>
+
+<div class="col-md-12 mb-3">
+
+<label class="form-label">
+
+Address
+<span class="text-danger">*</span>
+
+</label>
+
+<textarea
+name="address"
+class="form-control"
+rows="2"
+placeholder="Enter your complete address"
+required></textarea>
+
+</div>
+
+<div class="col-md-6 mb-3">
+
+<label class="form-label">
+
+LinkedIn Profile
+
+</label>
+
+<input
+type="url"
+name="linkedin"
+class="form-control"
+placeholder="https://linkedin.com/in/username">
+
+</div>
+
+<div class="col-md-6 mb-3">
+
+<label class="form-label">
+
+GitHub / Portfolio
+
+</label>
+
+<input
+type="url"
+name="github"
+class="form-control"
+placeholder="https://github.com/username">
+
+</div>
+
+</div>
+
+<!-- ================= CAREER OBJECTIVE ================= -->
+
+<h3 class="text-primary">
+
+🎯 Career Objective
+
+</h3>
+
+<hr>
+
+<textarea
+name="career_objective"
+rows="5"
+class="form-control"
+placeholder="Leave blank to let AI generate a professional career objective automatically."></textarea>
+
+<br>
+
+<!-- ================= EDUCATION ================= -->
+
+<h3 class="text-primary">
+
+🎓 Education
+
+</h3>
+
+<hr>
+
+<div class="row">
+
+<div class="col-md-6 mb-3">
+
+<label class="form-label">
+
+College / University
+<span class="text-danger">*</span>
+
+</label>
+
+<input
+type="text"
+name="college"
+class="form-control"
+placeholder="College Name"
+required>
+
+</div>
+
+<div class="col-md-6 mb-3">
+
+<label class="form-label">
+
+University
+
+</label>
+
+<input
+type="text"
+name="university"
+class="form-control"
+placeholder="University Name">
+
+</div>
+
+<div class="col-md-4 mb-3">
+
+<label class="form-label">
+
+Degree
+<span class="text-danger">*</span>
+
+</label>
+
+<input
+type="text"
+name="degree"
+class="form-control"
+placeholder="B.Tech / MBBS / LLB"
+required>
+
+</div>
+
+<div class="col-md-4 mb-3">
+
+<label class="form-label">
+
+Branch / Specialization
+<span class="text-danger">*</span>
+
+</label>
+
+<input
+type="text"
+name="branch"
+class="form-control"
+placeholder="AI & ML / Civil / Nursing"
+required>
+
+</div>
+
+<div class="col-md-4 mb-3">
+
+<label class="form-label">
+
+Passing Year
+<span class="text-danger">*</span>
+
+</label>
+
+<input
+type="number"
+name="passing_year"
+class="form-control"
+placeholder="2028"
+required>
+
+</div>
+
+<div class="col-md-6 mb-3">
+
+<label class="form-label">
+
+CGPA / Percentage
+<span class="text-danger">*</span>
+
+</label>
+
+<input
+type="text"
+name="cgpa"
+class="form-control"
+placeholder="8.50 CGPA or 82%"
+required>
+
+</div>
+
+<div class="col-md-6 mb-3">
+
+<label class="form-label">
+
+Current Semester (Optional)
+
+</label>
+
+<input
+type="text"
+name="semester"
+class="form-control"
+placeholder="6th Semester">
+
+</div>
+
+</div>
+
+<hr>
+<!-- ================= TECHNICAL SKILLS ================= -->
+
+<h3 class="text-primary">
+💻 Technical Skills
+</h3>
+
+<hr>
+
+<label class="form-label">
+Technical Skills <span class="text-danger">*</span>
+</label>
+
+<textarea
+name="skills"
+rows="4"
+class="form-control"
+placeholder="Example:
+Python
+Java
+C++
+SQL
+Machine Learning
+Flask
+HTML
+CSS"
+required></textarea>
+
+<br>
+
+<!-- ================= SOFT SKILLS ================= -->
+
+<h3 class="text-primary">
+🤝 Soft Skills
+</h3>
+
+<hr>
+
+<div class="row">
+
+<div class="col-md-6">
+
+<div class="form-check">
+<input class="form-check-input" type="checkbox" name="soft_skills" value="Communication">
+<label class="form-check-label">Communication</label>
+</div>
+
+<div class="form-check">
+<input class="form-check-input" type="checkbox" name="soft_skills" value="Leadership">
+<label class="form-check-label">Leadership</label>
+</div>
+
+<div class="form-check">
+<input class="form-check-input" type="checkbox" name="soft_skills" value="Problem Solving">
+<label class="form-check-label">Problem Solving</label>
+</div>
+
+<div class="form-check">
+<input class="form-check-input" type="checkbox" name="soft_skills" value="Critical Thinking">
+<label class="form-check-label">Critical Thinking</label>
+</div>
+
+</div>
+
+<div class="col-md-6">
+
+<div class="form-check">
+<input class="form-check-input" type="checkbox" name="soft_skills" value="Time Management">
+<label class="form-check-label">Time Management</label>
+</div>
+
+<div class="form-check">
+<input class="form-check-input" type="checkbox" name="soft_skills" value="Team Work">
+<label class="form-check-label">Team Work</label>
+</div>
+
+<div class="form-check">
+<input class="form-check-input" type="checkbox" name="soft_skills" value="Adaptability">
+<label class="form-check-label">Adaptability</label>
+</div>
+
+<div class="form-check">
+<input class="form-check-input" type="checkbox" name="soft_skills" value="Creativity">
+<label class="form-check-label">Creativity</label>
+</div>
+
+</div>
+
+</div>
+
+<hr>
+
+<!-- ================= PROJECTS ================= -->
+
+<h3 class="text-primary">
+🚀 Projects
+</h3>
+
+<hr>
+
+<label class="form-label">
+Project Title <span class="text-danger">*</span>
+</label>
+
+<input
+type="text"
+name="project_name"
+class="form-control"
+placeholder="AI Resume Analyzer"
+required>
+
+<br>
+
+<label class="form-label">
+Technologies Used
+</label>
+
+<input
+type="text"
+name="project_tech"
+class="form-control"
+placeholder="Python, Flask, SQLite, HTML, CSS">
+
+<br>
+
+<label class="form-label">
+Project Description <span class="text-danger">*</span>
+</label>
+
+<textarea
+name="projects"
+rows="6"
+class="form-control"
+placeholder="Describe your project..."
+required></textarea>
+
+<hr>
+
+<!-- ================= EXPERIENCE ================= -->
+
+<h3 class="text-primary">
+💼 Experience / Internship
+</h3>
+
+<hr>
+
+<label class="form-label">
+
+Company / Organization
+
+</label>
+
+<input
+type="text"
+name="company"
+class="form-control"
+placeholder="Company Name">
+
+<br>
+
+<label class="form-label">
+
+Role
+
+</label>
+
+<input
+type="text"
+name="role"
+class="form-control"
+placeholder="Intern / Software Engineer">
+
+<br>
+
+<label class="form-label">
+
+Experience Description
+
+</label>
+
+<textarea
+name="experience"
+rows="5"
+class="form-control"
+placeholder="Describe your internship or work experience"></textarea>
+
+<hr>
+
+<!-- ================= CERTIFICATIONS ================= -->
+
+<h3 class="text-primary">
+📜 Certifications
+</h3>
+
+<hr>
+
+<textarea
+name="certifications"
+rows="5"
+class="form-control"
+placeholder="Google AI Certificate
+AWS Cloud Practitioner
+NPTEL Python
+Coursera Machine Learning"></textarea>
+
+<hr>
+
+<!-- ================= ACHIEVEMENTS ================= -->
+
+<h3 class="text-primary">
+🏆 Achievements
+</h3>
+
+<hr>
+
+<textarea
+name="achievements"
+rows="5"
+class="form-control"
+placeholder="Hackathon Winner
+Coding Competition
+Sports
+Scholarship
+Leadership"></textarea>
+
+<hr>
+
+<!-- ================= LANGUAGES ================= -->
+
+<h3 class="text-primary">
+🌍 Languages Known
+</h3>
+
+<hr>
+
+<input
+type="text"
+name="languages"
+class="form-control"
+placeholder="English, Hindi, French">
+
+<hr>
+<!-- ===================================================== -->
+<!-- ===== DYNAMIC CAREER SPECIFIC INFORMATION ============ -->
+<!-- ===================================================== -->
+
+<h3 class="text-primary">
+🎯 Career Specific Information
+</h3>
+
+<hr>
+
+<!-- ===================================================== -->
+<!-- ENGINEERING -->
+<!-- ===================================================== -->
+
+{% if career == "Engineering" %}
+
+<div class="card border-primary mb-4">
+
+<div class="card-header bg-primary text-white">
+
+👨‍💻 Engineering Resume Details
+
+</div>
+
+<div class="card-body">
+
+<div class="row">
+
+<div class="col-md-6 mb-3">
+
+<label>
+
+Programming Languages
+<span class="text-danger">*</span>
+
+</label>
+
+<input
+type="text"
+class="form-control"
+name="programming_languages"
+placeholder="Python, Java, C++, JavaScript">
+
+</div>
+
+<div class="col-md-6 mb-3">
+
+<label>
+
+Frameworks
+
+</label>
+
+<input
+type="text"
+class="form-control"
+name="frameworks"
+placeholder="Flask, Django, React, Spring Boot">
+
+</div>
+
+<div class="col-md-6 mb-3">
+
+<label>GitHub</label>
+
+<input
+type="url"
+class="form-control"
+name="github_profile"
+placeholder="https://github.com/username">
+
+</div>
+
+<div class="col-md-6 mb-3">
+
+<label>Portfolio Website</label>
+
+<input
+type="url"
+class="form-control"
+name="portfolio">
+
+</div>
+
+<div class="col-md-6 mb-3">
+
+<label>LeetCode</label>
+
+<input
+type="url"
+class="form-control"
+name="leetcode">
+
+</div>
+
+<div class="col-md-6 mb-3">
+
+<label>HackerRank</label>
+
+<input
+type="url"
+class="form-control"
+name="hackerrank">
+
+</div>
+
+<div class="col-md-12 mb-3">
+
+<label>Hackathons</label>
+
+<textarea
+class="form-control"
+rows="3"
+name="hackathons"></textarea>
+
+</div>
+
+<div class="col-md-12 mb-3">
+
+<label>Technical Interests</label>
+
+<textarea
+class="form-control"
+rows="3"
+name="technical_interests"></textarea>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+{% endif %}
+
+<!-- ===================================================== -->
+<!-- MEDICAL -->
+<!-- ===================================================== -->
+
+{% if career == "Medical" %}
+
+<div class="card border-success mb-4">
+
+<div class="card-header bg-success text-white">
+
+🩺 Medical Resume Details
+
+</div>
+
+<div class="card-body">
+
+<label>Hospital Training</label>
+
+<input
+class="form-control"
+name="hospital_training">
+
+<br>
+
+<label>Clinical Experience</label>
+
+<textarea
+class="form-control"
+rows="3"
+name="clinical_experience"></textarea>
+
+<br>
+
+<label>Medical License</label>
+
+<input
+class="form-control"
+name="medical_license">
+
+<br>
+
+<label>Research Papers</label>
+
+<textarea
+class="form-control"
+rows="3"
+name="research_papers"></textarea>
+
+<br>
+
+<label>Medical Conferences</label>
+
+<textarea
+class="form-control"
+rows="3"
+name="medical_conferences"></textarea>
+
+</div>
+
+</div>
+
+{% endif %}
+
+<!-- ===================================================== -->
+<!-- LAW -->
+<!-- ===================================================== -->
+
+{% if career == "Law" %}
+
+<div class="card border-dark mb-4">
+
+<div class="card-header bg-dark text-white">
+
+⚖️ Law Resume Details
+
+</div>
+
+<div class="card-body">
+
+<label>Moot Court Experience</label>
+
+<textarea
+class="form-control"
+rows="3"
+name="moot_court"></textarea>
+
+<br>
+
+<label>Legal Internship</label>
+
+<textarea
+class="form-control"
+rows="3"
+name="legal_internship"></textarea>
+
+<br>
+
+<label>Practice Areas</label>
+
+<input
+class="form-control"
+name="practice_area">
+
+<br>
+
+<label>Publications</label>
+
+<textarea
+class="form-control"
+rows="3"
+name="publications"></textarea>
+
+</div>
+
+</div>
+
+{% endif %}
+
+<!-- ===================================================== -->
+<!-- MBA / MANAGEMENT -->
+<!-- ===================================================== -->
+
+{% if career == "MBA" or career == "Management" %}
+
+<div class="card border-warning mb-4">
+
+<div class="card-header bg-warning">
+
+💼 MBA Resume Details
+
+</div>
+
+<div class="card-body">
+
+<label>Specialization</label>
+
+<input
+class="form-control"
+name="specialization">
+
+<br>
+
+<label>Business Projects</label>
+
+<textarea
+class="form-control"
+rows="3"
+name="business_projects"></textarea>
+
+<br>
+
+<label>Leadership Experience</label>
+
+<textarea
+class="form-control"
+rows="3"
+name="leadership"></textarea>
+
+<br>
+
+<label>Case Studies</label>
+
+<textarea
+class="form-control"
+rows="3"
+name="case_studies"></textarea>
+
+</div>
+
+</div>
+
+{% endif %}
+<!-- ===================================================== -->
+<!-- PROFILE PHOTO -->
+<!-- ===================================================== -->
+
+<h3 class="text-primary mt-4">
+
+📷 Profile Photo
+
+</h3>
+
+<hr>
+
+<div class="mb-3">
+
+<label class="form-label">
+
+Upload Professional Photo
+
+</label>
+
+<input
+type="file"
+class="form-control"
+name="profile_photo"
+accept="image/*">
+
+<div class="form-text">
+
+Recommended size: Passport photo with plain background.
+
+</div>
+
+</div>
+
+<!-- ===================================================== -->
+<!-- RESUME TEMPLATE -->
+<!-- ===================================================== -->
+
+<h3 class="text-primary">
+
+🎨 Resume Template
+
+</h3>
+
+<hr>
+
+<div class="row">
+
+<div class="col-md-6">
+
+<label>
+
+Select Resume Theme
+
+</label>
+
+<select
+class="form-select"
+name="resume_theme">
+
+<option value="Professional">
+
+Professional (Recommended)
+
+</option>
+
+<option value="Modern">
+
+Modern
+
+</option>
+
+<option value="Executive">
+
+Executive
+
+</option>
+
+<option value="Minimal">
+
+Minimal
+
+</option>
+
+<option value="ATS">
+
+ATS Friendly
+
+</option>
+
+</select>
+
+</div>
+
+<div class="col-md-6">
+
+<label>
+
+Accent Color
+
+</label>
+
+<select
+class="form-select"
+name="theme_color">
+
+<option>Blue</option>
+<option>Black</option>
+<option>Green</option>
+<option>Purple</option>
+
+</select>
+
+</div>
+
+</div>
+
+<hr>
+
+<!-- ===================================================== -->
+<!-- AI FEATURES -->
+<!-- ===================================================== -->
+
+<h3 class="text-primary">
+
+🤖 AI Resume Assistant
+
+</h3>
+
+<hr>
+
+<div class="form-check">
+
+<input
+class="form-check-input"
+type="checkbox"
+name="ai_objective"
+checked>
+
+<label class="form-check-label">
+
+Generate Professional Career Objective using AI
+
+</label>
+
+</div>
+
+<div class="form-check">
+
+<input
+class="form-check-input"
+type="checkbox"
+name="ai_projects"
+checked>
+
+<label class="form-check-label">
+
+Improve Project Descriptions
+
+</label>
+
+</div>
+
+<div class="form-check">
+
+<input
+class="form-check-input"
+type="checkbox"
+name="ai_experience"
+checked>
+
+<label class="form-check-label">
+
+Rewrite Experience Professionally
+
+</label>
+
+</div>
+
+<div class="form-check">
+
+<input
+class="form-check-input"
+type="checkbox"
+name="ai_skills"
+checked>
+
+<label class="form-check-label">
+
+Suggest Missing Skills
+
+</label>
+
+</div>
+
+<div class="form-check">
+
+<input
+class="form-check-input"
+type="checkbox"
+name="ai_resume"
+checked>
+
+<label class="form-check-label">
+
+Optimize Resume for ATS
+
+</label>
+
+</div>
+
+<hr>
+
+<!-- ===================================================== -->
+<!-- RESUME COMPLETENESS -->
+<!-- ===================================================== -->
+
+<h3 class="text-primary">
+
+📊 Resume Completeness
+
+</h3>
+
+<hr>
+
+<div class="progress mb-3" style="height:30px;">
+
+<div
+class="progress-bar progress-bar-striped progress-bar-animated bg-success"
+style="width:0%;"
+id="resumeProgress">
+
+0%
+
+</div>
+
+</div>
+
+<p class="text-muted">
+
+The progress bar will update automatically after backend integration.
+
+</p>
+
+<hr>
+
+<!-- ===================================================== -->
+<!-- FINAL ACTION -->
+<!-- ===================================================== -->
+
+<div class="text-center">
+
+<button
+type="submit"
+class="btn btn-success btn-lg px-5">
+
+🚀 Generate Professional Resume
+
+</button>
+
+<a
+href="/dashboard"
+class="btn btn-secondary btn-lg px-5 ms-2">
+
+🏠 Dashboard
+
+</a>
+
+</div>
+
+</form>
+
+</div>
+
+</div>
+
+</div>
+
+</body>
+
+</html>

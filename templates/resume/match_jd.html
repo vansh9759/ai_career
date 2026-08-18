@@ -1,0 +1,66 @@
+{% extends 'layout.html' %}
+
+{% block title %}Resume vs Job Description Matcher | CareerOS AI{% endblock %}
+
+{% block content %}
+<div style="margin-bottom: 24px;">
+    <h2>Resume vs <span class="gradient-text">Job Description Matcher</span></h2>
+    <p style="color:var(--text-muted);">Compare your resume against any target job description to compute instant ATS Match %, missing keywords, and interview call probability.</p>
+</div>
+
+<div class="dashboard-grid">
+    <div class="col-span-6 glass-card">
+        <form action="{{ url_for('resume.match_jd') }}" method="POST">
+            <div class="form-group">
+                <label class="form-label">Your Resume Text</label>
+                <textarea name="resume_text" rows="6" class="form-control" placeholder="Paste your resume content here..." required></textarea>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Target Job Description</label>
+                <textarea name="job_description" rows="6" class="form-control" placeholder="Paste the target job description requirements here..." required></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-gradient" style="width:100%;">
+                <i class="bi bi-cpu-fill"></i> Calculate ATS Match %
+            </button>
+        </form>
+    </div>
+
+    <div class="col-span-6 glass-card">
+        {% if match_result %}
+        <div style="text-align:center; padding:20px 0; border-bottom:1px solid var(--glass-border);">
+            <div style="font-size:12px; font-weight:700; color:var(--text-subtle);">ATS MATCH COMPATIBILITY</div>
+            <div style="font-size:64px; font-weight:800; color:var(--brand-primary); margin:8px 0;">
+                {{ match_result.ats_match_percentage }}%
+            </div>
+            <span class="badge badge-verified">Interview Call Probability: {{ match_result.interview_probability }}</span>
+        </div>
+
+        <div style="margin-top:20px;">
+            <strong>Matched Industry Keywords:</strong>
+            <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:8px;">
+                {% for kw in match_result.matched_keywords %}
+                <span class="badge badge-purple"><i class="bi bi-check-lg"></i> {{ kw }}</span>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div style="margin-top:20px;">
+            <strong>Missing Job Description Keywords:</strong>
+            <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:8px;">
+                {% for kw in match_result.missing_keywords %}
+                <span class="badge badge-orange">+ {{ kw }}</span>
+                {% endfor %}
+            </div>
+        </div>
+        {% else %}
+        <div style="text-align:center; padding:80px 20px; color:var(--text-muted);">
+            <i class="bi bi-diagram-3-fill" style="font-size:48px; opacity:0.3;"></i>
+            <h4 style="margin-top:16px; color:var(--text-main);">No Match Executed Yet</h4>
+            <p style="font-size:13px;">Fill in your resume text and target job description on the left to run matching.</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

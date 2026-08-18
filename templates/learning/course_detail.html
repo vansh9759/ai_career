@@ -1,0 +1,75 @@
+{% extends 'layout.html' %}
+
+{% block title %}{{ course.title }} | CareerOS AI LMS{% endblock %}
+
+{% block content %}
+<div class="dashboard-grid">
+    <!-- Main Video & Lesson Content (Span 8) -->
+    <div class="col-span-8 glass-card">
+        <div style="margin-bottom:16px;">
+            <span class="badge badge-purple">{{ course.category }}</span>
+            <h2 style="margin-top:6px;">{{ course.title }}</h2>
+        </div>
+
+        <div style="position:relative; padding-bottom:56.25%; height:0; overflow:hidden; border-radius:var(--radius-md); background:#000; margin-bottom:20px;">
+            <iframe src="https://www.youtube.com/embed/rfscVS0vtbw" style="position:absolute; top:0; left:0; width:100%; height:100%; border:0;" allowfullscreen></iframe>
+        </div>
+
+        <div style="background:var(--bg-surface-elevated); padding:20px; border-radius:var(--radius-sm);">
+            <h4>Lesson Notes & Summary</h4>
+            <p style="color:var(--text-muted); font-size:14px; margin-top:8px;">
+                {{ course.description }}
+            </p>
+        </div>
+    </div>
+
+    <!-- AI Doubt Assistant & Lessons Playlist (Span 4) -->
+    <div class="col-span-4 glass-card">
+        <h3>Course Syllabus & Lessons</h3>
+        <div style="display:flex; flex-direction:column; gap:10px; margin:16px 0 24px 0;">
+            {% for lesson in lessons %}
+            <div style="background:var(--bg-surface-elevated); padding:12px; border-radius:var(--radius-sm); display:flex; justify-content:space-between; align-items:center; border:1px solid var(--glass-border);">
+                <div>
+                    <strong style="font-size:13px;">{{ lesson.title }}</strong>
+                    <div style="font-size:11px; color:var(--text-muted);">{{ lesson.duration }}</div>
+                </div>
+                <i class="bi bi-play-circle-fill" style="color:var(--brand-primary); font-size:18px;"></i>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div style="border-top:1px solid var(--glass-border); padding-top:20px;">
+            <h4><i class="bi bi-robot" style="color:var(--brand-accent);"></i> AI Doubt Assistant</h4>
+            <p style="font-size:12px; color:var(--text-muted); margin-bottom:12px;">Stuck on a concept? Ask Gemini AI for instant explanation.</p>
+
+            <div class="form-group">
+                <input type="text" id="doubt-input" class="form-control" placeholder="e.g. Explain SQL JOINs simply">
+            </div>
+            <button id="ask-doubt-btn" class="btn btn-gradient" style="width:100%;">Ask AI Doubt Assistant</button>
+
+            <div id="doubt-response" style="margin-top:12px; display:none; background:var(--bg-surface-elevated); padding:12px; border-radius:var(--radius-sm); font-size:13px;">
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.getElementById('ask-doubt-btn').addEventListener('click', async () => {
+    const doubt = document.getElementById('doubt-input').value;
+    if (!doubt) return;
+    const resBox = document.getElementById('doubt-response');
+    resBox.style.display = 'block';
+    resBox.innerHTML = '<i class="bi bi-hourglass-split"></i> Gemini AI is thinking...';
+
+    const res = await fetch('/learning/ask-doubt', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({question: doubt, context: '{{ course.title }}'})
+    });
+    const data = await res.json();
+    resBox.innerHTML = '<strong>AI Explanation:</strong><p style="margin-top:4px;">' + data.answer + '</p>';
+});
+</script>
+{% endblock %}

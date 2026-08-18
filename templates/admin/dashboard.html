@@ -1,0 +1,79 @@
+{% extends 'layout.html' %}
+
+{% block title %}Admin Control Panel | CareerOS AI{% endblock %}
+
+{% block content %}
+<div style="margin-bottom: 24px; display:flex; justify-content:space-between; align-items:center;">
+    <div>
+        <h2>System <span class="gradient-text">Admin Control Panel</span></h2>
+        <p style="color:var(--text-muted);">Manage platform users, SaaS revenue metrics, verified certificates, and system security.</p>
+    </div>
+    <span class="badge badge-verified" style="font-size:14px; padding:8px 16px;">Super Admin Mode</span>
+</div>
+
+<div class="dashboard-grid">
+    <div class="col-span-3 stat-card">
+        <div>
+            <div class="stat-label">TOTAL REGISTERED USERS</div>
+            <div class="stat-val">{{ stats.total_users }}</div>
+            <div class="stat-trend trend-up"><i class="bi bi-person-check-fill"></i> Active Students</div>
+        </div>
+        <div class="stat-icon-wrapper"><i class="bi bi-people-fill"></i></div>
+    </div>
+
+    <div class="col-span-3 stat-card">
+        <div>
+            <div class="stat-label">ACTIVE JOB POSTINGS</div>
+            <div class="stat-val" style="color:var(--brand-primary);">{{ stats.total_jobs }}</div>
+            <div class="stat-trend trend-up"><i class="bi bi-briefcase-fill"></i> Hiring Live</div>
+        </div>
+        <div class="stat-icon-wrapper"><i class="bi bi-briefcase-fill"></i></div>
+    </div>
+
+    <div class="col-span-3 stat-card">
+        <div>
+            <div class="stat-label">VERIFIED SKILL BADGES</div>
+            <div class="stat-val" style="color:var(--brand-secondary);">{{ stats.verified_badges_issued }}</div>
+            <div class="stat-trend trend-up"><i class="bi bi-patch-check-fill"></i> Authenticated</div>
+        </div>
+        <div class="stat-icon-wrapper" style="color:var(--brand-secondary); background:rgba(16,185,129,0.12);"><i class="bi bi-shield-check"></i></div>
+    </div>
+
+    <div class="col-span-3 stat-card">
+        <div>
+            <div class="stat-label">MONTHLY REVENUE</div>
+            <div class="stat-val" style="color:var(--brand-accent);">{{ stats.monthly_recurring_revenue }}</div>
+            <div class="stat-trend trend-up"><i class="bi bi-currency-dollar"></i> MRR SaaS</div>
+        </div>
+        <div class="stat-icon-wrapper" style="color:var(--brand-accent); background:rgba(139,92,246,0.12);"><i class="bi bi-cash-stack"></i></div>
+    </div>
+</div>
+
+<div class="dashboard-grid">
+    <div class="col-span-12 glass-card">
+        <h3>Platform User Management</h3>
+        <table style="width:100%; border-collapse:collapse; margin-top:16px;">
+            <thead>
+                <tr style="border-bottom:1px solid var(--glass-border); text-align:left; font-size:12px; color:var(--text-subtle);">
+                    <th style="padding:12px;">USER</th>
+                    <th style="padding:12px;">EMAIL</th>
+                    <th style="padding:12px;">ROLE</th>
+                    <th style="padding:12px;">DREAM COMPANY</th>
+                    <th style="padding:12px;">JOINED DATE</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for u in users %}
+                <tr style="border-bottom:1px solid var(--glass-border); font-size:14px;">
+                    <td style="padding:16px; font-weight:700;">{{ u.name }}</td>
+                    <td style="padding:16px; color:var(--text-muted);">{{ u.email }}</td>
+                    <td style="padding:16px;"><span class="badge badge-purple">{{ u.role }}</span></td>
+                    <td style="padding:16px;">{{ u.dream_company }}</td>
+                    <td style="padding:16px; font-size:12px; color:var(--text-subtle);">{{ u.created_at.strftime('%Y-%m-%d') }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

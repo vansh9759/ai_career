@@ -1,0 +1,52 @@
+{% extends 'layout.html' %}
+
+{% block title %}Target Company Readiness Tracker | CareerOS AI{% endblock %}
+
+{% block content %}
+<div style="margin-bottom: 24px; display:flex; justify-content:space-between; align-items:center;">
+    <div>
+        <h2>Target Company <span class="gradient-text">Readiness Tracker</span></h2>
+        <p style="color:var(--text-muted);">AI continuously benchmarks your live Employability Index against real hiring thresholds of Tier-1 Tech companies.</p>
+    </div>
+    <span class="badge badge-purple" style="font-size:13px; padding:8px 16px;">Target: {{ user.dream_company }}</span>
+</div>
+
+<div class="dashboard-grid">
+    {% for item in readiness_list %}
+    <div class="col-span-4 glass-card">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+            <h3 style="font-size:18px;">{{ item.company }}</h3>
+            <span class="badge {% if item.readiness_percentage >= 90 %}badge-verified{% elif item.readiness_percentage >= 75 %}badge-purple{% else %}badge-orange{% endif %}">
+                {{ item.status }}
+            </span>
+        </div>
+
+        <div style="text-align:center; padding:12px 0;">
+            <div style="font-size:48px; font-weight:800; color:var(--brand-primary);">
+                {{ item.readiness_percentage }}%
+            </div>
+            <div style="font-size:12px; color:var(--text-muted);">Readiness Match</div>
+        </div>
+
+        <div style="margin-top:12px;">
+            <div style="display:flex; justify-content:space-between; font-size:11px; color:var(--text-subtle); margin-bottom:4px;">
+                <span>Benchmark: {{ item.benchmark_score }} pts</span>
+                <span>Your Index: {{ user.employability_scores[0].total_score if user.employability_scores else 78 }} pts</span>
+            </div>
+            <div style="height:8px; background:var(--bg-surface-elevated); border-radius:10px; overflow:hidden;">
+                <div style="height:100%; width: {{ item.readiness_percentage }}%; background:var(--brand-gradient);"></div>
+            </div>
+        </div>
+
+        <div style="margin-top:16px; font-size:12px; border-top:1px solid var(--glass-border); padding-top:10px;">
+            <strong style="color:var(--text-main);">Recommended Focus Area:</strong>
+            <ul style="padding-left:16px; margin-top:4px; color:var(--text-muted);">
+                {% for gap in item.key_gaps %}
+                <li>{{ gap }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

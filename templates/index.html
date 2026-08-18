@@ -1,0 +1,119 @@
+{% extends 'layout.html' %}
+
+{% block title %}CareerOS AI - The World's First AI Career Operating System{% endblock %}
+
+{% block content %}
+<div class="hero-section">
+    <div class="hero-pill">
+        <i class="bi bi-stars"></i> Introducing The World's First AI Career Operating System
+    </div>
+    
+    <h1 class="hero-title">
+        Learn • Build • Improve • <span class="gradient-text">Get Hired</span>
+    </h1>
+    
+    <p class="hero-subtitle">
+        One unified AI ecosystem designed to continuously analyze your skills, optimize your resume, verify your code, conduct mock interviews, and land your dream job.
+    </p>
+
+    <div style="display:flex; justify-content:center; gap:16px; margin-bottom:48px;">
+        <a href="{{ url_for('student.dashboard') }}" class="btn btn-gradient" style="padding: 14px 32px; font-size:16px;">
+            Launch AI Mentor <i class="bi bi-arrow-right"></i>
+        </a>
+        <a href="{{ url_for('auth.register') }}" class="btn btn-secondary" style="padding: 14px 28px; font-size:16px;">
+            Explore Platform
+        </a>
+    </div>
+
+    <!-- Live Employability Index Preview Card -->
+    <div class="glass-panel" style="max-width: 900px; margin: 0 auto; padding: 32px; text-align:left;">
+        <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--glass-border); padding-bottom:16px; margin-bottom:24px;">
+            <div>
+                <span class="badge badge-purple">LIVE DEMO</span>
+                <h3 style="margin-top:6px;">Continuous AI Employability Engine</h3>
+            </div>
+            <div style="display:flex; align-items:center; gap:8px;">
+                <span class="badge badge-verified"><i class="bi bi-shield-check"></i> Real-time AI Analysis</span>
+            </div>
+        </div>
+
+        <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:20px;">
+            <div class="glass-card" style="text-align:center;">
+                <div style="font-size:13px; color:var(--text-muted); font-weight:700;">AI EMPLOYABILITY INDEX</div>
+                <div style="font-size:44px; font-weight:800; color:var(--brand-primary); margin:8px 0;">78<span style="font-size:18px; color:var(--text-muted);">/100</span></div>
+                <span class="badge badge-verified">+5 pts this week</span>
+            </div>
+
+            <div class="glass-card" style="text-align:center;">
+                <div style="font-size:13px; color:var(--text-muted); font-weight:700;">TARGET COMPANY READINESS</div>
+                <div style="font-size:44px; font-weight:800; color:var(--brand-secondary); margin:8px 0;">86<span style="font-size:18px; color:var(--text-muted);">%</span></div>
+                <span class="badge badge-purple">Google Ready</span>
+            </div>
+
+            <div class="glass-card" style="text-align:center;">
+                <div style="font-size:13px; color:var(--text-muted); font-weight:700;">VERIFIED SKILL PASSPORT</div>
+                <div style="font-size:44px; font-weight:800; color:var(--brand-accent); margin:8px 0;">4 Badges</div>
+                <span class="badge badge-orange">Python • SQL • ML</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Key Platform Features Grid -->
+<div style="margin-top: 80px;">
+    <div style="text-align:center; margin-bottom:48px;">
+        <h2 style="font-size:36px;">Why CareerOS AI is <span class="gradient-text">Different</span></h2>
+        <p style="color:var(--text-muted); max-width:600px; margin:10px auto 0 auto;">
+            Not just another course provider or resume editor. CareerOS AI actively develops your career from day one.
+        </p>
+    </div>
+
+    <div class="dashboard-grid">
+        <div class="col-span-4 glass-card">
+            <div class="stat-icon-wrapper" style="margin-bottom:16px;">
+                <i class="bi bi-speedometer2"></i>
+            </div>
+            <h3>AI Employability Index</h3>
+            <p style="color:var(--text-muted); margin-top:8px; font-size:14px;">
+                A single live score (0-100) reflecting your true placement readiness across coding, resume, projects, and interviews.
+            </p>
+        </div>
+
+        <div class="col-span-4 glass-card">
+            <div class="stat-icon-wrapper" style="margin-bottom:16px; background:rgba(16,185,129,0.12); color:var(--brand-secondary);">
+                <i class="bi bi-patch-check"></i>
+            </div>
+            <h3>Verified Skill Passport</h3>
+            <p style="color:var(--text-muted); margin-top:8px; font-size:14px;">
+                No unverified claims. Earn official AI-verified badges by completing proctored coding challenges and AI technical reviews.
+            </p>
+        </div>
+
+        <div class="col-span-4 glass-card">
+            <div class="stat-icon-wrapper" style="margin-bottom:16px; background:rgba(139,92,246,0.12); color:var(--brand-accent);">
+                <i class="bi bi-cpu"></i>
+            </div>
+            <h3>24/7 Gemini Career Mentor</h3>
+            <p style="color:var(--text-muted); margin-top:8px; font-size:14px;">
+                Ask your personal AI mentor what to learn next, why you were rejected, or how to prepare for your Google technical round.
+            </p>
+        </div>
+    </div>
+</div>
+
+<!-- Partner Companies Banner -->
+<div class="glass-panel" style="padding:32px; text-align:center; margin-top:40px;">
+    <div style="font-size:12px; font-weight:700; color:var(--text-subtle); letter-spacing:1.5px; margin-bottom:20px;">
+        TOP COMPANIES HIRING VERIFIED TALENT FROM CAREEROS AI
+    </div>
+    <div style="display:flex; justify-content:space-around; align-items:center; flex-wrap:wrap; gap:24px; font-weight:800; font-size:22px; color:var(--text-muted);">
+        <span>GOOGLE</span>
+        <span>MICROSOFT</span>
+        <span>AMAZON</span>
+        <span>META</span>
+        <span>NVIDIA</span>
+        <span>ADOBE</span>
+        <span>TCS</span>
+    </div>
+</div>
+{% endblock %}

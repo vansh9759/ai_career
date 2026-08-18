@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>AI Career Selection</title>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+</head>
+
+<body class="bg-light">
+
+<div class="container mt-5 mb-5">
+
+<div class="card shadow-lg">
+
+<div class="card-body">
+
+<h2 class="text-center text-primary">
+
+🚀 AI Career Assistant
+
+</h2>
+
+<p class="text-center text-muted">
+
+Select your career profile to build an AI-powered professional resume.
+
+</p>
+
+<hr>
+
+<form method="POST" action="/career_selection">
+
+<!-- Career -->
+
+<div class="mb-3">
+
+<label class="form-label">
+
+Career Category <span class="text-danger">*</span>
+
+</label>
+
+<select class="form-select" name="career" required>
+
+<option value="">Select Career</option>
+
+<option>Engineering</option>
+
+<option>Medical</option>
+
+<option>Law</option>
+
+<option>Management</option>
+
+<option>Commerce</option>
+
+<option>Science</option>
+
+<option>Arts</option>
+
+<option>Education</option>
+
+<option>Architecture</option>
+
+<option>Design</option>
+
+<option>Hotel Management</option>
+
+<option>Agriculture</option>
+
+<option>Other</option>
+
+</select>
+
+</div>
+
+<!-- Course -->
+
+<div class="mb-3">
+
+<label class="form-label">
+
+Course / Specialization <span class="text-danger">*</span>
+
+</label>
+
+<input
+type="text"
+class="form-control"
+name="course"
+placeholder="Example: AI & Machine Learning"
+required>
+
+</div>
+
+<!-- Status -->
+
+<div class="mb-3">
+
+<label class="form-label">
+
+Current Status <span class="text-danger">*</span>
+
+</label>
+
+<select class="form-select" name="status" required>
+
+<option value="">Select Status</option>
+
+<option>Student</option>
+
+<option>Fresher</option>
+
+<option>Experienced</option>
+
+</select>
+
+</div>
+
+<!-- Dream Job -->
+
+<div class="mb-3">
+
+<label class="form-label">
+
+Dream Job <span class="text-danger">*</span>
+
+</label>
+
+<input
+type="text"
+class="form-control"
+name="dream_job"
+placeholder="Example: AI Engineer"
+required>
+
+</div>
+
+<!-- Dream Company -->
+
+<div class="mb-3">
+
+<label class="form-label">
+
+Dream Company
+
+</label>
+
+<input
+type="text"
+class="form-control"
+name="dream_company"
+placeholder="Example: Google">
+
+</div>
+
+<!-- Country -->
+
+<div class="mb-3">
+
+<label class="form-label">
+
+Preferred Country <span class="text-danger">*</span>
+
+</label>
+
+<select class="form-select" name="country" required>
+
+<option value="">Select Country</option>
+
+<option>India</option>
+
+<option>USA</option>
+
+<option>Canada</option>
+
+<option>United Kingdom</option>
+
+<option>Germany</option>
+
+<option>Australia</option>
+
+<option>Singapore</option>
+
+</select>
+
+</div>
+
+<!-- Resume Purpose -->
+
+<div class="mb-4">
+
+<label class="form-label">
+
+Resume Purpose <span class="text-danger">*</span>
+
+</label>
+
+<select class="form-select" name="purpose" required>
+
+<option value="">Select Purpose</option>
+
+<option>Placement</option>
+
+<option>Internship</option>
+
+<option>Private Job</option>
+
+<option>Government Job</option>
+
+<option>Higher Studies</option>
+
+<option>Research</option>
+
+<option>Freelancing</option>
+
+</select>
+
+</div>
+
+<div class="text-center">
+
+<button class="btn btn-primary btn-lg">
+
+Continue →
+
+</button>
+
+</div>
+
+</form>
+
+</div>
+
+</div>
+
+</div>
+
+</body>
+
+</html>

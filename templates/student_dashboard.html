@@ -1,0 +1,165 @@
+{% extends 'layout.html' %}
+
+{% block title %}Student AI Mentor Dashboard | CareerOS AI{% endblock %}
+
+{% block content %}
+<!-- Top Welcome Banner -->
+<div class="glass-panel" style="padding: 28px 32px; margin-bottom: 32px; background: linear-gradient(135deg, rgba(15, 23, 42, 0.9) 0%, rgba(30, 41, 59, 0.9) 100%);">
+    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:20px;">
+        <div>
+            <span class="badge badge-purple" style="margin-bottom:8px;">AI CAREER OPERATING SYSTEM</span>
+            <h1 style="font-size:32px;">Welcome back, <span class="gradient-text">{{ user.name }}</span> 👋</h1>
+            <p style="color:var(--text-muted); margin-top:4px;">
+                Targeting <strong>{{ user.dream_company }}</strong> as a <strong>{{ user.dream_job }}</strong>.
+            </p>
+        </div>
+
+        <div style="display:flex; gap:12px;">
+            <a href="{{ url_for('coding.arena') }}" class="btn btn-primary"><i class="bi bi-play-circle-fill"></i> Today's Challenge</a>
+            <a href="{{ url_for('resume.analyzer') }}" class="btn btn-secondary"><i class="bi bi-magic"></i> AI Resume Review</a>
+        </div>
+    </div>
+</div>
+
+<!-- Main Dashboard Grid -->
+<div class="dashboard-grid">
+    <!-- Employability Index Widget (Span 4) -->
+    <div class="col-span-4 glass-card" style="text-align:center;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+            <h3 style="font-size:16px;">AI Employability Index</h3>
+            <span class="badge badge-verified">+{{ emp_data.total_score - 70 }} pts</span>
+        </div>
+
+        <div class="employability-gauge-container">
+            <div class="gauge-circle" style="--score: {{ emp_data.total_score }};">
+                <div class="gauge-inner">
+                    <div class="gauge-score">{{ emp_data.total_score }}</div>
+                    <div class="gauge-max">/ 100 Score</div>
+                </div>
+            </div>
+        </div>
+
+        <div style="margin-top:16px; font-size:13px; color:var(--text-muted);">
+            Status: <strong style="color:var(--brand-secondary);">{{ emp_data.readiness_stage }}</strong>
+        </div>
+
+        <div style="margin-top:20px; text-align:left; background:var(--bg-surface-elevated); padding:16px; border-radius:var(--radius-sm); font-size:13px;">
+            <strong><i class="bi bi-lightbulb-fill" style="color:#f59e0b;"></i> AI Score Boost Tip:</strong>
+            <p style="color:var(--text-muted); margin-top:4px;">{{ emp_data.explanation }}</p>
+        </div>
+    </div>
+
+    <!-- Company Readiness Widget (Span 4) -->
+    <div class="col-span-4 glass-card">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+            <h3 style="font-size:16px;">Target Company Readiness</h3>
+            <span class="badge badge-purple">{{ company_readiness.company }}</span>
+        </div>
+
+        <div style="text-align:center; padding:16px 0;">
+            <div style="font-size:56px; font-weight:800; color:var(--brand-primary);">
+                {{ company_readiness.readiness_percentage }}%
+            </div>
+            <div style="font-size:13px; color:var(--text-muted); font-weight:700; margin-top:-4px;">
+                {{ company_readiness.status }}
+            </div>
+        </div>
+
+        <div style="margin-top:12px;">
+            <div style="font-size:12px; font-weight:700; color:var(--text-subtle); margin-bottom:6px;">BENCHMARK SCORE VS YOURS</div>
+            <div style="height:10px; background:var(--bg-surface-elevated); border-radius:10px; overflow:hidden;">
+                <div style="height:100%; width: {{ company_readiness.readiness_percentage }}%; background:var(--brand-gradient);"></div>
+            </div>
+        </div>
+
+        <div style="margin-top:20px; font-size:13px;">
+            <strong>Missing Key Gap:</strong>
+            <ul style="padding-left:18px; margin-top:4px; color:var(--text-muted);">
+                {% for gap in company_readiness.key_gaps %}
+                <li>{{ gap }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+
+    <!-- Stats Breakdown & Daily Missions (Span 4) -->
+    <div class="col-span-4 glass-card">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+            <h3 style="font-size:16px;">Daily AI Missions</h3>
+            <span class="badge badge-orange"><i class="bi bi-fire"></i> {{ gamification.streak_days if gamification else 7 }} Day Streak</span>
+        </div>
+
+        <div style="display:flex; flex-direction:column; gap:12px;">
+            <div style="display:flex; align-items:center; justify-content:space-between; background:var(--bg-surface-elevated); padding:12px 16px; border-radius:var(--radius-sm);">
+                <div style="display:flex; align-items:center; gap:10px;">
+                    <i class="bi bi-check-circle-fill" style="color:var(--brand-secondary);"></i>
+                    <span style="font-size:13px;">Solve 1 SQL Medium Challenge</span>
+                </div>
+                <span style="font-size:12px; font-weight:700; color:var(--brand-accent);">+50 XP</span>
+            </div>
+
+            <div style="display:flex; align-items:center; justify-content:space-between; background:var(--bg-surface-elevated); padding:12px 16px; border-radius:var(--radius-sm);">
+                <div style="display:flex; align-items:center; gap:10px;">
+                    <i class="bi bi-circle" style="color:var(--text-subtle);"></i>
+                    <span style="font-size:13px;">Verify Python Skill Badge</span>
+                </div>
+                <span style="font-size:12px; font-weight:700; color:var(--brand-accent);">+100 XP</span>
+            </div>
+
+            <div style="display:flex; align-items:center; justify-content:space-between; background:var(--bg-surface-elevated); padding:12px 16px; border-radius:var(--radius-sm);">
+                <div style="display:flex; align-items:center; gap:10px;">
+                    <i class="bi bi-circle" style="color:var(--text-subtle);"></i>
+                    <span style="font-size:13px;">Complete AI Mock Technical Round</span>
+                </div>
+                <span style="font-size:12px; font-weight:700; color:var(--brand-accent);">+150 XP</span>
+            </div>
+        </div>
+
+        <div style="margin-top:20px; display:flex; justify-content:space-between; align-items:center; border-top:1px solid var(--glass-border); padding-top:12px;">
+            <span style="font-size:13px; color:var(--text-muted);">Level {{ gamification.level if gamification else 4 }} Scholar</span>
+            <span style="font-size:13px; font-weight:700; color:var(--brand-primary);">{{ gamification.xp if gamification else 1450 }} / 2000 XP</span>
+        </div>
+    </div>
+</div>
+
+<!-- Verified Skill Passport & Activity Row -->
+<div class="dashboard-grid">
+    <div class="col-span-8 glass-card">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+            <h3>Verified Skill Passport Badges</h3>
+            <a href="{{ url_for('skills.passport') }}" class="btn btn-secondary" style="font-size:12px;">View All Badges</a>
+        </div>
+
+        <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:16px;">
+            {% for skill in verified_skills %}
+            <div style="background:var(--bg-surface-elevated); padding:16px; border-radius:var(--radius-sm); border:1px solid var(--glass-border);">
+                <div style="display:flex; align-items:center; gap:10px; margin-bottom:8px;">
+                    <i class="bi bi-patch-check-fill" style="color:var(--brand-secondary); font-size:20px;"></i>
+                    <strong>{{ skill.skill_name }}</strong>
+                </div>
+                <div style="font-size:12px; color:var(--text-muted);">{{ skill.proficiency }}</div>
+                <div style="font-size:10px; font-family:'JetBrains Mono', monospace; color:var(--text-subtle); margin-top:6px;">{{ skill.badge_code }}</div>
+            </div>
+            {% else %}
+            <div style="grid-column:span 3; text-align:center; padding:20px; color:var(--text-muted);">
+                No verified skills yet. Complete a 15-min verification test to claim your first badge!
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="col-span-4 glass-card">
+        <h3>24/7 AI Mentor Quick Ask</h3>
+        <p style="font-size:13px; color:var(--text-muted); margin-bottom:16px;">Get instant personalized advice based on your profile.</p>
+
+        <form action="{{ url_for('mentor.chat') }}" method="GET">
+            <div class="form-group">
+                <input type="text" class="form-control" placeholder="Ask AI: How do I crack Google?" required>
+            </div>
+            <button type="submit" class="btn btn-primary" style="width:100%;">
+                <i class="bi bi-robot"></i> Ask AI Mentor
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}

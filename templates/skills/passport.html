@@ -1,0 +1,163 @@
+{% extends 'layout.html' %}
+
+{% block title %}AI Verified Skill Passport | CareerOS AI{% endblock %}
+
+{% block content %}
+<div style="margin-bottom: 24px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;">
+    <div>
+        <h2>AI Verified <span class="gradient-text">Skill Passport</span></h2>
+        <p style="color:var(--text-muted);">Skills cannot be claimed without proof. Earn official AI-verified badges trusted by enterprise recruiters.</p>
+    </div>
+    <div style="display:flex; gap:12px;">
+        <span class="badge badge-purple" style="font-size:13px; padding:8px 16px;"><i class="bi bi-shield-check"></i> {{ skills|length }} Active Badges</span>
+    </div>
+</div>
+
+<!-- Dashboard Layout Grid -->
+<div class="dashboard-grid">
+    <!-- Active Verified Badges Section (Span 8) -->
+    <div class="col-span-8 glass-card">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; border-bottom:1px solid var(--glass-border); padding-bottom:12px;">
+            <h3>Your Official Credential Badges</h3>
+            <div style="position:relative; width:220px;">
+                <input type="text" id="badge-search" class="form-control" placeholder="Search your badges..." style="padding:6px 12px 6px 32px; font-size:12px;">
+                <i class="bi bi-search" style="position:absolute; left:10px; top:50%; transform:translateY(-50%); font-size:12px; color:var(--text-subtle);"></i>
+            </div>
+        </div>
+
+        <div id="badge-list" style="display:grid; grid-template-columns: repeat(2, 1fr); gap:16px;">
+            {% for skill in skills %}
+            <div class="badge-card-item" data-name="{{ skill.skill_name.lower() }}" style="background:var(--bg-surface-elevated); padding:20px; border-radius:var(--radius-md); border:1px solid rgba(16,185,129,0.3); position:relative;">
+                <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+                    <div>
+                        <div style="display:flex; align-items:center; gap:8px;">
+                            <i class="bi bi-patch-check-fill" style="color:var(--brand-secondary); font-size:24px;"></i>
+                            <h4 style="font-size:18px;">{{ skill.skill_name }}</h4>
+                        </div>
+                        <span class="badge badge-purple" style="margin-top:6px;">{{ skill.proficiency }}</span>
+                    </div>
+                </div>
+
+                <div style="margin-top:16px; font-size:12px; color:var(--text-muted);">
+                    Verified Via: <strong>{{ skill.verification_method }}</strong>
+                </div>
+
+                <div style="margin-top:12px; padding:10px 12px; background:var(--bg-base); border-radius:var(--radius-sm); font-family:'JetBrains Mono', monospace; font-size:11px; color:var(--brand-primary); display:flex; justify-content:space-between; align-items:center;">
+                    <span>CODE: {{ skill.badge_code }}</span>
+                    <button class="copy-badge-btn" data-code="{{ skill.badge_code }}" style="background:none; border:none; color:var(--brand-primary); cursor:pointer; font-size:14px;" title="Copy Public Verification Link">
+                        <i class="bi bi-copy"></i>
+                    </button>
+                </div>
+
+                <div style="margin-top:10px; text-align:right;">
+                    <a href="{{ url_for('skills.public_badge_verify', badge_code=skill.badge_code) }}" target="_blank" style="font-size:11px; color:var(--text-subtle); text-decoration:none;">
+                        Public Verification Link <i class="bi bi-box-arrow-up-right"></i>
+                    </a>
+                </div>
+            </div>
+            {% else %}
+            <div style="grid-column:span 2; text-align:center; padding:40px; color:var(--text-muted);">
+                <i class="bi bi-patch-question-fill" style="font-size:48px; opacity:0.3; color:var(--brand-primary);"></i>
+                <h4 style="margin-top:12px; color:var(--text-main);">No Verified Badges Yet</h4>
+                <p style="font-size:13px; max-width:360px; margin:6px auto 0 auto;">Select an assessment exam on the right to complete your first 15-min verification exam!</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Available Verification Exams (Span 4) -->
+    <div class="col-span-4 glass-card">
+        <h3>Available Verification Exams</h3>
+        <p style="font-size:12px; color:var(--text-muted); margin-bottom:16px;">Pass with 75%+ score to issue your official badge credential.</p>
+
+        <!-- Category Filters -->
+        <div style="display:flex; gap:6px; flex-wrap:wrap; margin-bottom:16px;">
+            <button class="filter-tab-btn active" data-cat="all">All</button>
+            <button class="filter-tab-btn" data-cat="Programming">Programming</button>
+            <button class="filter-tab-btn" data-cat="Databases">Databases</button>
+            <button class="filter-tab-btn" data-cat="AI / ML">AI/ML</button>
+            <button class="filter-tab-btn" data-cat="Web Dev">Web Dev</button>
+            <button class="filter-tab-btn" data-cat="Soft Skills">Soft Skills</button>
+        </div>
+
+        <div style="display:flex; flex-direction:column; gap:12px;" id="exam-list">
+            {% for test in available_tests %}
+            <div class="exam-item" data-category="{{ test.category }}" style="background:var(--bg-surface-elevated); padding:14px; border-radius:var(--radius-sm); border:1px solid var(--glass-border); display:flex; justify-content:space-between; align-items:center;">
+                <div>
+                    <div style="display:flex; align-items:center; gap:6px;">
+                        <strong style="font-size:14px; font-weight:700;">{{ test.name }}</strong>
+                        {% if test.is_verified %}
+                        <i class="bi bi-patch-check-fill" style="color:var(--brand-secondary);" title="Verified"></i>
+                        {% endif %}
+                    </div>
+                    <div style="font-size:11px; color:var(--text-muted); margin-top:2px;">{{ test.category }} • {{ test.time }} • {{ test.questions_count }} Qs</div>
+                </div>
+
+                <a href="{{ url_for('skills.verify_skill', skill_name=test.name) }}" class="btn {% if test.is_verified %}btn-secondary{% else %}btn-primary{% endif %}" style="padding:6px 12px; font-size:12px;">
+                    {% if test.is_verified %}Retake{% else %}Start Exam{% endif %}
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<style>
+.filter-tab-btn {
+    background: var(--bg-surface-elevated);
+    border: 1px solid var(--glass-border);
+    color: var(--text-muted);
+    border-radius: var(--radius-full);
+    padding: 4px 10px;
+    font-size: 11px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: var(--transition-fast);
+}
+.filter-tab-btn.active, .filter-tab-btn:hover {
+    background: var(--brand-primary);
+    color: #fff;
+    border-color: var(--brand-primary);
+}
+</style>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// 1. Live Badge Search
+document.getElementById('badge-search')?.addEventListener('input', (e) => {
+    const q = e.target.value.toLowerCase().trim();
+    document.querySelectorAll('.badge-card-item').forEach(item => {
+        const name = item.getAttribute('data-name') || '';
+        item.style.display = name.includes(q) ? 'block' : 'none';
+    });
+});
+
+// 2. Exam Category Filtering
+document.querySelectorAll('.filter-tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+        document.querySelectorAll('.filter-tab-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const cat = btn.getAttribute('data-cat');
+        document.querySelectorAll('.exam-item').forEach(item => {
+            const itemCat = item.getAttribute('data-category');
+            if (cat === 'all' || itemCat === cat) {
+                item.style.display = 'flex';
+            } else {
+                item.style.display = 'none';
+            }
+        });
+    });
+});
+
+// 3. Copy Verification Badge Link to Clipboard
+document.querySelectorAll('.copy-badge-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+        const code = btn.getAttribute('data-code');
+        const publicUrl = window.location.origin + '/skills/badge/' + code;
+        navigator.clipboard.writeText(publicUrl);
+        alert('Public Credential URL copied to clipboard:\n' + publicUrl);
+    });
+});
+</script>
+{% endblock %}

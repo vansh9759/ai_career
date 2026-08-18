@@ -1,0 +1,48 @@
+{% extends 'layout.html' %}
+
+{% block title %}AI Portfolio Site Generator | CareerOS AI{% endblock %}
+
+{% block content %}
+<div style="margin-bottom: 24px; display:flex; justify-content:space-between; align-items:center;">
+    <div>
+        <h2>AI Portfolio <span class="gradient-text">Site Generator</span></h2>
+        <p style="color:var(--text-muted);">One-click export of a responsive, SEO-optimized personal portfolio showcasing your verified skills & projects.</p>
+    </div>
+    <button class="btn btn-gradient"><i class="bi bi-download"></i> Export HTML/CSS Bundle</button>
+</div>
+
+<div class="glass-panel" style="padding:40px; background:#0b0f19; color:#f8fafc; border-radius:var(--radius-md);">
+    <div style="text-align:center; max-width:600px; margin:0 auto 40px auto;">
+        <div class="avatar" style="width:80px; height:80px; font-size:32px; margin:0 auto 16px auto; background:var(--brand-gradient);">
+            {{ user.name[0] if user else 'A' }}
+        </div>
+        <h1 style="font-size:36px; font-weight:800;">{{ user.name if user else 'Alex Rivera' }}</h1>
+        <p style="color:var(--brand-primary); font-size:18px; font-weight:600; margin-top:4px;">
+            {{ user.career_goal if user else 'Full Stack AI Engineer' }}
+        </p>
+        <p style="color:#94a3b8; font-size:14px; margin-top:12px;">
+            Building high-performance microservices, predictive AI models, and enterprise full-stack web applications.
+        </p>
+
+        <div style="display:flex; justify-content:center; gap:12px; margin-top:20px;">
+            <span class="badge badge-purple"><i class="bi bi-github"></i> {{ user.github if user and user.github else 'github.com/alexrivera' }}</span>
+            <span class="badge badge-verified"><i class="bi bi-linkedin"></i> {{ user.linkedin if user and user.linkedin else 'linkedin.com/in/alexrivera' }}</span>
+        </div>
+    </div>
+
+    <div style="border-top:1px solid var(--glass-border); padding-top:32px;">
+        <h3 style="margin-bottom:20px; text-align:center;">AI Verified Skill Badges</h3>
+        <div style="display:flex; justify-content:center; gap:16px; flex-wrap:wrap;">
+            {% for s in skills %}
+            <div style="background:var(--bg-surface-elevated); padding:16px 24px; border-radius:var(--radius-sm); border:1px solid rgba(16,185,129,0.3); display:flex; align-items:center; gap:10px;">
+                <i class="bi bi-patch-check-fill" style="color:var(--brand-secondary); font-size:22px;"></i>
+                <div>
+                    <strong>{{ s.skill_name }}</strong>
+                    <div style="font-size:11px; color:#94a3b8;">{{ s.proficiency }}</div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

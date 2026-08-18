@@ -1,0 +1,37 @@
+{% extends 'layout.html' %}
+
+{% block title %}AI Project Builder | CareerOS AI{% endblock %}
+
+{% block content %}
+<div style="margin-bottom: 24px;">
+    <h2>AI Project <span class="gradient-text">Builder</span></h2>
+    <p style="color:var(--text-muted);">Step-by-step production architecture, database schema, API specs, and resume bullet generators.</p>
+</div>
+
+<div class="dashboard-grid">
+    {% for proj in projects %}
+    <div class="col-span-6 glass-card">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+            <span class="badge badge-purple">{{ proj.category }}</span>
+            <span class="badge badge-verified">{{ proj.level }}</span>
+        </div>
+
+        <h3>{{ proj.title }}</h3>
+        <p style="color:var(--text-muted); font-size:14px; margin-top:6px;">{{ proj.description }}</p>
+
+        <div style="margin-top:16px; background:var(--bg-surface-elevated); padding:12px; border-radius:var(--radius-sm); font-size:12px;">
+            <strong>Tech Stack:</strong> {{ proj.tech_stack }}
+        </div>
+
+        <div style="margin-top:12px; background:var(--bg-surface-elevated); padding:12px; border-radius:var(--radius-sm); font-size:12px;">
+            <strong>Architecture:</strong> {{ proj.architecture }}
+        </div>
+
+        <div style="margin-top:16px; border-top:1px solid var(--glass-border); padding-top:12px;">
+            <strong style="font-size:13px; color:var(--brand-primary);">AI Generated Resume Bullet Point:</strong>
+            <p style="font-size:12px; color:var(--text-muted); margin-top:4px;">"{{ proj.resume_bullets }}"</p>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
