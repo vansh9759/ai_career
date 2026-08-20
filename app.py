@@ -55,10 +55,17 @@ def inject_global_vars():
     return dict(current_user=user)
 
 
-# Home Landing Page Route
-@app.route('/')
-def home():
-    return render_template('index.html')
+# Pricing & SaaS Subscription Gateway Routes
+@app.route('/pricing')
+def pricing():
+    return render_template('pricing.html')
+
+@app.route('/upgrade-plan', methods=['POST'])
+def upgrade_plan():
+    from flask import flash, request
+    plan = request.form.get('plan', 'Pro Candidate')
+    flash(f"🎉 Stripe Checkout Simulation Success! You are now subscribed to the {plan} tier.", "success")
+    return redirect(url_for('student.dashboard'))
 
 
 # Backward compatibility redirects

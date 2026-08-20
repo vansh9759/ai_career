@@ -1,0 +1,82 @@
+{% extends 'layout.html' %}
+
+{% block title %}SaaS Subscription Plans & Pricing | CareerOS AI{% endblock %}
+
+{% block content %}
+<div style="text-align:center; max-width:800px; margin:0 auto 40px auto;">
+    <span class="badge badge-purple" style="font-size:13px; padding:6px 16px;">PRICING & ENTERPRISE TIERS</span>
+    <h1 style="font-size:36px; font-weight:800; margin-top:12px;">Invest in Your <span class="gradient-text">Career Growth</span></h1>
+    <p style="color:var(--text-muted); font-size:16px; margin-top:8px;">
+        Choose the plan that fits your goals. Unlock unlimited AI resume scans, proctored skill badges, 1v1 AI mock interviews, and recruiter access.
+    </p>
+</div>
+
+<div class="dashboard-grid" style="align-items:stretch;">
+    <!-- Free Tier (Span 4) -->
+    <div class="col-span-4 glass-card" style="display:flex; flex-direction:column; justify-content:space-between; border-top:4px solid var(--text-subtle);">
+        <div>
+            <span class="badge badge-purple">STARTER</span>
+            <h3 style="font-size:24px; margin-top:10px;">Free Student</h3>
+            <div style="font-size:36px; font-weight:800; color:var(--text-main); margin:16px 0;">$0 <span style="font-size:14px; color:var(--text-muted);">/ forever</span></div>
+            
+            <ul style="list-style:none; padding:0; margin:20px 0; display:flex; flex-direction:column; gap:12px; font-size:14px; color:var(--text-muted);">
+                <li><i class="bi bi-check-circle-fill" style="color:var(--brand-secondary);"></i> 3 Resume ATS Analyses per month</li>
+                <li><i class="bi bi-check-circle-fill" style="color:var(--brand-secondary);"></i> Access to Coding Arena (Python)</li>
+                <li><i class="bi bi-check-circle-fill" style="color:var(--brand-secondary);"></i> 1 AI Skill Passport Verification</li>
+                <li><i class="bi bi-check-circle-fill" style="color:var(--brand-secondary);"></i> Basic Company Readiness Scores</li>
+            </ul>
+        </div>
+        
+        <button class="btn btn-secondary" style="width:100%; padding:12px;" disabled>Current Free Plan</button>
+    </div>
+
+    <!-- Pro Candidate Tier (Span 4 - Highlighted) -->
+    <div class="col-span-4 glass-card" style="display:flex; flex-direction:column; justify-content:space-between; border:2px solid var(--brand-primary); background:linear-gradient(135deg, rgba(99,102,241,0.15) 0%, rgba(15,23,42,0.8) 100%); position:relative;">
+        <div style="position:absolute; top:-14px; right:20px; background:var(--brand-gradient); color:#fff; font-weight:700; font-size:11px; padding:4px 12px; border-radius:12px;">POPULAR CHOICE</div>
+        <div>
+            <span class="badge badge-verified">CAREER PRO</span>
+            <h3 style="font-size:24px; margin-top:10px;">Pro Candidate</h3>
+            <div style="font-size:36px; font-weight:800; color:var(--brand-primary); margin:16px 0;">$19 <span style="font-size:14px; color:var(--text-muted);">/ month</span></div>
+
+            <ul style="list-style:none; padding:0; margin:20px 0; display:flex; flex-direction:column; gap:12px; font-size:14px; color:var(--text-main);">
+                <li><i class="bi bi-check-circle-fill" style="color:var(--brand-secondary);"></i> <strong>Unlimited</strong> AI Resume Scans & JD Matcher</li>
+                <li><i class="bi bi-check-circle-fill" style="color:var(--brand-secondary);"></i> Multi-Language Compiler (Python, JS, C++, Java, SQL)</li>
+                <li><i class="bi bi-check-circle-fill" style="color:var(--brand-secondary);"></i> Live Voice Mic Mock Interviews & Speech Analytics</li>
+                <li><i class="bi bi-check-circle-fill" style="color:var(--brand-secondary);"></i> Dynamic AI Exam Generator for Custom Skills</li>
+                <li><i class="bi bi-check-circle-fill" style="color:var(--brand-secondary);"></i> 1-Click Exportable Portfolio Website</li>
+                <li><i class="bi bi-check-circle-fill" style="color:var(--brand-secondary);"></i> Featured Badge in Recruiter Search</li>
+            </ul>
+        </div>
+
+        <form action="{{ url_for('upgrade_plan') }}" method="POST">
+            <input type="hidden" name="plan" value="Pro Candidate">
+            <button type="submit" class="btn btn-gradient" style="width:100%; padding:14px; font-weight:700;">
+                Upgrade to Pro Candidate <i class="bi bi-credit-card-fill"></i>
+            </button>
+        </form>
+    </div>
+
+    <!-- University Enterprise Tier (Span 4) -->
+    <div class="col-span-4 glass-card" style="display:flex; flex-direction:column; justify-content:space-between; border-top:4px solid var(--brand-secondary);">
+        <div>
+            <span class="badge badge-purple">ENTERPRISE</span>
+            <h3 style="font-size:24px; margin-top:10px;">University / Campus</h3>
+            <div style="font-size:36px; font-weight:800; color:var(--brand-secondary); margin:16px 0;">$499 <span style="font-size:14px; color:var(--text-muted);">/ month</span></div>
+
+            <ul style="list-style:none; padding:0; margin:20px 0; display:flex; flex-direction:column; gap:12px; font-size:14px; color:var(--text-muted);">
+                <li><i class="bi bi-check-circle-fill" style="color:var(--brand-secondary);"></i> Up to 2,000 Student Subscriptions</li>
+                <li><i class="bi bi-check-circle-fill" style="color:var(--brand-secondary);"></i> Campus Placement Officer Analytics Portal</li>
+                <li><i class="bi bi-check-circle-fill" style="color:var(--brand-secondary);"></i> Bulk Student CSV Import & Batch Tracking</li>
+                <li><i class="bi bi-check-circle-fill" style="color:var(--brand-secondary);"></i> Direct Recruiter Talent Drive Hosting</li>
+            </ul>
+        </div>
+
+        <form action="{{ url_for('upgrade_plan') }}" method="POST">
+            <input type="hidden" name="plan" value="University Enterprise">
+            <button type="submit" class="btn btn-secondary" style="width:100%; padding:12px;">
+                Contact Enterprise Sales <i class="bi bi-building"></i>
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}

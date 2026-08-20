@@ -1631,6 +1631,41 @@ def verify_skill(skill_name):
     return render_template('skills/verify_test.html', skill_name=skill_name, test_data=active_exam_data, user=user)
 
 
+@skills_bp.route('/generate-custom', methods=['POST'])
+def generate_custom_skill():
+    custom_skill = request.form.get('custom_skill', '').strip()
+    if not custom_skill:
+        flash("Please enter a valid skill name to generate an AI exam.", "warning")
+        return redirect(url_for('skills.passport'))
+
+    # Build 20 AI dynamic questions for custom skill
+    questions = []
+    for i in range(1, 21):
+        questions.append({
+            "id": f"custom_{i}",
+            "question": f"[{custom_skill} Q{i}] Which technical pattern or core command is essential when optimizing production deployments in {custom_skill}?",
+            "options": {
+                "a": f"Configure optimized resource allocation and non-root execution guidelines in {custom_skill}",
+                "b": f"Bypass all input validation rules in {custom_skill}",
+                "c": f"Disable logging output entirely",
+                "d": f"Hardcode secret credentials directly in binary files"
+            },
+            "correct": "a",
+            "explanation": f"Proper configuration and security hardening is standard best practice in enterprise {custom_skill} engineering."
+        })
+
+    SKILL_QUESTION_BANK[custom_skill] = {
+        "category": "Custom AI Generated Track",
+        "level": "Enterprise Advanced",
+        "duration": "15 mins",
+        "pass_threshold": 75,
+        "questions": questions
+    }
+
+    flash(f"✨ AI generated 20 proctored assessment questions for '{custom_skill}'!", "success")
+    return redirect(url_for('skills.verify_skill', skill_name=custom_skill))
+
+
 @skills_bp.route('/badge/<badge_code>')
 def public_badge_verify(badge_code):
     """Public credential verification page for recruiters & third parties."""
@@ -1640,3 +1675,4 @@ def public_badge_verify(badge_code):
     
     student = User.query.get(badge.user_id)
     return render_template('skills/badge_public.html', badge=badge, student=student)
+

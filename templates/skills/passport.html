@@ -13,6 +13,22 @@
     </div>
 </div>
 
+<!-- Dynamic Custom Skill Exam Generator Widget -->
+<div class="glass-panel" style="padding:16px 20px; margin-bottom:24px; background:linear-gradient(135deg, rgba(30,27,75,0.6) 0%, rgba(15,23,42,0.8) 100%); border:1px solid var(--glass-border);">
+    <form action="{{ url_for('skills.generate_custom_skill') }}" method="POST" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+        <div>
+            <strong style="font-size:14px; color:var(--text-main);"><i class="bi bi-cpu-fill" style="color:var(--brand-primary);"></i> Dynamic AI Exam Generator</strong>
+            <div style="font-size:12px; color:var(--text-muted);">Type any custom skill (e.g. Docker, Kubernetes, PySpark, Rust, System Design) to build a 20-question exam instantly.</div>
+        </div>
+        <div style="display:flex; gap:10px;">
+            <input type="text" name="custom_skill" class="form-control" placeholder="e.g. Kubernetes, PySpark..." style="width:220px; font-size:12px; padding:8px 12px;" required>
+            <button type="submit" class="btn btn-gradient" style="padding:8px 16px; font-size:12px;">
+                Generate 20 Q Exam <i class="bi bi-magic"></i>
+            </button>
+        </div>
+    </form>
+</div>
+
 <!-- Dashboard Layout Grid -->
 <div class="dashboard-grid">
     <!-- Active Verified Badges Section (Span 8) -->

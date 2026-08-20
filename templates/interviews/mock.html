@@ -1,49 +1,78 @@
 {% extends 'layout.html' %}
 
-{% block title %}AI Mock Interviewer | CareerOS AI{% endblock %}
+{% block title %}AI Mock Interviewer & Speech Analytics | CareerOS AI{% endblock %}
 
 {% block content %}
-<div style="margin-bottom: 24px;">
-    <h2>AI Mock <span class="gradient-text">Interviewer</span></h2>
-    <p style="color:var(--text-muted);">Real-time interactive HR, Technical, and Behavioral mock interviews scored by Gemini AI.</p>
+<div style="margin-bottom: 24px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;">
+    <div>
+        <h2>AI Mock <span class="gradient-text">Interviewer & Speech Analytics</span></h2>
+        <p style="color:var(--text-muted);">Speak your interview answers directly into your mic for real-time speech WPM, filler word detection, and Gemini AI scoring.</p>
+    </div>
+    <span class="badge badge-purple" style="font-size:13px; padding:8px 16px;"><i class="bi bi-mic-fill"></i> Web Speech API Enabled</span>
 </div>
 
 <div class="dashboard-grid">
+    <!-- Live Interview Session Panel (Span 6) -->
     <div class="col-span-6 glass-card">
         <h3>Launch New AI Mock Session</h3>
+        
         <form action="{{ url_for('interviews.mock_interview') }}" method="POST" style="margin-top:16px;">
-            <div class="form-group">
-                <label class="form-label">Interview Type</label>
-                <select name="interview_type" class="form-control">
-                    <option value="Technical">Technical Round (Data Structures & System Design)</option>
-                    <option value="HR">HR Round (Culture Fit & Background)</option>
-                    <option value="Behavioral">Behavioral Round (STAR Method)</option>
-                </select>
-            </div>
+            <input type="hidden" name="speech_duration_sec" id="speech_duration_sec" value="0">
 
-            <div class="form-group">
-                <label class="form-label">Target Role</label>
-                <input type="text" name="target_role" class="form-control" value="Software Engineer">
-            </div>
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:16px;">
+                <div class="form-group">
+                    <label class="form-label">Interview Round</label>
+                    <select name="interview_type" class="form-control">
+                        <option value="Technical">Technical Round (Data Structures & System Design)</option>
+                        <option value="HR">HR Round (Culture Fit & Background)</option>
+                        <option value="Behavioral">Behavioral Round (STAR Method)</option>
+                    </select>
+                </div>
 
-            <div class="form-group">
-                <label class="form-label">AI Interviewer Question:</label>
-                <div style="background:var(--bg-surface-elevated); padding:16px; border-radius:var(--radius-sm); font-size:14px; font-weight:600; color:var(--brand-primary);">
-                    "Tell me about a time you resolved a critical production bug or optimized an API performance bottleneck."
+                <div class="form-group">
+                    <label class="form-label">Target Role</label>
+                    <input type="text" name="target_role" class="form-control" value="Software Engineer">
                 </div>
             </div>
 
             <div class="form-group">
-                <label class="form-label">Your Response (Speak or Type)</label>
-                <textarea name="answer_text" rows="5" class="form-control" placeholder="Use the STAR method to describe the Situation, Task, Action, and Result..." required></textarea>
+                <label class="form-label">AI Interviewer Question:</label>
+                <div style="background:var(--bg-surface-elevated); padding:16px; border-radius:var(--radius-sm); font-size:14px; font-weight:600; color:var(--brand-primary); border:1px solid var(--glass-border);">
+                    "Tell me about a time you resolved a critical production bug or optimized a high-concurrency performance bottleneck."
+                </div>
             </div>
 
-            <button type="submit" class="btn btn-gradient" style="width:100%;">
-                <i class="bi bi-mic-fill"></i> Submit Response for AI Evaluation
+            <!-- Speech Recording Controls -->
+            <div style="background:var(--bg-surface-elevated); padding:16px; border-radius:var(--radius-sm); margin-bottom:16px; border:1px solid var(--glass-border);">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <div style="display:flex; align-items:center; gap:10px;">
+                        <button type="button" id="mic-btn" class="btn btn-secondary" style="border-radius:50%; width:48px; height:48px; display:flex; align-items:center; justify-content:center; font-size:20px; color:var(--brand-primary);">
+                            <i class="bi bi-mic-fill"></i>
+                        </button>
+                        <div>
+                            <strong id="mic-status" style="font-size:13px; color:var(--text-main);">Click Mic to Speak Answer</strong>
+                            <div style="font-size:11px; color:var(--text-muted);" id="speech-stats-text">Timer: 0s • WPM: 0</div>
+                        </div>
+                    </div>
+
+                    <div style="text-align:right;">
+                        <span class="badge badge-orange" id="filler-badge" style="font-size:11px;">0 Filler Words</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Your Response (Live Transcribed Text)</label>
+                <textarea name="answer_text" id="answer_text" rows="5" class="form-control" placeholder="Speak into your microphone or type your response using the STAR method..." required></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-gradient" style="width:100%; padding:14px;">
+                <i class="bi bi-patch-check-fill"></i> Submit Response for AI Evaluation & Scorecard
             </button>
         </form>
     </div>
 
+    <!-- Past Sessions Panel (Span 6) -->
     <div class="col-span-6 glass-card">
         <h3>Past Mock Interview Reports</h3>
         <div style="display:flex; flex-direction:column; gap:12px; margin-top:16px;">
@@ -51,7 +80,7 @@
             <div style="background:var(--bg-surface-elevated); padding:16px; border-radius:var(--radius-sm); border:1px solid var(--glass-border); display:flex; justify-content:space-between; align-items:center;">
                 <div>
                     <strong style="font-size:15px;">{{ sess.interview_type }} Round</strong>
-                    <div style="font-size:12px; color:var(--text-muted);">{{ sess.target_role }}</div>
+                    <div style="font-size:12px; color:var(--text-muted);">{{ sess.target_role }} • {{ sess.feedback_summary }}</div>
                 </div>
                 <div style="text-align:right;">
                     <div style="font-size:22px; font-weight:800; color:var(--brand-secondary);">{{ sess.score }}<span style="font-size:12px;">/100</span></div>
@@ -60,10 +89,111 @@
             </div>
             {% else %}
             <div style="text-align:center; padding:40px; color:var(--text-muted);">
-                No past sessions yet. Launch your first mock round on the left!
+                <i class="bi bi-mic-mute" style="font-size:40px; opacity:0.3;"></i>
+                <h4 style="margin-top:12px; color:var(--text-main);">No Past Sessions Yet</h4>
+                <p style="font-size:13px; max-width:320px; margin:6px auto 0 auto;">Launch your first AI voice mock interview session on the left!</p>
             </div>
             {% endfor %}
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+const micBtn = document.getElementById('mic-btn');
+const micStatus = document.getElementById('mic-status');
+const answerText = document.getElementById('answer_text');
+const speechStatsText = document.getElementById('speech-stats-text');
+const fillerBadge = document.getElementById('filler-badge');
+const speechDurationInput = document.getElementById('speech_duration_sec');
+
+let isRecording = false;
+let recognition = null;
+let timerInterval = null;
+let secondsElapsed = 0;
+
+const FILLERS = ["um", "uh", "like", "basically", "you know", "actually", "literally", "sort of", "kind of"];
+
+if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    recognition = new SpeechRecognition();
+    recognition.continuous = true;
+    recognition.interimResults = true;
+
+    recognition.onresult = (event) => {
+        let transcript = '';
+        for (let i = event.resultIndex; i < event.results.length; i++) {
+            transcript += event.results[i][0].transcript;
+        }
+        answerText.value = transcript;
+        updateSpeechStats(transcript);
+    };
+
+    recognition.onerror = (e) => {
+        micStatus.innerText = "Speech recognition error: " + e.error;
+        stopRecording();
+    };
+
+    recognition.onend = () => {
+        if (isRecording) {
+            recognition.start();
+        }
+    };
+} else {
+    micStatus.innerText = "Web Speech API not supported in browser. Type your answer below.";
+    micBtn.disabled = true;
+}
+
+function updateSpeechStats(text) {
+    const words = text.trim().split(/\s+/).filter(w => w.length > 0);
+    const wordCount = words.length;
+    const durationMin = Math.max(0.1, secondsElapsed / 60.0);
+    const wpm = Math.round(wordCount / durationMin);
+
+    speechStatsText.innerText = `Timer: ${secondsElapsed}s • WPM: ${wpm} • Words: ${wordCount}`;
+
+    const lower = text.toLowerCase();
+    let totalFillers = 0;
+    FILLERS.forEach(f => {
+        const matches = lower.match(new RegExp('\\b' + f + '\\b', 'g'));
+        if (matches) totalFillers += matches.length;
+    });
+
+    fillerBadge.innerText = `${totalFillers} Filler Words`;
+}
+
+function startRecording() {
+    isRecording = true;
+    secondsElapsed = 0;
+    micBtn.style.background = 'var(--state-danger)';
+    micBtn.style.color = '#fff';
+    micStatus.innerText = "Recording Live... Speak Now!";
+
+    recognition.start();
+
+    timerInterval = setInterval(() => {
+        secondsElapsed++;
+        speechDurationInput.value = secondsElapsed;
+        updateSpeechStats(answerText.value);
+    }, 1000);
+}
+
+function stopRecording() {
+    isRecording = false;
+    micBtn.style.background = 'var(--bg-surface-elevated)';
+    micBtn.style.color = 'var(--brand-primary)';
+    micStatus.innerText = "Click Mic to Speak Answer";
+    if (recognition) recognition.stop();
+    if (timerInterval) clearInterval(timerInterval);
+}
+
+micBtn?.addEventListener('click', () => {
+    if (!isRecording) {
+        startRecording();
+    } else {
+        stopRecording();
+    }
+});
+</script>
 {% endblock %}

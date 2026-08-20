@@ -37,7 +37,7 @@
             <h4><i class="bi bi-terminal-fill" style="color:var(--brand-primary);"></i> Execution Console & AI Complexity</h4>
             
             <div id="ai-review-box" style="margin-top:12px; background:#0d1117; padding:16px; border-radius:var(--radius-sm); font-family:'JetBrains Mono', monospace; font-size:13px; color:#c9d1d9; border:1px solid rgba(255,255,255,0.1); min-height:140px;">
-                <span style="color:#8b949e;">// Console stdout output will display here when you click "Run Code & Submit"...</span>
+                <span style="color:#8b949e;">// Select language and click "Run Code & Submit" to view live output...</span>
             </div>
         </div>
     </div>
@@ -45,9 +45,15 @@
     <!-- Code Editor Workspace Panel -->
     <div class="editor-workspace-panel glass-card" style="padding:24px; display:flex; flex-direction:column;">
         <div class="editor-header" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; padding-bottom:12px; border-bottom:1px solid var(--glass-border);">
-            <div style="display:flex; align-items:center; gap:8px;">
-                <i class="bi bi-filetype-py" style="color:var(--brand-primary); font-size:20px;"></i>
-                <span style="font-size:14px; font-weight:700; color:var(--text-main);">Python 3 Interpreter</span>
+            <div style="display:flex; align-items:center; gap:12px;">
+                <label style="font-size:12px; color:var(--text-subtle); font-weight:700;">LANGUAGE:</label>
+                <select id="lang-select" class="form-control" style="width:160px; padding:6px 12px; font-size:13px;">
+                    <option value="Python" selected>Python 3</option>
+                    <option value="JavaScript">JavaScript (Node)</option>
+                    <option value="C++">C++ 20 (GCC)</option>
+                    <option value="Java">Java 17</option>
+                    <option value="SQL">SQL (PostgreSQL)</option>
+                </select>
             </div>
             <button id="run-btn" class="btn btn-gradient" style="padding:8px 20px; font-size:13px;">
                 <i class="bi bi-play-fill"></i> Run Code & Submit
@@ -61,16 +67,28 @@
 
 {% block scripts %}
 <script>
+const starters = {{ starters|tojson }};
+const langSelect = document.getElementById('lang-select');
+const codeInput = document.getElementById('code-input');
+
+langSelect?.addEventListener('change', (e) => {
+    const lang = e.target.value;
+    if (starters[lang]) {
+        codeInput.value = starters[lang];
+    }
+});
+
 document.getElementById('run-btn').addEventListener('click', async () => {
-    const code = document.getElementById('code-input').value;
+    const code = codeInput.value;
+    const lang = langSelect.value;
     const reviewBox = document.getElementById('ai-review-box');
-    reviewBox.innerHTML = '<span style="color:#e3b341;"><i class="bi bi-hourglass-split"></i> Executing Python interpreter & analyzing runtime complexity...</span>';
+    reviewBox.innerHTML = `<span style="color:#e3b341;"><i class="bi bi-hourglass-split"></i> Executing ${lang} compiler & analyzing complexity...</span>`;
 
     try {
         const res = await fetch('/coding/run-code', {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({code: code, challenge_id: {{ challenge.id }}})
+            body: JSON.stringify({code: code, language: lang, challenge_id: {{ challenge.id }}})
         });
         const data = await res.json();
         
@@ -79,11 +97,11 @@ document.getElementById('run-btn').addEventListener('click', async () => {
         
         reviewBox.innerHTML = `
             <div style="color:${statusColor}; font-weight:700; font-size:14px; margin-bottom:8px;">
-                <i class="bi ${isSuccess ? 'bi-check-circle-fill' : 'bi-x-circle-fill'}"></i> Execution Status: ${data.status}
+                <i class="bi ${isSuccess ? 'bi-check-circle-fill' : 'bi-x-circle-fill'}"></i> ${data.language} Status: ${data.status}
             </div>
             
             <div style="background:#161b22; padding:10px 12px; border-radius:4px; margin-bottom:10px; border-left:3px solid ${statusColor};">
-                <div style="color:#8b949e; font-size:11px; margin-bottom:4px;">STDOUT CONSOLE OUTPUT:</div>
+                <div style="color:#8b949e; font-size:11px; margin-bottom:4px;">STDOUT / ENGINE OUTPUT:</div>
                 <pre style="margin:0; color:#c9d1d9; font-size:12px; white-space:pre-wrap;">${data.executed_output}</pre>
             </div>
 
@@ -97,7 +115,7 @@ document.getElementById('run-btn').addEventListener('click', async () => {
             </div>
         `;
     } catch (err) {
-        reviewBox.innerHTML = '<span style="color:#f85149;"><i class="bi bi-exclamation-triangle-fill"></i> Server error executing Python code.</span>';
+        reviewBox.innerHTML = '<span style="color:#f85149;"><i class="bi bi-exclamation-triangle-fill"></i> Execution failed.</span>';
     }
 });
 </script>

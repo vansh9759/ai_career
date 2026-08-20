@@ -104,6 +104,12 @@
                             <span>LinkedIn Optimizer</span>
                         </a>
                     </li>
+                    <li class="nav-item {% if request.endpoint == 'pricing' %}active{% endif %}">
+                        <a href="{{ url_for('pricing') }}">
+                            <i class="bi bi-credit-card-fill"></i>
+                            <span>SaaS Pricing Plans</span>
+                        </a>
+                    </li>
                 </ul>
             </div>
 
