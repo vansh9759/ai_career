@@ -148,6 +148,20 @@
                 </div>
 
                 <div class="header-actions">
+                    <!-- Multi-Language Selector Dropdown -->
+                    <div class="lang-selector">
+                        <button class="lang-btn" id="langDropdownBtn">
+                            <span>🌐</span> <span id="currentLangLabel">EN</span> <i class="bi bi-chevron-down" style="font-size:10px;"></i>
+                        </button>
+                        <div class="lang-dropdown" id="langDropdown">
+                            <a href="javascript:void(0)" onclick="changeLanguage('en')">🌐 English</a>
+                            <a href="javascript:void(0)" onclick="changeLanguage('hi')">🇮🇳 हिन्दी (Hindi)</a>
+                            <a href="javascript:void(0)" onclick="changeLanguage('es')">🇪🇸 Español</a>
+                            <a href="javascript:void(0)" onclick="changeLanguage('fr')">🇫🇷 Français</a>
+                            <a href="javascript:void(0)" onclick="changeLanguage('de')">🇩🇪 Deutsch</a>
+                        </div>
+                    </div>
+
                     <button class="btn-icon" id="theme-toggle-btn" title="Toggle Theme">
                         <i class="bi bi-sun-fill"></i>
                     </button>
@@ -195,6 +209,82 @@
     </div>
 
     <script src="{{ url_for('static', filename='js/theme.js') }}"></script>
+    <script>
+    const translations = {
+        en: {
+            hero_pill: "Introducing The World's First AI Career Operating System",
+            hero_title: "Learn • Build • Improve • Get Hired",
+            hero_sub: "One unified AI ecosystem designed to continuously analyze your skills, optimize your resume, verify your code, conduct mock interviews, and land your dream job.",
+            btn_launch: "Launch AI Mentor",
+            btn_explore: "Explore Platform",
+            why_diff: "Why CareerOS AI is Different",
+            diff_sub: "Not just another course provider or resume editor. CareerOS AI actively develops your career from day one."
+        },
+        hi: {
+            hero_pill: "प्रस्तुत है विश्व का पहला AI करियर ऑपरेटिंग सिस्टम",
+            hero_title: "सीखें • बनाएं • सुधारें • नौकरी पाएं",
+            hero_sub: "एक एकीकृत AI पारिस्थितिकी तंत्र जो लगातार आपके कौशल का विश्लेषण करता है, आपके रीज़्यूमे को अनुकूलित करता है, आपके कोड को सत्यापित करता है, और आपको आपके सपनों की नौकरी दिलाता है।",
+            btn_launch: "AI मेंटर शुरू करें",
+            btn_explore: "प्लेटफ़ॉर्म खोजें",
+            why_diff: "CareerOS AI क्यों अलग है",
+            diff_sub: "केवल एक पाठ्यक्रम प्रदाता या बायोडाटा संपादक नहीं। CareerOS AI पहले दिन से ही आपके करियर को सक्रिय रूप से विकसित करता है।"
+        },
+        es: {
+            hero_pill: "Presentamos el primer sistema operativo de carrera de IA del mundo",
+            hero_title: "Aprende • Construye • Mejora • Consigue Empleo",
+            hero_sub: "Un ecosistema de IA unificado diseñado para analizar continuamente tus habilidades, optimizar tu currículum, verificar tu código y contratarte.",
+            btn_launch: "Lanzar Mentor de IA",
+            btn_explore: "Explorar Plataforma",
+            why_diff: "¿Por qué CareerOS AI es diferente?",
+            diff_sub: "No es solo otro editor de currículums. CareerOS AI desarrolla activamente tu carrera desde el primer día."
+        },
+        fr: {
+            hero_pill: "Présentation du premier système d'exploitation de carrière IA au monde",
+            hero_title: "Apprendre • Construire • Améliorer • Être Engagé",
+            hero_sub: "Un écosystème IA unifié conçu pour analyser vos compétences, optimiser votre CV et réussir vos entretiens.",
+            btn_launch: "Lancer le Mentor IA",
+            btn_explore: "Explorer la Plateforme",
+            why_diff: "Pourquoi CareerOS AI est Différent",
+            diff_sub: "Pas seulement un autre éditeur de CV. CareerOS AI développe activement votre carrière dès le premier jour."
+        },
+        de: {
+            hero_pill: "Das weltweit erste KI-Karriere-Betriebssystem",
+            hero_title: "Lernen • Bauen • Verbessern • Eingestellt Werden",
+            hero_sub: "Ein einheitliches KI-Ökosystem, das Ihre Fähigkeiten analysiert, Ihren Lebenslauf optimiert und Vorstellungsgespräche führt.",
+            btn_launch: "KI-Mentor Starten",
+            btn_explore: "Plattform Erkunden",
+            why_diff: "Warum CareerOS AI anders ist",
+            diff_sub: "Nicht nur ein weiterer Lebenslauf-Editor. CareerOS AI entwickelt Ihre Karriere ab dem ersten Tag."
+        }
+    };
+
+    function changeLanguage(lang) {
+        if (!translations[lang]) return;
+        document.querySelectorAll('[data-i18n]').forEach(el => {
+            const key = el.getAttribute('data-i18n');
+            if (translations[lang][key]) {
+                el.innerText = translations[lang][key];
+            }
+        });
+        document.getElementById('currentLangLabel').innerText = lang.toUpperCase();
+        document.getElementById('langDropdown')?.classList.remove('show');
+        localStorage.setItem('careeros_lang', lang);
+    }
+
+    document.getElementById('langDropdownBtn')?.addEventListener('click', (e) => {
+        e.stopPropagation();
+        document.getElementById('langDropdown')?.classList.toggle('show');
+    });
+    document.addEventListener('click', () => {
+        document.getElementById('langDropdown')?.classList.remove('show');
+    });
+
+    // Auto-restore saved language
+    const savedLang = localStorage.getItem('careeros_lang');
+    if (savedLang) {
+        changeLanguage(savedLang);
+    }
+    </script>
     {% block scripts %}{% endblock %}
 </body>
 </html>

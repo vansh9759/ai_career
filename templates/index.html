@@ -3,30 +3,33 @@
 {% block title %}CareerOS AI - The World's First AI Career Operating System{% endblock %}
 
 {% block content %}
-<div class="hero-section">
-    <div class="hero-pill">
+<div class="hero-section" style="position:relative; overflow:hidden;">
+    <!-- Ambient Ambient Mesh Glow -->
+    <div class="hero-mesh-glow"></div>
+
+    <div class="hero-pill" data-i18n="hero_pill">
         <i class="bi bi-stars"></i> Introducing The World's First AI Career Operating System
     </div>
     
-    <h1 class="hero-title">
+    <h1 class="hero-title" data-i18n="hero_title">
         Learn • Build • Improve • <span class="gradient-text">Get Hired</span>
     </h1>
     
-    <p class="hero-subtitle">
+    <p class="hero-subtitle" data-i18n="hero_sub">
         One unified AI ecosystem designed to continuously analyze your skills, optimize your resume, verify your code, conduct mock interviews, and land your dream job.
     </p>
 
-    <div style="display:flex; justify-content:center; gap:16px; margin-bottom:48px;">
-        <a href="{{ url_for('student.dashboard') }}" class="btn btn-gradient" style="padding: 14px 32px; font-size:16px;">
+    <div style="display:flex; justify-content:center; gap:16px; margin-bottom:48px; position:relative; z-index:2;">
+        <a href="{{ url_for('student.dashboard') }}" class="btn btn-gradient" style="padding: 14px 32px; font-size:16px;" data-i18n="btn_launch">
             Launch AI Mentor <i class="bi bi-arrow-right"></i>
         </a>
-        <a href="{{ url_for('auth.register') }}" class="btn btn-secondary" style="padding: 14px 28px; font-size:16px;">
+        <a href="{{ url_for('auth.register') }}" class="btn btn-secondary" style="padding: 14px 28px; font-size:16px;" data-i18n="btn_explore">
             Explore Platform
         </a>
     </div>
 
     <!-- Live Employability Index Preview Card -->
-    <div class="glass-panel" style="max-width: 900px; margin: 0 auto; padding: 32px; text-align:left;">
+    <div class="glass-panel" style="max-width: 900px; margin: 0 auto; padding: 32px; text-align:left; position:relative; z-index:2;">
         <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--glass-border); padding-bottom:16px; margin-bottom:24px;">
             <div>
                 <span class="badge badge-purple">LIVE DEMO</span>
@@ -59,11 +62,34 @@
     </div>
 </div>
 
+<!-- Company Hiring Partner Marquee Ticker -->
+<div class="marquee-container">
+    <div class="marquee-track">
+        <span class="marquee-brand"><i class="bi bi-google"></i> GOOGLE</span>
+        <span class="marquee-brand"><i class="bi bi-microsoft"></i> MICROSOFT</span>
+        <span class="marquee-brand"><i class="bi bi-amazon"></i> AMAZON</span>
+        <span class="marquee-brand"><i class="bi bi-meta"></i> META</span>
+        <span class="marquee-brand"><i class="bi bi-cpu-fill"></i> NVIDIA</span>
+        <span class="marquee-brand"><i class="bi bi-apple"></i> APPLE</span>
+        <span class="marquee-brand"><i class="bi bi-triangle-fill"></i> ADOBE</span>
+        <span class="marquee-brand"><i class="bi bi-film"></i> NETFLIX</span>
+        <!-- Duplicate for Infinite Loop -->
+        <span class="marquee-brand"><i class="bi bi-google"></i> GOOGLE</span>
+        <span class="marquee-brand"><i class="bi bi-microsoft"></i> MICROSOFT</span>
+        <span class="marquee-brand"><i class="bi bi-amazon"></i> AMAZON</span>
+        <span class="marquee-brand"><i class="bi bi-meta"></i> META</span>
+        <span class="marquee-brand"><i class="bi bi-cpu-fill"></i> NVIDIA</span>
+        <span class="marquee-brand"><i class="bi bi-apple"></i> APPLE</span>
+        <span class="marquee-brand"><i class="bi bi-triangle-fill"></i> ADOBE</span>
+        <span class="marquee-brand"><i class="bi bi-film"></i> NETFLIX</span>
+    </div>
+</div>
+
 <!-- Key Platform Features Grid -->
-<div style="margin-top: 80px;">
+<div style="margin-top: 60px;">
     <div style="text-align:center; margin-bottom:48px;">
-        <h2 style="font-size:36px;">Why CareerOS AI is <span class="gradient-text">Different</span></h2>
-        <p style="color:var(--text-muted); max-width:600px; margin:10px auto 0 auto;">
+        <h2 style="font-size:36px;" data-i18n="why_diff">Why CareerOS AI is <span class="gradient-text">Different</span></h2>
+        <p style="color:var(--text-muted); max-width:600px; margin:10px auto 0 auto;" data-i18n="diff_sub">
             Not just another course provider or resume editor. CareerOS AI actively develops your career from day one.
         </p>
     </div>
@@ -101,19 +127,36 @@
     </div>
 </div>
 
-<!-- Partner Companies Banner -->
-<div class="glass-panel" style="padding:32px; text-align:center; margin-top:40px;">
-    <div style="font-size:12px; font-weight:700; color:var(--text-subtle); letter-spacing:1.5px; margin-bottom:20px;">
-        TOP COMPANIES HIRING VERIFIED TALENT FROM CAREEROS AI
+<!-- Enterprise Platform Comparison Section -->
+<div style="margin-top: 80px;">
+    <div style="text-align:center; margin-bottom:40px;">
+        <h2 style="font-size:32px;">Traditional Portals vs. <span class="gradient-text">CareerOS AI</span></h2>
+        <p style="color:var(--text-muted);">See why top university candidates choose CareerOS AI over static job boards.</p>
     </div>
-    <div style="display:flex; justify-content:space-around; align-items:center; flex-wrap:wrap; gap:24px; font-weight:800; font-size:22px; color:var(--text-muted);">
-        <span>GOOGLE</span>
-        <span>MICROSOFT</span>
-        <span>AMAZON</span>
-        <span>META</span>
-        <span>NVIDIA</span>
-        <span>ADOBE</span>
-        <span>TCS</span>
+
+    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:24px;">
+        <div class="comparison-card">
+            <h3 style="color:var(--text-subtle); margin-bottom:16px;"><i class="bi bi-x-circle-fill" style="color:var(--state-danger);"></i> Traditional Job Portals</h3>
+            <ul style="list-style:none; padding:0; display:flex; flex-direction:column; gap:12px; font-size:14px; color:var(--text-muted);">
+                <li>❌ Static resume uploads with zero feedback</li>
+                <li>❌ Generic rejection emails with no reason provided</li>
+                <li>❌ Unverified skill claims on candidate profiles</li>
+                <li>❌ No mock interview preparation or speech analytics</li>
+            </ul>
+        </div>
+
+        <div class="comparison-card recommended">
+            <div style="position:absolute; top:-12px; right:20px;" class="badge badge-verified">
+                <i class="bi bi-star-fill"></i> RECOMMENDED
+            </div>
+            <h3 style="color:var(--brand-primary); margin-bottom:16px;"><i class="bi bi-check-circle-fill" style="color:var(--brand-secondary);"></i> CareerOS AI Platform</h3>
+            <ul style="list-style:none; padding:0; display:flex; flex-direction:column; gap:12px; font-size:14px; color:var(--text-main);">
+                <li>✅ Continuous 0-100 Employability Index score tracking</li>
+                <li>✅ Gemini AI resume feedback with instant JD match score</li>
+                <li>✅ Cryptographically verified skill badges (Python, SQL, ML)</li>
+                <li>✅ Web Speech API mic mock interviews with WPM & filler word analytics</li>
+            </ul>
+        </div>
     </div>
 </div>
 {% endblock %}
