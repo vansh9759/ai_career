@@ -92,42 +92,33 @@ def register_redirect():
 with app.app_context():
     try:
         db.create_all()
-        # Verify schema integrity
-        User.query.count()
-    except Exception as e:
-        print(">>> Legacy database schema detected. Resetting database schema... <<<")
-        db.drop_all()
-        db.create_all()
-    
-    # Create Default Demo User if empty
-    if User.query.count() == 0:
-        demo_user = User(
-            name="Alex Rivera",
-            email="alex@careeros.ai",
-            password=generate_password_hash("password123"),
-            role="student",
-            dream_company="Google",
-            dream_job="Software Engineer",
-            career_goal="Full Stack AI Engineer",
-            college="Stanford University",
-            degree="B.S. Computer Science",
-            github="github.com/alexrivera",
-            linkedin="linkedin.com/in/alexrivera",
-            leetcode="leetcode.com/alexrivera"
-        )
-        db.session.add(demo_user)
-        db.session.commit()
+        if User.query.count() == 0:
+            demo_user = User(
+                name="Alex Rivera",
+                email="alex@careeros.ai",
+                password=generate_password_hash("password123"),
+                role="student",
+                dream_company="Google",
+                dream_job="Software Engineer",
+                career_goal="Full Stack AI Engineer",
+                college="Stanford University",
+                degree="B.S. Computer Science",
+                github="github.com/alexrivera",
+                linkedin="linkedin.com/in/alexrivera",
+                leetcode="leetcode.com/alexrivera"
+            )
+            db.session.add(demo_user)
+            db.session.commit()
 
-        # Seed initial EmployabilityScore & Verified Skills
-        emp = EmployabilityScore(user_id=demo_user.id, total_score=78)
-        gam = GamificationProfile(user_id=demo_user.id, xp=2400, coins=450, streak_days=12, level=5)
-        
-        sk1 = VerifiedSkill(user_id=demo_user.id, skill_name="Python", proficiency="Verified Expert", status="Verified", badge_code="VERIFIED-PY-88A91")
-        sk2 = VerifiedSkill(user_id=demo_user.id, skill_name="SQL", proficiency="Verified Specialist", status="Verified", badge_code="VERIFIED-SQL-91F22")
-        sk3 = VerifiedSkill(user_id=demo_user.id, skill_name="Machine Learning", proficiency="Verified Intermediate", status="Verified", badge_code="VERIFIED-ML-44C10")
-        
-        db.session.add_all([emp, gam, sk1, sk2, sk3])
-        db.session.commit()
+            emp = EmployabilityScore(user_id=demo_user.id, total_score=78)
+            gam = GamificationProfile(user_id=demo_user.id, xp=2400, coins=450, streak_days=12, level=5)
+            sk1 = VerifiedSkill(user_id=demo_user.id, skill_name="Python", proficiency="Verified Expert", status="Verified", badge_code="VERIFIED-PY-88A91")
+            sk2 = VerifiedSkill(user_id=demo_user.id, skill_name="SQL", proficiency="Verified Specialist", status="Verified", badge_code="VERIFIED-SQL-91F22")
+            sk3 = VerifiedSkill(user_id=demo_user.id, skill_name="Machine Learning", proficiency="Verified Intermediate", status="Verified", badge_code="VERIFIED-ML-44C10")
+            db.session.add_all([emp, gam, sk1, sk2, sk3])
+            db.session.commit()
+    except Exception as db_err:
+        print(">>> DB Init Warning:", db_err)
 
 if __name__ == '__main__':
     print(">>> CareerOS AI Platform Server Starting... <<<")
