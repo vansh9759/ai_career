@@ -162,4 +162,58 @@
         </form>
     </div>
 </div>
+
+<!-- NextGenGrowth Style Live Brand Projects Hub -->
+<div class="dashboard-grid" style="margin-top:24px;">
+    <div class="col-span-12 glass-card">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; border-bottom:1px solid var(--glass-border); padding-bottom:14px;">
+            <div>
+                <span class="badge badge-verified" style="margin-bottom:4px;"><i class="bi bi-shield-check"></i> NextGen Growth Talent Engine</span>
+                <h3>Real-World Brand Projects & Gigs</h3>
+            </div>
+            <a href="{{ url_for('jobs.portal') }}" class="btn btn-primary" style="font-size:13px;"><i class="bi bi-briefcase-fill"></i> View All Opportunities</a>
+        </div>
+
+        <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:20px;">
+            <div style="background:var(--bg-surface-elevated); padding:20px; border-radius:16px; border:1px solid var(--glass-border); position:relative;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                    <span class="badge badge-purple">🐍 Python Backend</span>
+                    <strong style="color:var(--brand-secondary); font-size:14px;">$450 / Project</strong>
+                </div>
+                <h4 style="font-size:16px; margin-bottom:6px;">Build FastAPI Microservice for AI Startup</h4>
+                <p style="font-size:12px; color:var(--text-muted); margin-bottom:14px;">7-day paid trial evaluation for verified Python candidates.</p>
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <span style="font-size:11px; color:var(--text-subtle);"><i class="bi bi-clock-fill"></i> 7 Days Paid Trial</span>
+                    <a href="{{ url_for('jobs.portal') }}" class="btn btn-secondary" style="padding:4px 12px; font-size:11px;">Apply Now</a>
+                </div>
+            </div>
+
+            <div style="background:var(--bg-surface-elevated); padding:20px; border-radius:16px; border:1px solid var(--glass-border); position:relative;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                    <span class="badge badge-verified">🛢️ SQL Analytics</span>
+                    <strong style="color:var(--brand-secondary); font-size:14px;">$600 / Project</strong>
+                </div>
+                <h4 style="font-size:16px; margin-bottom:6px;">PostgreSQL Data Pipeline Optimization</h4>
+                <p style="font-size:12px; color:var(--text-muted); margin-bottom:14px;">Optimize high-concurrency database queries for e-commerce brand.</p>
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <span style="font-size:11px; color:var(--text-subtle);"><i class="bi bi-clock-fill"></i> Protected Escrow</span>
+                    <a href="{{ url_for('jobs.portal') }}" class="btn btn-secondary" style="padding:4px 12px; font-size:11px;">Apply Now</a>
+                </div>
+            </div>
+
+            <div style="background:var(--bg-surface-elevated); padding:20px; border-radius:16px; border:1px solid var(--glass-border); position:relative;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                    <span class="badge badge-orange">🤖 ML Model Tuning</span>
+                    <strong style="color:var(--brand-secondary); font-size:14px;">$800 / Project</strong>
+                </div>
+                <h4 style="font-size:16px; margin-bottom:6px;">Fine-tune LLM for Customer Support Agent</h4>
+                <p style="font-size:12px; color:var(--text-muted); margin-bottom:14px;">Fine-tune open source Llama 3 model on proprietary dataset.</p>
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <span style="font-size:11px; color:var(--text-subtle);"><i class="bi bi-clock-fill"></i> 7 Days Paid Trial</span>
+                    <a href="{{ url_for('jobs.portal') }}" class="btn btn-secondary" style="padding:4px 12px; font-size:11px;">Apply Now</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

@@ -1,40 +1,76 @@
 {% extends 'layout.html' %}
 
-{% block title %}Job & Internship Portal | CareerOS AI{% endblock %}
+{% block title %}Job & Brand Opportunities Marketplace | CareerOS AI{% endblock %}
 
 {% block content %}
-<div style="margin-bottom: 24px;">
-    <h2>Job & Internship <span class="gradient-text">Portal</span></h2>
-    <p style="color:var(--text-muted);">AI-matched opportunities based on your Verified Skills and Employability Index.</p>
+<div style="margin-bottom: 24px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;">
+    <div>
+        <span class="badge badge-verified" style="margin-bottom:6px;"><i class="bi bi-shield-check"></i> Protected Milestone Escrow Enabled</span>
+        <h2>NextGen Brand Projects & <span class="gradient-text">Opportunities</span></h2>
+        <p style="color:var(--text-muted);">AI-matched projects, 7-day paid trials, and enterprise retainers for verified candidates.</p>
+    </div>
+    
+    <div style="display:flex; gap:10px;">
+        <span class="badge badge-purple" style="font-size:13px; padding:8px 16px;"><i class="bi bi-patch-check-fill"></i> Verified Candidate Matching Active</span>
+    </div>
+</div>
+
+<!-- Search & Filter Bar (NextGenGrowth Style) -->
+<div class="glass-panel" style="padding:16px 24px; margin-bottom:28px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;">
+    <div style="display:flex; gap:10px; flex-wrap:wrap;">
+        <button class="btn btn-primary" style="padding:6px 14px; font-size:12px;">All Opportunities ({{ jobs|length }})</button>
+        <button class="btn btn-secondary" style="padding:6px 14px; font-size:12px;">7-Day Paid Trials</button>
+        <button class="btn btn-secondary" style="padding:6px 14px; font-size:12px;">Full-Stack & Python</button>
+        <button class="btn btn-secondary" style="padding:6px 14px; font-size:12px;">SQL Data Pipelines</button>
+        <button class="btn btn-secondary" style="padding:6px 14px; font-size:12px;">GenAI & ML Retainers</button>
+    </div>
+    
+    <div style="position:relative; width:240px;">
+        <input type="text" id="job-search-input" class="form-control" placeholder="Search by role or company..." style="padding:6px 12px 6px 32px; font-size:12px;">
+        <i class="bi bi-search" style="position:absolute; left:10px; top:50%; transform:translateY(-50%); color:var(--text-subtle); font-size:12px;"></i>
+    </div>
 </div>
 
 <div class="dashboard-grid">
     {% for job in jobs %}
-    <div class="col-span-4 glass-card" style="display:flex; flex-direction:column; justify-content:space-between;">
+    <div class="col-span-4 glass-card job-card-item" data-title="{{ job.title.lower() }} {{ job.company_name.lower() }}" style="display:flex; flex-direction:column; justify-content:space-between; position:relative; border-color:rgba(16,185,129,0.15);">
         <div>
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
                 <span class="badge badge-purple">{{ job.company_name }}</span>
-                <span class="badge badge-verified">{{ job.job_type }}</span>
+                <span class="badge badge-verified"><i class="bi bi-clock-fill"></i> 7-Day Paid Trial</span>
             </div>
 
             <h3 style="font-size:18px; margin-bottom:4px;">{{ job.title }}</h3>
-            <div style="font-size:13px; color:var(--text-muted); margin-bottom:12px;"><i class="bi bi-geo-alt-fill"></i> {{ job.location }}</div>
+            <div style="font-size:13px; color:var(--text-muted); margin-bottom:12px;"><i class="bi bi-geo-alt-fill"></i> {{ job.location }} • {{ job.job_type }}</div>
 
-            <p style="font-size:13px; color:var(--text-muted); margin-bottom:16px;">{{ job.description }}</p>
+            <p style="font-size:13px; color:var(--text-muted); margin-bottom:16px; line-height:1.5;">{{ job.description }}</p>
         </div>
 
         <div>
-            <div style="font-size:12px; color:var(--text-subtle); margin-bottom:12px;">
-                Salary: <strong>{{ job.salary_range }}</strong>
+            <div style="display:flex; justify-content:space-between; align-items:center; background:var(--bg-surface-elevated); padding:10px 14px; border-radius:10px; margin-bottom:14px; font-size:12px;">
+                <span style="color:var(--text-muted);">Budget / Stipend:</span>
+                <strong style="color:var(--brand-secondary); font-size:14px;">{{ job.salary_range }}</strong>
             </div>
 
             <form action="{{ url_for('jobs.apply', job_id=job.id) }}" method="POST">
                 <button type="submit" class="btn btn-primary" style="width:100%;">
-                    Apply with AI Match Passport <i class="bi bi-send-fill"></i>
+                    Apply with Verified Passport <i class="bi bi-send-fill"></i>
                 </button>
             </form>
         </div>
     </div>
     {% endfor %}
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.getElementById('job-search-input')?.addEventListener('input', (e) => {
+    const q = e.target.value.toLowerCase().trim();
+    document.querySelectorAll('.job-card-item').forEach(card => {
+        const text = card.getAttribute('data-title') || '';
+        card.style.display = text.includes(q) ? 'flex' : 'none';
+    });
+});
+</script>
 {% endblock %}
