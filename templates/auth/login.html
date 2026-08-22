@@ -3,34 +3,88 @@
 {% block title %}Sign In | CareerOS AI{% endblock %}
 
 {% block content %}
-<div style="max-width: 440px; margin: 40px auto;" class="glass-panel">
-    <div style="padding: 32px;">
+<div style="max-width: 1050px; margin: 30px auto; display:grid; grid-template-columns: 1fr 1fr; gap:32px; align-items:center;">
+    
+    <!-- Left Showcase Panel (NextGenGrowth Style) -->
+    <div class="glass-card" style="padding: 40px; background: linear-gradient(145deg, rgba(17,24,39,0.9), rgba(16,185,129,0.08)); border-color: rgba(16,185,129,0.2); position:relative; overflow:hidden;">
+        <div class="hero-mesh-glow" style="width:300px; height:300px; top:-50px; left:-50px;"></div>
+        
+        <div style="position:relative; z-index:2;">
+            <div class="badge badge-verified" style="margin-bottom:16px;">
+                <i class="bi bi-shield-check"></i> NextGen AI Authentication
+            </div>
+            
+            <h2 style="font-size:32px; line-height:1.2; margin-bottom:16px;">
+                Welcome Back to Your <span class="gradient-text">AI Career Engine</span>
+            </h2>
+            
+            <p style="color:var(--text-muted); font-size:15px; line-height:1.6; margin-bottom:32px;">
+                Access your real-time 0-100 Employability Index score, practice Web Speech mock interviews, and apply for verified brand projects.
+            </p>
+
+            <!-- Floating Preview Card Widget -->
+            <div class="glass-panel" style="padding:20px; border-radius:16px; margin-bottom:24px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+                    <div style="display:flex; align-items:center; gap:10px;">
+                        <div class="avatar" style="background:linear-gradient(135deg, #10b981, #059669);">AR</div>
+                        <div>
+                            <strong style="font-size:14px;">Alex Rivera</strong>
+                            <div style="font-size:11px; color:var(--text-muted);">Google Software Engineer Track</div>
+                        </div>
+                    </div>
+                    <span class="badge badge-purple">78/100 Score</span>
+                </div>
+                <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                    <span class="badge badge-verified">✓ Python Verified</span>
+                    <span class="badge badge-verified">✓ SQL Verified</span>
+                    <span class="badge badge-orange">★ 12 Day Streak</span>
+                </div>
+            </div>
+
+            <div style="display:flex; gap:16px; font-size:13px; color:var(--text-muted);">
+                <span><i class="bi bi-check-circle-fill" style="color:var(--brand-secondary);"></i> 256-bit Encrypted</span>
+                <span><i class="bi bi-check-circle-fill" style="color:var(--brand-secondary);"></i> 99.9% Uptime</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Right Sign In Form Panel -->
+    <div class="glass-panel" style="padding: 40px;">
         <div style="text-align: center; margin-bottom: 28px;">
-            <div class="brand-icon" style="margin: 0 auto 16px auto;">
-                <i class="bi bi-cpu-fill"></i>
+            <div class="brand-icon" style="margin: 0 auto 16px auto; background:linear-gradient(135deg, rgba(16,185,129,0.2), rgba(59,130,246,0.2)); color:var(--brand-secondary);">
+                <i class="bi bi-key-fill"></i>
             </div>
             <h2>Sign In to <span class="gradient-text">CareerOS AI</span></h2>
-            <p style="color:var(--text-muted); font-size:14px; margin-top:4px;">Access your personal AI mentor and employability score.</p>
+            <p style="color:var(--text-muted); font-size:14px; margin-top:4px;">Enter your registered account credentials below.</p>
         </div>
 
         <form action="{{ url_for('auth.login') }}" method="POST">
             <div class="form-group">
-                <label class="form-label">Email Address</label>
-                <input type="email" name="email" class="form-control" placeholder="name@university.edu" required>
+                <label class="form-label"><i class="bi bi-envelope-fill" style="color:var(--brand-primary);"></i> Email Address</label>
+                <input type="email" name="email" class="form-control" placeholder="name@university.edu" value="alex@careeros.ai" required>
             </div>
 
             <div class="form-group">
-                <label class="form-label">Password</label>
-                <input type="password" name="password" class="form-control" placeholder="••••••••" required>
+                <label class="form-label" style="display:flex; justify-content:space-between;">
+                    <span><i class="bi bi-lock-fill" style="color:var(--brand-accent);"></i> Password</span>
+                    <a href="javascript:void(0)" onclick="alert('Demo Mode: Default password is password123')" style="font-size:12px; color:var(--brand-primary); text-decoration:none;">Forgot password?</a>
+                </label>
+                <input type="password" id="login-pass" name="password" class="form-control" placeholder="••••••••" value="password123" required>
             </div>
 
-            <button type="submit" class="btn btn-gradient" style="width: 100%; padding: 12px; margin-top: 8px;">
-                Sign In <i class="bi bi-arrow-right"></i>
+            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:20px; font-size:13px; color:var(--text-muted);">
+                <label style="display:flex; align-items:center; gap:6px; cursor:pointer;">
+                    <input type="checkbox" checked style="accent-color:var(--brand-secondary);"> Remember this session
+                </label>
+            </div>
+
+            <button type="submit" class="btn btn-gradient" style="width: 100%; padding: 14px; font-size:15px;">
+                Sign In to Dashboard <i class="bi bi-arrow-right-short" style="font-size:20px;"></i>
             </button>
         </form>
 
-        <div style="text-align: center; margin-top: 24px; font-size: 14px; color: var(--text-muted);">
-            Don't have an account? <a href="{{ url_for('auth.register') }}" style="color: var(--brand-primary); text-decoration: none; font-weight: 600;">Create Account</a>
+        <div style="text-align: center; margin-top: 24px; font-size: 14px; color: var(--text-muted); border-top:1px solid var(--glass-border); padding-top:20px;">
+            Don't have an account? <a href="{{ url_for('auth.register') }}" style="color: var(--brand-secondary); text-decoration: none; font-weight: 700;">Create Account →</a>
         </div>
     </div>
 </div>

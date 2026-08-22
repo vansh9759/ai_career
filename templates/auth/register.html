@@ -3,26 +3,74 @@
 {% block title %}Create Account | CareerOS AI{% endblock %}
 
 {% block content %}
-<div style="max-width: 500px; margin: 30px auto;" class="glass-panel">
-    <div style="padding: 32px;">
+<div style="max-width: 1100px; margin: 20px auto; display:grid; grid-template-columns: 1fr 1fr; gap:32px; align-items:center;">
+    
+    <!-- Left Showcase Panel (NextGenGrowth Style) -->
+    <div class="glass-card" style="padding: 40px; background: linear-gradient(145deg, rgba(17,24,39,0.9), rgba(139,92,246,0.08)); border-color: rgba(139,92,246,0.2); position:relative; overflow:hidden;">
+        <div class="hero-mesh-glow" style="width:300px; height:300px; top:-50px; right:-50px;"></div>
+        
+        <div style="position:relative; z-index:2;">
+            <div class="badge badge-purple" style="margin-bottom:16px;">
+                <i class="bi bi-rocket-takeoff-fill"></i> Join 14,000+ Students & Recruiters
+            </div>
+            
+            <h2 style="font-size:32px; line-height:1.2; margin-bottom:16px;">
+                Build Your Verified Career <span class="gradient-text">Passport Today</span>
+            </h2>
+            
+            <p style="color:var(--text-muted); font-size:15px; line-height:1.6; margin-bottom:28px;">
+                Get instant access to AI resume optimization, proctored coding challenges, Web Speech mock interviews, and university recruiter matching.
+            </p>
+
+            <!-- Feature Bullet List -->
+            <div style="display:flex; flex-direction:column; gap:16px; margin-bottom:32px;">
+                <div style="display:flex; gap:12px; align-items:flex-start;">
+                    <div style="width:28px; height:28px; border-radius:50%; background:rgba(16,185,129,0.15); color:var(--brand-secondary); display:grid; place-items:center; flex-shrink:0;">✓</div>
+                    <div>
+                        <strong style="font-size:14px;">Live Employability Score</strong>
+                        <div style="font-size:12px; color:var(--text-muted);">Real-time 0-100 placement readiness score tracking.</div>
+                    </div>
+                </div>
+
+                <div style="display:flex; gap:12px; align-items:flex-start;">
+                    <div style="width:28px; height:28px; border-radius:50%; background:rgba(59,130,246,0.15); color:var(--brand-primary); display:grid; place-items:center; flex-shrink:0;">✓</div>
+                    <div>
+                        <strong style="font-size:14px;">Verified Skill Badges</strong>
+                        <div style="font-size:12px; color:var(--text-muted);">Earn authentic cryptographic certificates for Python, SQL, and ML.</div>
+                    </div>
+                </div>
+
+                <div style="display:flex; gap:12px; align-items:flex-start;">
+                    <div style="width:28px; height:28px; border-radius:50%; background:rgba(139,92,246,0.15); color:var(--brand-accent); display:grid; place-items:center; flex-shrink:0;">✓</div>
+                    <div>
+                        <strong style="font-size:14px;">24/7 Gemini Career Mentor</strong>
+                        <div style="font-size:12px; color:var(--text-muted);">Ask questions, practice interviews, and get roadmap advice anytime.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Right Account Creation Form Panel -->
+    <div class="glass-panel" style="padding: 36px;">
         <div style="text-align: center; margin-bottom: 24px;">
-            <h2>Get Started with <span class="gradient-text">CareerOS AI</span></h2>
-            <p style="color:var(--text-muted); font-size:14px; margin-top:4px;">Join the world's first AI Career Operating System ecosystem.</p>
+            <h2>Create Account on <span class="gradient-text">CareerOS AI</span></h2>
+            <p style="color:var(--text-muted); font-size:14px; margin-top:4px;">Fill out your details to activate your account.</p>
         </div>
 
         <form action="{{ url_for('auth.register') }}" method="POST">
             <div class="form-group">
-                <label class="form-label">Full Name</label>
-                <input type="text" name="name" class="form-control" placeholder="Alex Rivera" required>
+                <label class="form-label"><i class="bi bi-person-fill" style="color:var(--brand-primary);"></i> Full Name</label>
+                <input type="text" name="name" class="form-control" placeholder="e.g. Alex Rivera" required>
             </div>
 
             <div class="form-group">
-                <label class="form-label">Email Address</label>
-                <input type="email" name="email" class="form-control" placeholder="alex@stanford.edu" required>
+                <label class="form-label"><i class="bi bi-envelope-fill" style="color:var(--brand-secondary);"></i> Email Address</label>
+                <input type="email" name="email" class="form-control" placeholder="e.g. alex@stanford.edu" required>
             </div>
 
             <div class="form-group">
-                <label class="form-label">Password</label>
+                <label class="form-label"><i class="bi bi-lock-fill" style="color:var(--brand-accent);"></i> Create Password</label>
                 <input type="password" name="password" class="form-control" placeholder="••••••••" required>
             </div>
 
@@ -30,25 +78,25 @@
                 <div class="form-group">
                     <label class="form-label">Account Role</label>
                     <select name="role" class="form-control">
-                        <option value="student">Student / Fresh Graduate</option>
-                        <option value="recruiter">Recruiter / Employer</option>
+                        <option value="student">Student Candidate</option>
+                        <option value="recruiter">Enterprise Recruiter</option>
                         <option value="university">University Placement Admin</option>
                     </select>
                 </div>
 
                 <div class="form-group">
-                    <label class="form-label">Dream Company</label>
-                    <input type="text" name="dream_company" class="form-control" placeholder="Google, Microsoft, Amazon" value="Google">
+                    <label class="form-label">Target Dream Company</label>
+                    <input type="text" name="dream_company" class="form-control" placeholder="Google, Microsoft" value="Google">
                 </div>
             </div>
 
-            <button type="submit" class="btn btn-gradient" style="width: 100%; padding: 12px; margin-top: 8px;">
-                Create AI Career Account <i class="bi bi-rocket-takeoff-fill"></i>
+            <button type="submit" class="btn btn-gradient" style="width: 100%; padding: 14px; margin-top: 8px; font-size:15px;">
+                Activate Career Account <i class="bi bi-rocket-takeoff-fill"></i>
             </button>
         </form>
 
-        <div style="text-align: center; margin-top: 24px; font-size: 14px; color: var(--text-muted);">
-            Already registered? <a href="{{ url_for('auth.login') }}" style="color: var(--brand-primary); text-decoration: none; font-weight: 600;">Sign In</a>
+        <div style="text-align: center; margin-top: 20px; font-size: 14px; color: var(--text-muted); border-top:1px solid var(--glass-border); padding-top:16px;">
+            Already registered? <a href="{{ url_for('auth.login') }}" style="color: var(--brand-primary); text-decoration: none; font-weight: 700;">Sign In →</a>
         </div>
     </div>
 </div>
