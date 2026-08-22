@@ -55,6 +55,12 @@ def inject_global_vars():
     return dict(current_user=user)
 
 
+# Home Landing Page Route
+@app.route('/')
+def home():
+    return render_template('index.html')
+
+
 # Pricing & SaaS Subscription Gateway Routes
 @app.route('/pricing')
 def pricing():
