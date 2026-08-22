@@ -77,3 +77,23 @@ def create_job():
     
     flash(f"🎉 New Job Opportunity '{title}' at {company} published live!", "success")
     return redirect(url_for('admin.dashboard'))
+
+@admin_bp.route('/award-badge', methods=['POST'])
+def award_badge():
+    user_id = request.form.get('user_id', 1)
+    skill_name = request.form.get('skill_name', 'Python 3')
+    proficiency = request.form.get('proficiency', 'Verified Expert')
+    
+    badge_code = f"VERIFIED-{skill_name[:2].upper()}-99A{user_id}"
+    badge = VerifiedSkill(
+        user_id=int(user_id),
+        skill_name=skill_name,
+        proficiency=proficiency,
+        status="Verified",
+        badge_code=badge_code
+    )
+    db.session.add(badge)
+    db.session.commit()
+    flash(f"🎉 Awarded Verified Badge '{skill_name}' ({badge_code}) to Candidate ID #{user_id}!", "success")
+    return redirect(url_for('admin.dashboard'))
+

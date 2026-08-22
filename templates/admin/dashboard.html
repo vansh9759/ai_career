@@ -149,6 +149,37 @@
         </form>
 
         <div style="margin-top:24px; border-top:1px solid var(--glass-border); padding-top:16px;">
+            <h3>Award Verified Skill Badge</h3>
+            <p style="font-size:12px; color:var(--text-muted); margin-bottom:12px;">Issue cryptographic skill badges directly to candidates.</p>
+            
+            <form action="{{ url_for('admin.award_badge') }}" method="POST">
+                <div class="form-group">
+                    <label class="form-label">Candidate</label>
+                    <select name="user_id" class="form-control" style="font-size:12px;">
+                        {% for u in users %}
+                        <option value="{{ u.id }}">{{ u.name }} (ID #{{ u.id }})</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+                    <div class="form-group">
+                        <label class="form-label">Skill Name</label>
+                        <input type="text" name="skill_name" class="form-control" value="Python 3" required style="font-size:12px;">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Proficiency</label>
+                        <input type="text" name="proficiency" class="form-control" value="Verified Expert" required style="font-size:12px;">
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-secondary" style="width:100%; font-size:12px; padding:8px;">
+                    Issue Verified Badge <i class="bi bi-patch-check-fill" style="color:var(--brand-secondary);"></i>
+                </button>
+            </form>
+        </div>
+
+        <div style="margin-top:24px; border-top:1px solid var(--glass-border); padding-top:16px;">
             <strong style="font-size:13px; color:var(--text-main);"><i class="bi bi-hdd-network-fill" style="color:var(--brand-secondary);"></i> System Health Status</strong>
             <div style="margin-top:8px; display:flex; flex-direction:column; gap:8px; font-size:12px; color:var(--text-muted);">
                 <div style="display:flex; justify-content:space-between;">
