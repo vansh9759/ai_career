@@ -1,0 +1,44 @@
+{% extends 'admin/layout.html' %}
+
+{% block title %}System Audit Logs | AdminOS{% endblock %}
+
+{% block content %}
+<div style="margin-bottom: 24px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;">
+    <div>
+        <h2>Security Audit <span class="gradient-text">Logs</span></h2>
+        <p style="color:var(--text-muted);">Immutable audit trail recording administrator logins, user mutations, content updates, and settings changes.</p>
+    </div>
+    <span class="badge badge-verified">Total Log Events: {{ logs|length }}</span>
+</div>
+
+<div class="glass-card">
+    <table style="width:100%; border-collapse:collapse; text-align:left;">
+        <thead>
+            <tr style="border-bottom:1px solid var(--glass-border); font-size:11px; color:var(--text-subtle); text-transform:uppercase;">
+                <th style="padding:14px;">ID</th>
+                <th style="padding:14px;">Admin</th>
+                <th style="padding:14px;">Action</th>
+                <th style="padding:14px;">Target Entity</th>
+                <th style="padding:14px;">Details</th>
+                <th style="padding:14px;">IP Address</th>
+                <th style="padding:14px;">Timestamp</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for l in logs %}
+            <tr style="border-bottom:1px solid var(--glass-border); font-size:13.5px;">
+                <td style="padding:16px; font-weight:700;">#{{ l.id }}</td>
+                <td style="padding:16px; font-weight:700;">{{ l.admin_name }}</td>
+                <td style="padding:16px;"><span class="badge badge-purple">{{ l.action }}</span></td>
+                <td style="padding:16px; color:var(--text-muted);">{{ l.target_type }} #{{ l.target_id }}</td>
+                <td style="padding:16px; color:var(--text-muted);">{{ l.details }}</td>
+                <td style="padding:16px; font-family:'JetBrains Mono'; font-size:11px; color:var(--text-subtle);">{{ l.ip_address }}</td>
+                <td style="padding:16px; font-size:12px; color:var(--text-subtle);">{{ l.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+            </tr>
+            {% else %}
+            <tr><td colspan="7" style="padding:20px; text-align:center; color:var(--text-muted);">No audit events recorded yet.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

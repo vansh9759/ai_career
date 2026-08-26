@@ -1,0 +1,134 @@
+{% extends 'admin/layout.html' %}
+
+{% block title %}User Management | CareerOS AI Admin{% endblock %}
+
+{% block content %}
+<div style="margin-bottom: 24px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;">
+    <div>
+        <h2>User <span class="gradient-text">Management</span></h2>
+        <p style="color:var(--text-muted);">Manage candidate accounts, user permissions, role elevation, suspension, and password resets.</p>
+    </div>
+    
+    <button class="btn btn-primary" onclick="document.getElementById('newUserModal').style.display='flex'"><i class="bi bi-person-plus-fill"></i> Add New User</button>
+</div>
+
+<!-- Search & Filter Controls -->
+<div class="glass-panel" style="padding:16px 24px; margin-bottom:24px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;">
+    <form action="{{ url_for('admin.users_list') }}" method="GET" style="display:flex; gap:12px; flex:1; max-width:600px;">
+        <input type="text" name="search" class="form-control" placeholder="Search user by name or email..." value="{{ search }}" style="font-size:13px;">
+        <select name="role" class="form-control" style="width:160px; font-size:13px;">
+            <option value="">All Roles</option>
+            <option value="student" {% if selected_role == 'student' %}selected{% endif %}>Student</option>
+            <option value="recruiter" {% if selected_role == 'recruiter' %}selected{% endif %}>Recruiter</option>
+            <option value="university" {% if selected_role == 'university' %}selected{% endif %}>University</option>
+            <option value="admin" {% if selected_role == 'admin' %}selected{% endif %}>Admin</option>
+            <option value="super_admin" {% if selected_role == 'super_admin' %}selected{% endif %}>Super Admin</option>
+        </select>
+        <button type="submit" class="btn btn-secondary" style="font-size:13px;">Filter</button>
+    </form>
+    
+    <span class="badge badge-verified">Total Users: {{ users|length }}</span>
+</div>
+
+<!-- User Table -->
+<div class="glass-card">
+    <table style="width:100%; border-collapse:collapse; text-align:left;">
+        <thead>
+            <tr style="border-bottom:1px solid var(--glass-border); font-size:11px; color:var(--text-subtle); text-transform:uppercase;">
+                <th style="padding:14px;">User</th>
+                <th style="padding:14px;">Email</th>
+                <th style="padding:14px;">Role</th>
+                <th style="padding:14px;">Target Company</th>
+                <th style="padding:14px;">Registered Date</th>
+                <th style="padding:14px;">Role Management</th>
+                <th style="padding:14px; text-align:right;">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for u in users %}
+            <tr style="border-bottom:1px solid var(--glass-border); font-size:13.5px;">
+                <td style="padding:16px; font-weight:700; display:flex; align-items:center; gap:10px;">
+                    <div class="avatar" style="width:34px; height:34px; font-size:12px; background:linear-gradient(135deg, #3b82f6, #8b5cf6);">{{ u.name[0] }}</div>
+                    <a href="{{ url_for('admin.user_detail_page', user_id=u.id) }}" style="color:var(--text-main); text-decoration:none;">{{ u.name }}</a>
+                </td>
+                <td style="padding:16px; color:var(--text-muted);">{{ u.email }}</td>
+                <td style="padding:16px;">
+                    <span class="badge {% if u.role in ['admin', 'super_admin'] %}badge-verified{% elif u.role == 'recruiter' %}badge-purple{% else %}badge-orange{% endif %}">
+                        {{ u.role.upper() }}
+                    </span>
+                </td>
+                <td style="padding:16px; color:var(--text-muted);">{{ u.dream_company }}</td>
+                <td style="padding:16px; font-size:12px; color:var(--text-subtle);">{{ u.created_at.strftime('%Y-%m-%d') }}</td>
+                <td style="padding:16px;">
+                    <form action="{{ url_for('admin.change_role', target_user_id=u.id) }}" method="POST" style="display:flex; gap:6px;">
+                        <select name="role" class="form-control" style="padding:4px 8px; font-size:11px; width:110px;">
+                            <option value="student" {% if u.role == 'student' %}selected{% endif %}>Student</option>
+                            <option value="recruiter" {% if u.role == 'recruiter' %}selected{% endif %}>Recruiter</option>
+                            <option value="university" {% if u.role == 'university' %}selected{% endif %}>University</option>
+                            <option value="admin" {% if u.role == 'admin' %}selected{% endif %}>Admin</option>
+                        </select>
+                        <button type="submit" class="btn btn-secondary" style="padding:4px 8px; font-size:11px;">Save</button>
+                    </form>
+                </td>
+                <td style="padding:16px; text-align:right;">
+                    <div style="display:flex; justify-content:flex-end; gap:6px;">
+                        <a href="{{ url_for('admin.user_detail_page', user_id=u.id) }}" class="btn btn-secondary" style="padding:4px 8px; font-size:11px;" title="View Details"><i class="bi bi-eye-fill"></i></a>
+                        <form action="{{ url_for('admin.reset_password', target_user_id=u.id) }}" method="POST" onsubmit="return confirm('Reset password for {{ u.name }}?');" style="display:inline;">
+                            <button type="submit" class="btn btn-secondary" style="padding:4px 8px; font-size:11px;" title="Reset Password"><i class="bi bi-key-fill"></i></button>
+                        </form>
+                        <form action="{{ url_for('admin.delete_user', target_user_id=u.id) }}" method="POST" onsubmit="return confirm('Delete user {{ u.name }}?');" style="display:inline;">
+                            <button type="submit" class="btn btn-secondary" style="padding:4px 8px; font-size:11px; color:var(--state-danger);" title="Delete User"><i class="bi bi-trash-fill"></i></button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+            {% else %}
+            <tr><td colspan="7" style="padding:20px; text-align:center; color:var(--text-muted);">No users found matching query.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- Modal for New User -->
+<div id="newUserModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.7); backdrop-filter:blur(6px); z-index:1000; align-items:center; justify-content:center; padding:20px;">
+    <div class="glass-panel" style="width:100%; max-width:480px; padding:28px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+            <h3>Add New Platform User</h3>
+            <button onclick="document.getElementById('newUserModal').style.display='none'" class="btn-icon"><i class="bi bi-x-lg"></i></button>
+        </div>
+        <form action="/api/admin/users" method="POST" id="newUserForm">
+            <div class="form-group"><label class="form-label">Full Name</label><input type="text" id="new_name" class="form-control" required></div>
+            <div class="form-group"><label class="form-label">Email Address</label><input type="email" id="new_email" class="form-control" required></div>
+            <div class="form-group"><label class="form-label">Password</label><input type="password" id="new_pw" class="form-control" value="Password123" required></div>
+            <div class="form-group"><label class="form-label">Role</label>
+                <select id="new_role" class="form-control">
+                    <option value="student">Student Candidate</option>
+                    <option value="recruiter">Recruiter</option>
+                    <option value="university">University Placement Admin</option>
+                    <option value="admin">Administrator</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary" style="width:100%;">Create User Account</button>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.getElementById('newUserForm')?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const res = await fetch('/api/admin/users', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+            name: document.getElementById('new_name').value,
+            email: document.getElementById('new_email').value,
+            password: document.getElementById('new_pw').value,
+            role: document.getElementById('new_role').value
+        })
+    });
+    if (res.ok) { alert('User created successfully!'); window.location.reload(); }
+});
+</script>
+{% endblock %}

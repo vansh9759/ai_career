@@ -1,0 +1,44 @@
+{% extends 'admin/layout.html' %}
+
+{% block title %}Resume Analyzer Management | AdminOS{% endblock %}
+
+{% block content %}
+<div style="margin-bottom: 24px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;">
+    <div>
+        <h2>Resume Analyzer <span class="gradient-text">Management</span></h2>
+        <p style="color:var(--text-muted);">Monitor candidate ATS resume upload analyses, score distributions, and AI parsing reports.</p>
+    </div>
+    <a href="/api/admin/reports/csv?type=resumes" class="btn btn-secondary" style="font-size:13px;"><i class="bi bi-download"></i> Export Resumes CSV</a>
+</div>
+
+<div class="glass-card">
+    <table style="width:100%; border-collapse:collapse; text-align:left;">
+        <thead>
+            <tr style="border-bottom:1px solid var(--glass-border); font-size:11px; color:var(--text-subtle); text-transform:uppercase;">
+                <th style="padding:14px;">ID</th>
+                <th style="padding:14px;">Candidate</th>
+                <th style="padding:14px;">Document Filename</th>
+                <th style="padding:14px;">ATS Score</th>
+                <th style="padding:14px;">Upload Date</th>
+                <th style="padding:14px; text-align:right;">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for r in resumes %}
+            <tr style="border-bottom:1px solid var(--glass-border); font-size:13.5px;">
+                <td style="padding:16px; font-weight:700;">#{{ r.id }}</td>
+                <td style="padding:16px; font-weight:700;">Candidate #{{ r.user_id }}</td>
+                <td style="padding:16px; color:var(--text-muted);"><i class="bi bi-file-earmark-pdf-fill" style="color:var(--state-danger);"></i> {{ r.filename }}</td>
+                <td style="padding:16px;"><span class="badge {% if r.ats_score >= 80 %}badge-verified{% elif r.ats_score >= 65 %}badge-purple{% else %}badge-orange{% endif %}">{{ r.ats_score }}/100 Score</span></td>
+                <td style="padding:16px; font-size:12px; color:var(--text-subtle);">{{ r.upload_date.strftime('%Y-%m-%d %H:%M') }}</td>
+                <td style="padding:16px; text-align:right;">
+                    <button class="btn btn-secondary" style="padding:4px 10px; font-size:11px;" onclick="alert('ATS Score: {{ r.ats_score }}/100\nFilename: {{ r.filename }}\nParsed Status: AI Processed Cleanly')"><i class="bi bi-eye-fill"></i> View Report</button>
+                </td>
+            </tr>
+            {% else %}
+            <tr><td colspan="6" style="padding:20px; text-align:center; color:var(--text-muted);">No resume analyses recorded yet.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

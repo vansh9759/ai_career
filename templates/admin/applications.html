@@ -1,0 +1,46 @@
+{% extends 'admin/layout.html' %}
+
+{% block title %}Application Management | AdminOS{% endblock %}
+
+{% block content %}
+<div style="margin-bottom: 24px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;">
+    <div>
+        <h2>Job Application <span class="gradient-text">Monitoring</span></h2>
+        <p style="color:var(--text-muted);">Monitor candidate applications, interview scheduling, ATS match scores, and status pipelines.</p>
+    </div>
+    <span class="badge badge-verified">Total Applications: {{ applications|length }}</span>
+</div>
+
+<div class="glass-card">
+    <table style="width:100%; border-collapse:collapse; text-align:left;">
+        <thead>
+            <tr style="border-bottom:1px solid var(--glass-border); font-size:11px; color:var(--text-subtle); text-transform:uppercase;">
+                <th style="padding:14px;">App ID</th>
+                <th style="padding:14px;">Candidate</th>
+                <th style="padding:14px;">Job Target</th>
+                <th style="padding:14px;">ATS Match Score</th>
+                <th style="padding:14px;">Status</th>
+                <th style="padding:14px;">Applied Date</th>
+                <th style="padding:14px; text-align:right;">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for a in applications %}
+            <tr style="border-bottom:1px solid var(--glass-border); font-size:13.5px;">
+                <td style="padding:16px; font-weight:700;">#{{ a.id }}</td>
+                <td style="padding:16px; font-weight:700;">Candidate #{{ a.user_id }}</td>
+                <td style="padding:16px;">Job Posting #{{ a.job_id }}</td>
+                <td style="padding:16px;"><span class="badge badge-verified">{{ a.ats_match_score }}/100 Match</span></td>
+                <td style="padding:16px;"><span class="badge badge-purple">{{ a.status }}</span></td>
+                <td style="padding:16px; font-size:12px; color:var(--text-subtle);">{{ a.applied_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                <td style="padding:16px; text-align:right;">
+                    <button class="btn btn-secondary" style="padding:4px 10px; font-size:11px;" onclick="alert('Interview Scheduled for Application #{{ a.id }}')"><i class="bi bi-calendar-event"></i> Schedule</button>
+                </td>
+            </tr>
+            {% else %}
+            <tr><td colspan="7" style="padding:20px; text-align:center; color:var(--text-muted);">No job applications submitted yet.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

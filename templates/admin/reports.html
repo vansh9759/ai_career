@@ -1,0 +1,26 @@
+{% extends 'admin/layout.html' %}
+
+{% block title %}Platform Reports & Exports | AdminOS{% endblock %}
+
+{% block content %}
+<div style="margin-bottom: 24px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;">
+    <div>
+        <h2>System Reports & <span class="gradient-text">Exports</span></h2>
+        <p style="color:var(--text-muted);">Generate comprehensive platform analytics, candidate audit reports, and CSV data exports.</p>
+    </div>
+</div>
+
+<div class="dashboard-grid">
+    <div class="col-span-6 glass-card">
+        <h3><i class="bi bi-file-earmark-spreadsheet-fill" style="color:var(--brand-primary);"></i> Candidate Data Export</h3>
+        <p style="color:var(--text-muted); font-size:13px; margin:10px 0 20px 0;">Export full platform user list including names, emails, roles, target companies, and registration dates.</p>
+        <a href="/api/admin/reports/csv?type=users" class="btn btn-primary" style="width:100%;"><i class="bi bi-download"></i> Download Candidates CSV</a>
+    </div>
+
+    <div class="col-span-6 glass-card">
+        <h3><i class="bi bi-file-earmark-pdf-fill" style="color:var(--brand-secondary);"></i> Resume Analysis Export</h3>
+        <p style="color:var(--text-muted); font-size:13px; margin:10px 0 20px 0;">Export all ATS resume analysis scores, document names, and candidate match scores.</p>
+        <a href="/api/admin/reports/csv?type=resumes" class="btn btn-secondary" style="width:100%;"><i class="bi bi-download"></i> Download Resume Reports CSV</a>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,65 @@
+{% extends 'admin/layout.html' %}
+
+{% block title %}Content Management System (CMS) | AdminOS{% endblock %}
+
+{% block content %}
+<div style="margin-bottom: 24px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;">
+    <div>
+        <h2>Content Management <span class="gradient-text">(CMS)</span></h2>
+        <p style="color:var(--text-muted);">Manage career guides, blog posts, FAQs, interview question banks, and learning roadmaps.</p>
+    </div>
+    <button class="btn btn-primary" onclick="document.getElementById('newContentModal').style.display='flex'"><i class="bi bi-plus-circle-fill"></i> Publish New Content</button>
+</div>
+
+<div class="glass-card">
+    <table style="width:100%; border-collapse:collapse; text-align:left;">
+        <thead>
+            <tr style="border-bottom:1px solid var(--glass-border); font-size:11px; color:var(--text-subtle); text-transform:uppercase;">
+                <th style="padding:14px;">Title</th>
+                <th style="padding:14px;">Type</th>
+                <th style="padding:14px;">Slug</th>
+                <th style="padding:14px;">Author</th>
+                <th style="padding:14px;">Status</th>
+                <th style="padding:14px;">Last Updated</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for c in contents %}
+            <tr style="border-bottom:1px solid var(--glass-border); font-size:13.5px;">
+                <td style="padding:16px; font-weight:700;"><i class="bi bi-journal-richtext" style="color:var(--brand-primary);"></i> {{ c.title }}</td>
+                <td style="padding:16px;"><span class="badge badge-purple">{{ c.content_type.upper() }}</span></td>
+                <td style="padding:16px; font-family:'JetBrains Mono'; font-size:11px; color:var(--text-muted);">/{{ c.slug }}</td>
+                <td style="padding:16px; color:var(--text-muted);">{{ c.author }}</td>
+                <td style="padding:16px;"><span class="badge {% if c.is_published %}badge-verified{% else %}badge-orange{% endif %}">{% if c.is_published %}Published{% else %}Draft{% endif %}</span></td>
+                <td style="padding:16px; font-size:12px; color:var(--text-subtle);">{{ c.updated_at.strftime('%Y-%m-%d') }}</td>
+            </tr>
+            {% else %}
+            <tr><td colspan="6" style="padding:20px; text-align:center; color:var(--text-muted);">No CMS articles published yet.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- Modal New Content -->
+<div id="newContentModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.7); backdrop-filter:blur(6px); z-index:1000; align-items:center; justify-content:center; padding:20px;">
+    <div class="glass-panel" style="width:100%; max-width:540px; padding:28px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+            <h3>Publish CMS Content</h3>
+            <button onclick="document.getElementById('newContentModal').style.display='none'" class="btn-icon"><i class="bi bi-x-lg"></i></button>
+        </div>
+        <form action="{{ url_for('admin.content_cms') }}" method="POST">
+            <div class="form-group"><label class="form-label">Article Title</label><input type="text" name="title" class="form-control" placeholder="e.g. Master PyTorch for AI Engineering" required></div>
+            <div class="form-group"><label class="form-label">Content Type</label>
+                <select name="content_type" class="form-control">
+                    <option value="guide">Career Guide</option>
+                    <option value="blog">Blog Post</option>
+                    <option value="faq">FAQ</option>
+                    <option value="roadmap">Learning Roadmap</option>
+                </select>
+            </div>
+            <div class="form-group"><label class="form-label">Content Body (Markdown/HTML Supported)</label><textarea name="content_body" class="form-control" rows="5" required></textarea></div>
+            <button type="submit" class="btn btn-primary" style="width:100%;">Publish Content Live</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,74 @@
+{% extends 'admin/layout.html' %}
+
+{% block title %}System Notifications | AdminOS{% endblock %}
+
+{% block content %}
+<div style="margin-bottom: 24px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;">
+    <div>
+        <h2>Broadcast Notification <span class="gradient-text">Engine</span></h2>
+        <p style="color:var(--text-muted);">Send platform announcements, maintenance notices, and job alerts to user segments.</p>
+    </div>
+</div>
+
+<div class="dashboard-grid">
+    <div class="col-span-5 glass-card">
+        <h3>Compose Broadcast Message</h3>
+        <form action="{{ url_for('admin.notifications') }}" method="POST" style="margin-top:16px;">
+            <div class="form-group">
+                <label class="form-label">Notification Title</label>
+                <input type="text" name="title" class="form-control" placeholder="e.g. 🎉 New AI Interview Speech Coach Live!" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Target Audience Segment</label>
+                <select name="target_audience" class="form-control">
+                    <option value="all">All Platform Candidates & Recruiters</option>
+                    <option value="premium">Pro Candidate Subscribers</option>
+                    <option value="free">Free Tier Users Only</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Notification Type</label>
+                <select name="type" class="form-control">
+                    <option value="announcement">Announcement</option>
+                    <option value="info">Informational</option>
+                    <option value="success">Success / Milestone</option>
+                    <option value="warning">Warning / Maintenance</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Message Body</label>
+                <textarea name="message" class="form-control" rows="4" required placeholder="Write clear, engaging notification content..."></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary" style="width:100%;">Dispatch Broadcast <i class="bi bi-send-fill"></i></button>
+        </form>
+    </div>
+
+    <div class="col-span-7 glass-card">
+        <h3>Broadcast History Logs</h3>
+        <table style="width:100%; margin-top:14px; border-collapse:collapse; text-align:left;">
+            <thead>
+                <tr style="border-bottom:1px solid var(--glass-border); font-size:11px; color:var(--text-subtle); text-transform:uppercase;">
+                    <th style="padding:10px;">Title</th>
+                    <th style="padding:10px;">Audience</th>
+                    <th style="padding:10px;">Type</th>
+                    <th style="padding:10px;">Status</th>
+                    <th style="padding:10px;">Sent At</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for n in notifications %}
+                <tr style="border-bottom:1px solid var(--glass-border); font-size:13px;">
+                    <td style="padding:12px; font-weight:700;">{{ n.title }}</td>
+                    <td style="padding:12px;"><span class="badge badge-purple">{{ n.target_audience.upper() }}</span></td>
+                    <td style="padding:12px;"><span class="badge badge-orange">{{ n.type }}</span></td>
+                    <td style="padding:12px;"><span class="badge badge-verified">{{ n.status }}</span></td>
+                    <td style="padding:12px; font-size:12px; color:var(--text-subtle);">{{ n.sent_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                </tr>
+                {% else %}
+                <tr><td colspan="5" style="padding:16px; text-align:center; color:var(--text-muted);">No notifications dispatched yet.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

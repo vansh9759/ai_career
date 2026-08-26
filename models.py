@@ -253,3 +253,124 @@ class GamificationProfile(db.Model):
     streak_days = db.Column(db.Integer, default=7)
     level = db.Column(db.Integer, default=4)
     badges_json = db.Column(db.Text, default='["7-Day Streak", "Code Ninja", "Verified Python Pro"]')
+
+
+# ---------------- ADMIN PORTAL & SECURITY MODELS ---------------- #
+class AuditLog(db.Model):
+    __tablename__ = "audit_logs"
+
+    id = db.Column(db.Integer, primary_key=True)
+    admin_id = db.Column(db.Integer, nullable=True)
+    admin_name = db.Column(db.String(100), default="System Admin")
+    action = db.Column(db.String(100), nullable=False)
+    target_type = db.Column(db.String(50), default="General")
+    target_id = db.Column(db.String(100), default="")
+    ip_address = db.Column(db.String(45), default="127.0.0.1")
+    details = db.Column(db.Text, default="")
+    result = db.Column(db.String(30), default="Success")
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+
+
+class SystemNotification(db.Model):
+    __tablename__ = "system_notifications"
+
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(200), nullable=False)
+    message = db.Column(db.Text, nullable=False)
+    type = db.Column(db.String(30), default="info") # info, success, warning, announcement
+    target_audience = db.Column(db.String(30), default="all") # all, selected, premium, free
+    scheduled_at = db.Column(db.DateTime, default=datetime.utcnow)
+    sent_at = db.Column(db.DateTime, default=datetime.utcnow)
+    status = db.Column(db.String(30), default="Sent") # Draft, Scheduled, Sent
+
+
+class CareerPath(db.Model):
+    __tablename__ = "career_paths"
+
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(150), nullable=False)
+    description = db.Column(db.Text)
+    required_skills = db.Column(db.String(300), default="Python, SQL, Algorithms")
+    recommended_skills = db.Column(db.String(300), default="System Design, Docker")
+    salary_range = db.Column(db.String(100), default="$100,000 - $160,000")
+    difficulty = db.Column(db.String(50), default="Intermediate")
+    experience_level = db.Column(db.String(50), default="0-3 Years")
+    related_jobs = db.Column(db.String(250), default="Backend Engineer, AI Engineer")
+    learning_resources = db.Column(db.Text, default="Python Masterclass, SQL Deep Dive")
+    status = db.Column(db.String(30), default="Active")
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+
+class SkillMaster(db.Model):
+    __tablename__ = "skill_masters"
+
+    id = db.Column(db.Integer, primary_key=True)
+    skill_name = db.Column(db.String(100), unique=True, nullable=False)
+    category = db.Column(db.String(100), default="Programming Languages")
+    popularity_score = db.Column(db.Integer, default=95)
+    description = db.Column(db.Text)
+    related_careers = db.Column(db.String(250), default="Full Stack Engineer, Data Scientist")
+    status = db.Column(db.String(30), default="Active")
+
+
+class SubscriptionRecord(db.Model):
+    __tablename__ = "subscription_records"
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
+    plan_name = db.Column(db.String(50), default="Pro Candidate") # Free, Pro Candidate, Enterprise
+    status = db.Column(db.String(30), default="Active") # Active, Cancelled, Expired
+    mrr_amount = db.Column(db.Float, default=19.0)
+    start_date = db.Column(db.DateTime, default=datetime.utcnow)
+    end_date = db.Column(db.DateTime)
+
+
+class PaymentTransaction(db.Model):
+    __tablename__ = "payment_transactions"
+
+    id = db.Column(db.Integer, primary_key=True)
+    transaction_id = db.Column(db.String(100), unique=True, nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
+    amount = db.Column(db.Float, default=19.0)
+    plan_name = db.Column(db.String(50), default="Pro Candidate")
+    payment_method = db.Column(db.String(50), default="Stripe Credit Card")
+    status = db.Column(db.String(30), default="Successful") # Successful, Pending, Failed, Refunded
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+
+class CMSContent(db.Model):
+    __tablename__ = "cms_content"
+
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(200), nullable=False)
+    slug = db.Column(db.String(200), unique=True, nullable=False)
+    content_type = db.Column(db.String(50), default="guide") # guide, blog, faq, question, roadmap
+    content_body = db.Column(db.Text, nullable=False)
+    category = db.Column(db.String(100), default="General")
+    tags = db.Column(db.String(200), default="Career, AI")
+    is_published = db.Column(db.Boolean, default=True)
+    author = db.Column(db.String(100), default="CareerOS Team")
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+
+class AdminSetting(db.Model):
+    __tablename__ = "admin_settings"
+
+    id = db.Column(db.Integer, primary_key=True)
+    setting_key = db.Column(db.String(100), unique=True, nullable=False)
+    setting_value = db.Column(db.Text)
+    category = db.Column(db.String(50), default="general") # general, security, ai, email, maintenance
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+
+class AIUsageLog(db.Model):
+    __tablename__ = "ai_usage_logs"
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, nullable=True)
+    feature_name = db.Column(db.String(100), default="Resume Analyzer")
+    tokens_used = db.Column(db.Integer, default=450)
+    response_time_ms = db.Column(db.Integer, default=320)
+    status_code = db.Column(db.Integer, default=200)
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow)

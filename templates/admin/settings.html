@@ -1,0 +1,48 @@
+{% extends 'admin/layout.html' %}
+
+{% block title %}System Settings | AdminOS{% endblock %}
+
+{% block content %}
+<div style="margin-bottom: 24px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;">
+    <div>
+        <h2>System Settings & <span class="gradient-text">Configuration</span></h2>
+        <p style="color:var(--text-muted);">Manage platform branding, security policies, AI provider quotas, email gateways, and maintenance mode.</p>
+    </div>
+</div>
+
+<form action="{{ url_for('admin.settings_page') }}" method="POST">
+    <div class="dashboard-grid">
+        <div class="col-span-6 glass-card">
+            <h3>General & Branding Settings</h3>
+            <div style="margin-top:16px;">
+                <div class="form-group">
+                    <label class="form-label">Platform Website Title</label>
+                    <input type="text" name="site_name" class="form-control" value="{{ settings.get('site_name', 'CareerOS AI') }}">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Contact Support Email</label>
+                    <input type="email" name="contact_email" class="form-control" value="support@careeros.ai">
+                </div>
+            </div>
+        </div>
+
+        <div class="col-span-6 glass-card">
+            <h3>Security & Maintenance Mode</h3>
+            <div style="margin-top:16px;">
+                <div class="form-group">
+                    <label class="form-label">Session Inactivity Timeout</label>
+                    <select class="form-control"><option value="30">30 Minutes</option><option value="60" selected>60 Minutes</option><option value="120">2 Hours</option></select>
+                </div>
+                <div class="form-group" style="display:flex; align-items:center; gap:10px; margin-top:20px;">
+                    <input type="checkbox" name="maintenance_mode" id="maint" {% if settings.get('maintenance_mode') == 'true' %}checked{% endif %} style="accent-color:var(--state-danger); width:18px; height:18px;">
+                    <label for="maint" style="font-weight:700; color:var(--state-danger); cursor:pointer;">Enable Platform Maintenance Mode</label>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-span-12 glass-card">
+            <button type="submit" class="btn btn-primary" style="padding:12px 28px;"><i class="bi bi-save-fill"></i> Save Platform Settings</button>
+        </div>
+    </div>
+</form>
+{% endblock %}

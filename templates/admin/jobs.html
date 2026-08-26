@@ -1,0 +1,66 @@
+{% extends 'admin/layout.html' %}
+
+{% block title %}Job Postings Management | AdminOS{% endblock %}
+
+{% block content %}
+<div style="margin-bottom: 24px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;">
+    <div>
+        <h2>Job Postings <span class="gradient-text">Management</span></h2>
+        <p style="color:var(--text-muted);">Manage active job opportunities, recruiter listings, salary ranges, and candidate requirements.</p>
+    </div>
+    <button class="btn btn-primary" onclick="document.getElementById('newJobModal').style.display='flex'"><i class="bi bi-briefcase-fill"></i> Publish New Job</button>
+</div>
+
+<div class="glass-card">
+    <table style="width:100%; border-collapse:collapse; text-align:left;">
+        <thead>
+            <tr style="border-bottom:1px solid var(--glass-border); font-size:11px; color:var(--text-subtle); text-transform:uppercase;">
+                <th style="padding:14px;">ID</th>
+                <th style="padding:14px;">Company</th>
+                <th style="padding:14px;">Job Title</th>
+                <th style="padding:14px;">Location / Type</th>
+                <th style="padding:14px;">Salary Range</th>
+                <th style="padding:14px;">Required Skills</th>
+                <th style="padding:14px; text-align:right;">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for j in jobs %}
+            <tr style="border-bottom:1px solid var(--glass-border); font-size:13.5px;">
+                <td style="padding:16px; font-weight:700;">#{{ j.id }}</td>
+                <td style="padding:16px; font-weight:700;"><span class="badge badge-purple">{{ j.company_name }}</span></td>
+                <td style="padding:16px;">{{ j.title }}</td>
+                <td style="padding:16px; color:var(--text-muted);"><i class="bi bi-geo-alt-fill"></i> {{ j.location }} ({{ j.job_type }})</td>
+                <td style="padding:16px; font-weight:700; color:var(--brand-secondary);">{{ j.salary_range }}</td>
+                <td style="padding:16px; font-size:12px; color:var(--text-muted);">{{ j.required_skills }}</td>
+                <td style="padding:16px; text-align:right;">
+                    <button class="btn btn-secondary" style="padding:4px 8px; font-size:11px;" onclick="alert('Viewing Job #{{ j.id }}: {{ j.title }} at {{ j.company_name }}')"><i class="bi bi-eye-fill"></i></button>
+                </td>
+            </tr>
+            {% else %}
+            <tr><td colspan="7" style="padding:20px; text-align:center; color:var(--text-muted);">No active job postings.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- Modal for New Job -->
+<div id="newJobModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.7); backdrop-filter:blur(6px); z-index:1000; align-items:center; justify-content:center; padding:20px;">
+    <div class="glass-panel" style="width:100%; max-width:500px; padding:28px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+            <h3>Publish New Job Opportunity</h3>
+            <button onclick="document.getElementById('newJobModal').style.display='none'" class="btn-icon"><i class="bi bi-x-lg"></i></button>
+        </div>
+        <form action="{{ url_for('admin.create_job') }}" method="POST">
+            <div class="form-group"><label class="form-label">Hiring Company</label><input type="text" name="company" class="form-control" placeholder="e.g. Google" required></div>
+            <div class="form-group"><label class="form-label">Job Title</label><input type="text" name="title" class="form-control" placeholder="e.g. Senior Software Engineer" required></div>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+                <div class="form-group"><label class="form-label">Location</label><input type="text" name="location" class="form-control" value="Remote"></div>
+                <div class="form-group"><label class="form-label">Salary Range</label><input type="text" name="salary_range" class="form-control" value="$120k - $160k"></div>
+            </div>
+            <div class="form-group"><label class="form-label">Required Skills</label><input type="text" name="requirements" class="form-control" value="Python, SQL, React"></div>
+            <button type="submit" class="btn btn-primary" style="width:100%;">Publish Job Listing</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

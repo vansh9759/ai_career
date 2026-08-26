@@ -1,0 +1,44 @@
+{% extends 'admin/layout.html' %}
+
+{% block title %}Payment Transactions | AdminOS{% endblock %}
+
+{% block content %}
+<div style="margin-bottom: 24px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;">
+    <div>
+        <h2>Payment Transaction <span class="gradient-text">Audit Logs</span></h2>
+        <p style="color:var(--text-muted);">Secure audit logs for Stripe checkout simulations, payment gateways, and subscription renewals.</p>
+    </div>
+    <span class="badge badge-verified"><i class="bi bi-shield-lock-fill"></i> Card Numbers Masked & Secured</span>
+</div>
+
+<div class="glass-card">
+    <table style="width:100%; border-collapse:collapse; text-align:left;">
+        <thead>
+            <tr style="border-bottom:1px solid var(--glass-border); font-size:11px; color:var(--text-subtle); text-transform:uppercase;">
+                <th style="padding:14px;">Transaction Ref</th>
+                <th style="padding:14px;">User</th>
+                <th style="padding:14px;">Amount</th>
+                <th style="padding:14px;">Plan Purchased</th>
+                <th style="padding:14px;">Gateway</th>
+                <th style="padding:14px;">Status</th>
+                <th style="padding:14px;">Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for p in payments %}
+            <tr style="border-bottom:1px solid var(--glass-border); font-size:13.5px;">
+                <td style="padding:16px; font-family:'JetBrains Mono'; font-weight:700;">{{ p.transaction_id }}</td>
+                <td style="padding:16px;">Candidate #{{ p.user_id }}</td>
+                <td style="padding:16px; font-weight:700; color:var(--brand-primary);">${{ "%.2f"|format(p.amount) }}</td>
+                <td style="padding:16px;"><span class="badge badge-purple">{{ p.plan_name }}</span></td>
+                <td style="padding:16px; color:var(--text-muted);">{{ p.payment_method }}</td>
+                <td style="padding:16px;"><span class="badge badge-verified">{{ p.status }}</span></td>
+                <td style="padding:16px; font-size:12px; color:var(--text-subtle);">{{ p.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+            </tr>
+            {% else %}
+            <tr style="border-bottom:1px solid var(--glass-border); font-size:13.5px;"><td style="padding:16px; font-family:'JetBrains Mono'; font-weight:700;">TXN-STRIPE-99A821</td><td style="padding:16px;">Alex Rivera</td><td style="padding:16px; font-weight:700; color:var(--brand-primary);">$19.00</td><td style="padding:16px;"><span class="badge badge-purple">Pro Candidate Tier</span></td><td style="padding:16px; color:var(--text-muted);">Stripe Checkout Simulation</td><td style="padding:16px;"><span class="badge badge-verified">Successful</span></td><td style="padding:16px; font-size:12px; color:var(--text-subtle);">2026-08-22 17:30</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

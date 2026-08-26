@@ -1,0 +1,90 @@
+{% extends 'admin/layout.html' %}
+
+{% block title %}Master Skill Inventory | AdminOS{% endblock %}
+
+{% block content %}
+<div style="margin-bottom: 24px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;">
+    <div>
+        <h2>Master Skill <span class="gradient-text">Inventory</span></h2>
+        <p style="color:var(--text-muted);">Manage skill taxonomies, verification badges, popularity weights, and assessment benchmarks.</p>
+    </div>
+    <div style="display:flex; gap:10px;">
+        <button class="btn btn-primary" onclick="document.getElementById('newSkillModal').style.display='flex'"><i class="bi bi-plus-circle-fill"></i> Add Master Skill</button>
+        <button class="btn btn-secondary" onclick="document.getElementById('awardBadgeModal').style.display='flex'"><i class="bi bi-patch-check-fill"></i> Award Badge</button>
+    </div>
+</div>
+
+<div class="dashboard-grid">
+    <div class="col-span-8 glass-card">
+        <h3>Master Skill Taxonomy ({{ skills|length }})</h3>
+        <table style="width:100%; margin-top:14px; border-collapse:collapse; text-align:left;">
+            <thead>
+                <tr style="border-bottom:1px solid var(--glass-border); font-size:11px; color:var(--text-subtle); text-transform:uppercase;">
+                    <th style="padding:10px;">Skill Name</th>
+                    <th style="padding:10px;">Category</th>
+                    <th style="padding:10px;">Popularity Score</th>
+                    <th style="padding:10px;">Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for s in skills %}
+                <tr style="border-bottom:1px solid var(--glass-border); font-size:13px;">
+                    <td style="padding:12px; font-weight:700;"><i class="bi bi-patch-check-fill" style="color:var(--brand-primary);"></i> {{ s.skill_name }}</td>
+                    <td style="padding:12px;"><span class="badge badge-purple">{{ s.category }}</span></td>
+                    <td style="padding:12px; font-weight:700; color:var(--brand-secondary);">{{ s.popularity_score }}/100</td>
+                    <td style="padding:12px;"><span class="badge badge-verified">{{ s.status }}</span></td>
+                </tr>
+                {% else %}
+                <tr><td colspan="4" style="padding:16px; text-align:center; color:var(--text-muted);">No skills in master inventory.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="col-span-4 glass-card">
+        <h3>Issued Candidate Badges ({{ verified_badges|length }})</h3>
+        <div style="margin-top:14px; display:flex; flex-direction:column; gap:10px; max-height:400px; overflow-y:auto;">
+            {% for b in verified_badges %}
+            <div style="background:var(--bg-surface-elevated); padding:12px; border-radius:8px; font-size:12px;">
+                <strong style="color:var(--brand-primary);">{{ b.skill_name }}</strong> (User #{{ b.user_id }})
+                <div style="color:var(--text-muted); font-size:11px;">{{ b.proficiency }} • {{ b.badge_code }}</div>
+            </div>
+            {% else %}
+            <div style="color:var(--text-muted);">No candidate badges issued yet.</div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<!-- Modal New Skill -->
+<div id="newSkillModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.7); backdrop-filter:blur(6px); z-index:1000; align-items:center; justify-content:center; padding:20px;">
+    <div class="glass-panel" style="width:100%; max-width:440px; padding:28px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+            <h3>Add Master Skill</h3>
+            <button onclick="document.getElementById('newSkillModal').style.display='none'" class="btn-icon"><i class="bi bi-x-lg"></i></button>
+        </div>
+        <form action="{{ url_for('admin.create_skill') }}" method="POST">
+            <div class="form-group"><label class="form-label">Skill Name</label><input type="text" name="skill_name" class="form-control" placeholder="e.g. PyTorch" required></div>
+            <div class="form-group"><label class="form-label">Category</label><input type="text" name="category" class="form-control" value="Artificial Intelligence"></div>
+            <div class="form-group"><label class="form-label">Popularity Score (1-100)</label><input type="number" name="popularity_score" class="form-control" value="95"></div>
+            <button type="submit" class="btn btn-primary" style="width:100%;">Add Skill to Inventory</button>
+        </form>
+    </div>
+</div>
+
+<!-- Modal Award Badge -->
+<div id="awardBadgeModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.7); backdrop-filter:blur(6px); z-index:1000; align-items:center; justify-content:center; padding:20px;">
+    <div class="glass-panel" style="width:100%; max-width:440px; padding:28px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+            <h3>Award Verified Badge</h3>
+            <button onclick="document.getElementById('awardBadgeModal').style.display='none'" class="btn-icon"><i class="bi bi-x-lg"></i></button>
+        </div>
+        <form action="{{ url_for('admin.award_badge') }}" method="POST">
+            <div class="form-group"><label class="form-label">User ID</label><input type="number" name="user_id" class="form-control" value="1" required></div>
+            <div class="form-group"><label class="form-label">Skill Name</label><input type="text" name="skill_name" class="form-control" value="Python 3" required></div>
+            <div class="form-group"><label class="form-label">Proficiency</label><input type="text" name="proficiency" class="form-control" value="Verified Expert"></div>
+            <button type="submit" class="btn btn-primary" style="width:100%;">Grant Verified Badge</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,58 @@
+{% extends 'admin/layout.html' %}
+
+{% block title %}Career Paths Management | AdminOS{% endblock %}
+
+{% block content %}
+<div style="margin-bottom: 24px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;">
+    <div>
+        <h2>Career Recommendation <span class="gradient-text">Management</span></h2>
+        <p style="color:var(--text-muted);">Manage recommended career paths, skill requirements, difficulty tiers, and salary benchmarks.</p>
+    </div>
+    <button class="btn btn-primary" onclick="document.getElementById('newCareerModal').style.display='flex'"><i class="bi bi-plus-circle-fill"></i> Add New Career Path</button>
+</div>
+
+<div class="dashboard-grid">
+    {% for c in careers %}
+    <div class="col-span-4 glass-card" style="display:flex; flex-direction:column; justify-content:space-between;">
+        <div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+                <span class="badge badge-purple">{{ c.difficulty }}</span>
+                <span class="badge badge-verified">{{ c.status }}</span>
+            </div>
+            <h3 style="font-size:18px; margin-bottom:8px;">{{ c.title }}</h3>
+            <p style="font-size:13px; color:var(--text-muted); margin-bottom:14px;">{{ c.description }}</p>
+            <div style="font-size:12px; color:var(--text-subtle); margin-bottom:8px;"><strong>Required Skills:</strong> {{ c.required_skills }}</div>
+        </div>
+
+        <div style="border-top:1px solid var(--glass-border); padding-top:12px; margin-top:14px; display:flex; justify-content:space-between; align-items:center;">
+            <strong style="color:var(--brand-secondary); font-size:14px;">{{ c.salary_range }}</strong>
+            <span style="font-size:11px; color:var(--text-subtle);">Active Path</span>
+        </div>
+    </div>
+    {% else %}
+    <div class="col-span-12 glass-card" style="text-align:center; padding:30px; color:var(--text-muted);">No career paths configured. Add a new career path to get started!</div>
+    {% endfor %}
+</div>
+
+<!-- Modal for New Career -->
+<div id="newCareerModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.7); backdrop-filter:blur(6px); z-index:1000; align-items:center; justify-content:center; padding:20px;">
+    <div class="glass-panel" style="width:100%; max-width:500px; padding:28px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+            <h3>Create Career Path</h3>
+            <button onclick="document.getElementById('newCareerModal').style.display='none'" class="btn-icon"><i class="bi bi-x-lg"></i></button>
+        </div>
+        <form action="{{ url_for('admin.create_career') }}" method="POST">
+            <div class="form-group"><label class="form-label">Career Title</label><input type="text" name="title" class="form-control" placeholder="e.g. AI Systems Architect" required></div>
+            <div class="form-group"><label class="form-label">Description</label><textarea name="description" class="form-control" rows="3" required></textarea></div>
+            <div class="form-group"><label class="form-label">Required Skills</label><input type="text" name="required_skills" class="form-control" value="Python, SQL, PyTorch, Docker" required></div>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+                <div class="form-group"><label class="form-label">Salary Range</label><input type="text" name="salary_range" class="form-control" value="$130k - $180k"></div>
+                <div class="form-group"><label class="form-label">Difficulty</label>
+                    <select name="difficulty" class="form-control"><option value="Beginner">Beginner</option><option value="Intermediate" selected>Intermediate</option><option value="Advanced">Advanced</option></select>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary" style="width:100%;">Publish Career Path</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

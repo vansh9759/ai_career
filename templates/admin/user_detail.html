@@ -1,0 +1,205 @@
+{% extends 'admin/layout.html' %}
+
+{% block title %}User Profile - {{ target_user.name }} | AdminOS{% endblock %}
+
+{% block content %}
+<div style="margin-bottom: 24px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;">
+    <div>
+        <a href="{{ url_for('admin.users_list') }}" style="font-size:12px; color:var(--brand-primary); text-decoration:none; display:inline-block; margin-bottom:6px;">← Back to All Users</a>
+        <h2>Candidate Profile: <span class="gradient-text">{{ target_user.name }}</span></h2>
+        <p style="color:var(--text-muted);">Registered {{ target_user.created_at.strftime('%B %d, %Y') }} • {{ target_user.email }}</p>
+    </div>
+    
+    <div style="display:flex; gap:10px;">
+        <span class="badge badge-verified" style="font-size:14px; padding:8px 16px;">Role: {{ target_user.role.upper() }}</span>
+        <form action="{{ url_for('admin.reset_password', target_user_id=target_user.id) }}" method="POST" onsubmit="return confirm('Reset password for {{ target_user.name }}?');">
+            <button type="submit" class="btn btn-secondary" style="font-size:12px;"><i class="bi bi-key-fill"></i> Reset Password</button>
+        </form>
+    </div>
+</div>
+
+<!-- 9 Tab Navigation Bar -->
+<div class="glass-panel" style="padding:10px 16px; margin-bottom:24px; display:flex; gap:8px; overflow-x:auto;">
+    <button class="btn btn-primary user-tab-btn active" onclick="switchUserTab(this, 'tab-overview')"><i class="bi bi-grid-1x2-fill"></i> Overview</button>
+    <button class="btn btn-secondary user-tab-btn" onclick="switchUserTab(this, 'tab-resume')"><i class="bi bi-file-earmark-person"></i> Resume ({{ resumes|length }})</button>
+    <button class="btn btn-secondary user-tab-btn" onclick="switchUserTab(this, 'tab-skills')"><i class="bi bi-patch-check"></i> Skills ({{ skills|length }})</button>
+    <button class="btn btn-secondary user-tab-btn" onclick="switchUserTab(this, 'tab-career')"><i class="bi bi-compass"></i> Career Paths</button>
+    <button class="btn btn-secondary user-tab-btn" onclick="switchUserTab(this, 'tab-jobs')"><i class="bi bi-search"></i> Job Searches</button>
+    <button class="btn btn-secondary user-tab-btn" onclick="switchUserTab(this, 'tab-applications')"><i class="bi bi-journal-check"></i> Applications ({{ apps|length }})</button>
+    <button class="btn btn-secondary user-tab-btn" onclick="switchUserTab(this, 'tab-interviews')"><i class="bi bi-mic"></i> AI Interviews ({{ interviews|length }})</button>
+    <button class="btn btn-secondary user-tab-btn" onclick="switchUserTab(this, 'tab-subscription')"><i class="bi bi-credit-card"></i> Subscriptions</button>
+    <button class="btn btn-secondary user-tab-btn" onclick="switchUserTab(this, 'tab-activity')"><i class="bi bi-clock-history"></i> Activity Log</button>
+</div>
+
+<!-- Tab 1: Overview -->
+<div id="tab-overview" class="user-tab-content">
+    <div class="dashboard-grid">
+        <div class="col-span-4 glass-card">
+            <h3>Personal Profile</h3>
+            <div style="margin-top:16px; display:flex; flex-direction:column; gap:10px; font-size:13px; color:var(--text-muted);">
+                <div><strong>Full Name:</strong> {{ target_user.name }}</div>
+                <div><strong>Email:</strong> {{ target_user.email }}</div>
+                <div><strong>Role:</strong> {{ target_user.role.upper() }}</div>
+                <div><strong>Target Company:</strong> {{ target_user.dream_company }}</div>
+                <div><strong>Target Job:</strong> {{ target_user.dream_job }}</div>
+                <div><strong>College / University:</strong> {{ target_user.college }}</div>
+                <div><strong>Degree:</strong> {{ target_user.degree }}</div>
+                <div><strong>GitHub:</strong> {{ target_user.github or 'Not Linked' }}</div>
+                <div><strong>LinkedIn:</strong> {{ target_user.linkedin or 'Not Linked' }}</div>
+            </div>
+        </div>
+
+        <div class="col-span-4 glass-card" style="text-align:center;">
+            <h3>Employability Index Score</h3>
+            <div style="font-size:56px; font-weight:800; color:var(--brand-primary); margin:20px 0;">
+                {{ emp.total_score if emp else 78 }}<span style="font-size:20px; color:var(--text-muted);"> / 100</span>
+            </div>
+            <span class="badge badge-verified">Target Match: {{ target_user.dream_company }}</span>
+            <div style="margin-top:20px; text-align:left; font-size:12px; color:var(--text-muted); background:var(--bg-surface-elevated); padding:14px; border-radius:10px;">
+                <strong>AI Diagnostic Feedback:</strong>
+                <p style="margin-top:4px;">{{ emp.explanation if emp else 'Employability score benchmarked against Google SWE hiring standards.' }}</p>
+            </div>
+        </div>
+
+        <div class="col-span-4 glass-card">
+            <h3>Quick Admin Actions</h3>
+            <form action="{{ url_for('admin.change_role', target_user_id=target_user.id) }}" method="POST" style="margin-top:14px;">
+                <div class="form-group">
+                    <label class="form-label">Update Role Permission</label>
+                    <select name="role" class="form-control">
+                        <option value="student" {% if target_user.role == 'student' %}selected{% endif %}>Student</option>
+                        <option value="recruiter" {% if target_user.role == 'recruiter' %}selected{% endif %}>Recruiter</option>
+                        <option value="university" {% if target_user.role == 'university' %}selected{% endif %}>University</option>
+                        <option value="admin" {% if target_user.role == 'admin' %}selected{% endif %}>Admin</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width:100%; margin-bottom:12px;">Save Role Change</button>
+            </form>
+
+            <form action="{{ url_for('admin.award_badge') }}" method="POST">
+                <input type="hidden" name="user_id" value="{{ target_user.id }}">
+                <div class="form-group">
+                    <label class="form-label">Award Verified Skill Badge</label>
+                    <input type="text" name="skill_name" class="form-control" value="Python 3" placeholder="Skill Name">
+                </div>
+                <button type="submit" class="btn btn-secondary" style="width:100%;">Issue Verified Badge <i class="bi bi-patch-check-fill" style="color:var(--brand-secondary);"></i></button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Tab 2: Resume -->
+<div id="tab-resume" class="user-tab-content" style="display:none;">
+    <div class="glass-card">
+        <h3>Analyzed Resumes ({{ resumes|length }})</h3>
+        <table style="width:100%; margin-top:14px; border-collapse:collapse; text-align:left;">
+            <thead><tr style="font-size:11px; color:var(--text-subtle); border-bottom:1px solid var(--glass-border);"><th style="padding:10px;">ID</th><th style="padding:10px;">Filename</th><th style="padding:10px;">ATS Score</th><th style="padding:10px;">Upload Date</th></tr></thead>
+            <tbody>
+                {% for r in resumes %}
+                <tr style="border-bottom:1px solid var(--glass-border); font-size:13px;"><td style="padding:12px;">#{{ r.id }}</td><td style="padding:12px;">{{ r.filename }}</td><td style="padding:12px;"><span class="badge badge-verified">{{ r.ats_score }}/100</span></td><td style="padding:12px;">{{ r.upload_date.strftime('%Y-%m-%d %H:%M') }}</td></tr>
+                {% else %}<tr><td colspan="4" style="padding:16px; text-align:center; color:var(--text-muted);">No resume documents uploaded.</td></tr>{% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Tab 3: Skills -->
+<div id="tab-skills" class="user-tab-content" style="display:none;">
+    <div class="glass-card">
+        <h3>Verified Skill Passport Badges</h3>
+        <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-top:16px;">
+            {% for s in skills %}
+            <div style="background:var(--bg-surface-elevated); padding:16px; border-radius:12px;">
+                <strong style="color:var(--brand-primary);"><i class="bi bi-patch-check-fill"></i> {{ s.skill_name }}</strong>
+                <div style="font-size:12px; color:var(--text-muted); margin-top:4px;">{{ s.proficiency }}</div>
+                <div style="font-size:10px; font-family:'JetBrains Mono'; color:var(--text-subtle); margin-top:6px;">{{ s.badge_code }}</div>
+            </div>
+            {% else %}<div style="grid-column:span 3; color:var(--text-muted);">No verified skills passport claimed.</div>{% endfor %}
+        </div>
+    </div>
+</div>
+
+<!-- Tab 4: Career Paths -->
+<div id="tab-career" class="user-tab-content" style="display:none;">
+    <div class="glass-card">
+        <h3>Career Goal Roadmap</h3>
+        <p style="color:var(--text-muted);">Target Goal: <strong>{{ target_user.career_goal }}</strong> targeting <strong>{{ target_user.dream_company }}</strong>.</p>
+    </div>
+</div>
+
+<!-- Tab 5: Job Searches -->
+<div id="tab-jobs" class="user-tab-content" style="display:none;">
+    <div class="glass-card">
+        <h3>Job Search Preferences</h3>
+        <p style="color:var(--text-muted);">Preferred Role: {{ target_user.dream_job }} | Location Preference: Remote / Hybrid</p>
+    </div>
+</div>
+
+<!-- Tab 6: Applications -->
+<div id="tab-applications" class="user-tab-content" style="display:none;">
+    <div class="glass-card">
+        <h3>Submitted Job Applications</h3>
+        <table style="width:100%; margin-top:14px; border-collapse:collapse; text-align:left;">
+            <thead><tr style="font-size:11px; color:var(--text-subtle); border-bottom:1px solid var(--glass-border);"><th style="padding:10px;">App ID</th><th style="padding:10px;">Job ID</th><th style="padding:10px;">Status</th><th style="padding:10px;">Applied Date</th></tr></thead>
+            <tbody>
+                {% for a in apps %}
+                <tr style="border-bottom:1px solid var(--glass-border); font-size:13px;"><td style="padding:12px;">#{{ a.id }}</td><td style="padding:12px;">Job #{{ a.job_id }}</td><td style="padding:12px;"><span class="badge badge-purple">{{ a.status }}</span></td><td style="padding:12px;">{{ a.applied_at.strftime('%Y-%m-%d') }}</td></tr>
+                {% else %}<tr><td colspan="4" style="padding:16px; text-align:center; color:var(--text-muted);">No job applications submitted.</td></tr>{% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Tab 7: AI Interviews -->
+<div id="tab-interviews" class="user-tab-content" style="display:none;">
+    <div class="glass-card">
+        <h3>Mock Interview Sessions</h3>
+        <table style="width:100%; margin-top:14px; border-collapse:collapse; text-align:left;">
+            <thead><tr style="font-size:11px; color:var(--text-subtle); border-bottom:1px solid var(--glass-border);"><th style="padding:10px;">Session ID</th><th style="padding:10px;">Type</th><th style="padding:10px;">Score</th><th style="padding:10px;">Date</th></tr></thead>
+            <tbody>
+                {% for i in interviews %}
+                <tr style="border-bottom:1px solid var(--glass-border); font-size:13px;"><td style="padding:12px;">#{{ i.id }}</td><td style="padding:12px;">{{ i.interview_type }}</td><td style="padding:12px;"><span class="badge badge-verified">{{ i.score }}/100</span></td><td style="padding:12px;">{{ i.created_at.strftime('%Y-%m-%d') }}</td></tr>
+                {% else %}<tr><td colspan="4" style="padding:16px; text-align:center; color:var(--text-muted);">No mock interviews completed.</td></tr>{% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Tab 8: Subscription -->
+<div id="tab-subscription" class="user-tab-content" style="display:none;">
+    <div class="glass-card">
+        <h3>Subscription & Billing History</h3>
+        {% for sub in subs %}
+        <div style="background:var(--bg-surface-elevated); padding:16px; border-radius:10px; margin-top:10px;">
+            <strong>Plan: {{ sub.plan_name }}</strong> — Status: <span class="badge badge-verified">{{ sub.status }}</span> — MRR: ${{ sub.mrr_amount }}
+        </div>
+        {% else %}<div style="color:var(--text-muted);">User is currently on the Free Tier Plan.</div>{% endfor %}
+    </div>
+</div>
+
+<!-- Tab 9: Activity Log -->
+<div id="tab-activity" class="user-tab-content" style="display:none;">
+    <div class="glass-card">
+        <h3>User Security Audit Trail</h3>
+        <table style="width:100%; margin-top:14px; border-collapse:collapse; text-align:left;">
+            <thead><tr style="font-size:11px; color:var(--text-subtle); border-bottom:1px solid var(--glass-border);"><th style="padding:10px;">Action</th><th style="padding:10px;">Details</th><th style="padding:10px;">IP Address</th><th style="padding:10px;">Date</th></tr></thead>
+            <tbody>
+                {% for l in logs %}
+                <tr style="border-bottom:1px solid var(--glass-border); font-size:13px;"><td style="padding:12px;">{{ l.action }}</td><td style="padding:12px; color:var(--text-muted);">{{ l.details }}</td><td style="padding:12px; font-family:'JetBrains Mono'; font-size:11px;">{{ l.ip_address }}</td><td style="padding:12px;">{{ l.timestamp.strftime('%Y-%m-%d %H:%M') }}</td></tr>
+                {% else %}<tr><td colspan="4" style="padding:16px; text-align:center; color:var(--text-muted);">No activity logs recorded for this candidate.</td></tr>{% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function switchUserTab(btn, tabId) {
+    document.querySelectorAll('.user-tab-btn').forEach(b => { b.classList.remove('btn-primary', 'active'); b.classList.add('btn-secondary'); });
+    btn.classList.remove('btn-secondary'); btn.classList.add('btn-primary', 'active');
+    document.querySelectorAll('.user-tab-content').forEach(t => t.style.display = 'none');
+    document.getElementById(tabId).style.display = 'block';
+}
+</script>
+{% endblock %}
