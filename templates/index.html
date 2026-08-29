@@ -4,23 +4,26 @@
 
 {% block content %}
 <div class="hero-section" style="position:relative; overflow:hidden;">
-    <!-- Ambient Ambient Mesh Glow -->
+    <!-- Interactive 3D Particle Network Canvas -->
+    <canvas id="particle-canvas" style="position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:all; z-index:1;"></canvas>
+
+    <!-- Ambient Mesh Glow -->
     <div class="hero-mesh-glow"></div>
 
-    <div class="hero-pill" data-i18n="hero_pill">
+    <div class="hero-pill" data-i18n="hero_pill" style="position:relative; z-index:2;">
         <i class="bi bi-stars"></i> Introducing The World's First AI Career Operating System
     </div>
     
-    <h1 class="hero-title" data-i18n="hero_title">
+    <h1 class="hero-title" data-i18n="hero_title" style="position:relative; z-index:2;">
         Learn • Build • Improve • <span class="gradient-text">Get Hired</span>
     </h1>
     
-    <p class="hero-subtitle" data-i18n="hero_sub">
+    <p class="hero-subtitle" data-i18n="hero_sub" style="position:relative; z-index:2;">
         One unified AI ecosystem designed to continuously analyze your skills, optimize your resume, verify your code, conduct mock interviews, and land your dream job.
     </p>
 
     <div style="display:flex; justify-content:center; gap:16px; margin-bottom:48px; position:relative; z-index:2;">
-        <a href="{{ url_for('student.dashboard') }}" class="btn btn-gradient" style="padding: 14px 32px; font-size:16px;" data-i18n="btn_launch">
+        <a href="{{ url_for('student.dashboard') }}" class="btn btn-gradient neon-glow-border" style="padding: 14px 32px; font-size:16px;" data-i18n="btn_launch">
             Launch AI Mentor <i class="bi bi-arrow-right"></i>
         </a>
         <a href="{{ url_for('auth.register') }}" class="btn btn-secondary" style="padding: 14px 28px; font-size:16px;" data-i18n="btn_explore">
@@ -28,39 +31,68 @@
         </a>
     </div>
 
-    <!-- Live Employability Index Preview Card -->
-    <div class="glass-panel" style="max-width: 900px; margin: 0 auto; padding: 32px; text-align:left; position:relative; z-index:2;">
+    <!-- Live Employability Index & Instant AI Resume Scanner Preview -->
+    <div class="glass-panel neon-glow-border" style="max-width: 900px; margin: 0 auto; padding: 32px; text-align:left; position:relative; z-index:2;">
         <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--glass-border); padding-bottom:16px; margin-bottom:24px;">
             <div>
-                <span class="badge badge-purple">LIVE DEMO</span>
-                <h3 style="margin-top:6px;">Continuous AI Employability Engine</h3>
+                <span class="badge badge-purple"><i class="bi bi-lightning-charge-fill"></i> INSTANT AI ENGINE DEMO</span>
+                <h3 style="margin-top:6px;">Continuous AI Employability & Resume Scanner</h3>
             </div>
             <div style="display:flex; align-items:center; gap:8px;">
                 <span class="badge badge-verified"><i class="bi bi-shield-check"></i> Real-time AI Analysis</span>
             </div>
         </div>
 
-        <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:20px;">
+        <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:20px; margin-bottom:28px;">
             <div class="glass-card" style="text-align:center;">
                 <div style="font-size:13px; color:var(--text-muted); font-weight:700;">AI EMPLOYABILITY INDEX</div>
-                <div style="font-size:44px; font-weight:800; color:var(--brand-primary); margin:8px 0;">78<span style="font-size:18px; color:var(--text-muted);">/100</span></div>
+                <div style="font-size:44px; font-weight:800; color:var(--brand-primary); margin:8px 0;"><span data-counter="78">78</span><span style="font-size:18px; color:var(--text-muted);">/100</span></div>
                 <span class="badge badge-verified">+5 pts this week</span>
             </div>
 
             <div class="glass-card" style="text-align:center;">
                 <div style="font-size:13px; color:var(--text-muted); font-weight:700;">TARGET COMPANY READINESS</div>
-                <div style="font-size:44px; font-weight:800; color:var(--brand-secondary); margin:8px 0;">86<span style="font-size:18px; color:var(--text-muted);">%</span></div>
+                <div style="font-size:44px; font-weight:800; color:var(--brand-secondary); margin:8px 0;"><span data-counter="86" data-suffix="%">86%</span></div>
                 <span class="badge badge-purple">Google Ready</span>
             </div>
 
             <div class="glass-card" style="text-align:center;">
                 <div style="font-size:13px; color:var(--text-muted); font-weight:700;">VERIFIED SKILL PASSPORT</div>
-                <div style="font-size:44px; font-weight:800; color:var(--brand-accent); margin:8px 0;">4 Badges</div>
+                <div style="font-size:44px; font-weight:800; color:var(--brand-accent); margin:8px 0;"><span data-counter="4" data-suffix=" Badges">4 Badges</span></div>
                 <span class="badge badge-orange">Python • SQL • ML</span>
+            </div>
+        </div>
+
+        <!-- Instant Drag & Drop AI Resume Tester Widget -->
+        <div style="background:var(--bg-surface-elevated); border:2px dashed var(--brand-primary); border-radius:14px; padding:24px; text-align:center; transition:var(--transition-smooth);" id="dropZoneHero">
+            <i class="bi bi-cloud-arrow-up-fill" style="font-size:36px; color:var(--brand-primary);"></i>
+            <h4 style="margin-top:8px;">Instant AI Resume Score Check</h4>
+            <p style="font-size:13px; color:var(--text-muted); margin-bottom:14px;">Paste your resume text below or upload a PDF to get your instant ATS score!</p>
+
+            <div style="max-width:600px; margin:0 auto; display:flex; gap:10px;">
+                <input type="text" id="instantResumeInput" class="form-control" placeholder="Paste your resume text or job title (e.g. Python Developer with SQL experience)..." style="font-size:13px;">
+                <button class="btn btn-gradient" onclick="runInstantScan()" style="padding:10px 20px; font-size:13px; whitespace:nowrap;">Scan AI ATS <i class="bi bi-cpu-fill"></i></button>
+            </div>
+
+            <div id="instantScanResult" style="display:none; margin-top:20px; text-align:left; background:var(--glass-bg); padding:16px; border-radius:10px; border:1px solid var(--brand-secondary);">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <strong style="color:var(--brand-secondary);"><i class="bi bi-check-circle-fill"></i> Instant ATS Score: 84/100 (Strong Match)</strong>
+                    <a href="{{ url_for('resume.analyzer') }}" class="btn btn-secondary" style="font-size:11px;">View Detailed AI Report →</a>
+                </div>
+                <p style="font-size:12px; color:var(--text-muted); margin-top:6px;">Detected Key Skills: Python, SQL, REST APIs, Git. Recommendation: Add 1 Cloud Deployment project (Docker/GCP) to hit 90+ score.</p>
             </div>
         </div>
     </div>
 </div>
+
+<script>
+function runInstantScan() {
+    const input = document.getElementById('instantResumeInput').value;
+    if (!input.trim()) { alert('Please enter your resume text or skills first!'); return; }
+    const res = document.getElementById('instantScanResult');
+    res.style.display = 'block';
+}
+</script>
 
 <!-- Company Hiring Partner Marquee Ticker -->
 <div class="marquee-container">

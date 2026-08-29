@@ -6,8 +6,10 @@ document.addEventListener('DOMContentLoaded', () => {
     // 1. Dark/Light Theme Switching
     const themeToggleBtn = document.getElementById('theme-toggle-btn');
     const storedTheme = localStorage.getItem('careeros_theme') || 'dark';
+    const storedAccent = localStorage.getItem('careeros_accent') || 'emerald';
     
     document.documentElement.setAttribute('data-theme', storedTheme);
+    document.documentElement.setAttribute('data-accent', storedAccent);
     updateThemeIcon(storedTheme);
 
     if (themeToggleBtn) {
@@ -27,6 +29,12 @@ document.addEventListener('DOMContentLoaded', () => {
             icon.className = theme === 'dark' ? 'bi bi-sun-fill' : 'bi bi-moon-stars-fill';
         }
     }
+
+    // Global Accent Swatch Changer
+    window.setThemeAccent = function(accentName) {
+        document.documentElement.setAttribute('data-accent', accentName);
+        localStorage.setItem('careeros_accent', accentName);
+    };
 
     // 2. Mobile Sidebar Toggle
     const mobileMenuBtn = document.getElementById('mobile-menu-btn');

@@ -43,6 +43,54 @@
     --transition-smooth: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+/* Theme Accent Swatches */
+[data-accent="emerald"] {
+    --brand-primary: #10b981;
+    --brand-primary-hover: #059669;
+    --brand-secondary: #3b82f6;
+    --brand-accent: #34d399;
+    --brand-gradient: linear-gradient(135deg, #10b981 0%, #3b82f6 50%, #8b5cf6 100%);
+    --glow-shadow: 0 0 25px rgba(16, 185, 129, 0.35);
+}
+
+[data-accent="purple"] {
+    --brand-primary: #8b5cf6;
+    --brand-primary-hover: #7c3aed;
+    --brand-secondary: #ec4899;
+    --brand-accent: #a855f7;
+    --brand-gradient: linear-gradient(135deg, #8b5cf6 0%, #ec4899 50%, #3b82f6 100%);
+    --glow-shadow: 0 0 25px rgba(139, 92, 246, 0.35);
+}
+
+[data-accent="blue"] {
+    --brand-primary: #3b82f6;
+    --brand-primary-hover: #2563eb;
+    --brand-secondary: #06b6d4;
+    --brand-accent: #60a5fa;
+    --brand-gradient: linear-gradient(135deg, #3b82f6 0%, #06b6d4 50%, #10b981 100%);
+    --glow-shadow: 0 0 25px rgba(59, 130, 246, 0.35);
+}
+
+[data-accent="crimson"] {
+    --brand-primary: #f43f5e;
+    --brand-primary-hover: #e11d48;
+    --brand-secondary: #f97316;
+    --brand-accent: #fb7185;
+    --brand-gradient: linear-gradient(135deg, #f43f5e 0%, #f97316 50%, #8b5cf6 100%);
+    --glow-shadow: 0 0 25px rgba(244, 63, 94, 0.35);
+}
+
+/* Glowing Neon Keyframe Animations */
+@keyframes cyberGlowPulse {
+    0% { box-shadow: 0 0 15px rgba(16, 185, 129, 0.2); }
+    50% { box-shadow: 0 0 35px rgba(16, 185, 129, 0.5), 0 0 15px rgba(59, 130, 246, 0.3); }
+    100% { box-shadow: 0 0 15px rgba(16, 185, 129, 0.2); }
+}
+
+.neon-glow-border {
+    animation: cyberGlowPulse 3s infinite ease-in-out;
+}
+
 /* Light Theme Overrides */
 [data-theme="light"] {
     --bg-base: #f8fafc;

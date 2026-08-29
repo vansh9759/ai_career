@@ -148,6 +148,15 @@
                 </div>
 
                 <div class="header-actions">
+                    <!-- Theme Accent Swatch Selector -->
+                    <div style="display:flex; align-items:center; gap:6px; background:var(--bg-surface-elevated); padding:4px 8px; border-radius:20px; border:1px solid var(--glass-border);">
+                        <span style="font-size:10px; text-transform:uppercase; font-weight:700; color:var(--text-subtle); margin-right:2px;">ACCENT:</span>
+                        <button onclick="setThemeAccent('emerald')" title="Emerald Cyber" style="width:14px; height:14px; border-radius:50%; background:#10b981; border:none; cursor:pointer; transition:transform 0.2s;" onhover="this.style.transform='scale(1.2)'"></button>
+                        <button onclick="setThemeAccent('purple')" title="Neon Purple" style="width:14px; height:14px; border-radius:50%; background:#8b5cf6; border:none; cursor:pointer; transition:transform 0.2s;" onhover="this.style.transform='scale(1.2)'"></button>
+                        <button onclick="setThemeAccent('blue')" title="Electric Blue" style="width:14px; height:14px; border-radius:50%; background:#3b82f6; border:none; cursor:pointer; transition:transform 0.2s;" onhover="this.style.transform='scale(1.2)'"></button>
+                        <button onclick="setThemeAccent('crimson')" title="Sunset Crimson" style="width:14px; height:14px; border-radius:50%; background:#f43f5e; border:none; cursor:pointer; transition:transform 0.2s;" onhover="this.style.transform='scale(1.2)'"></button>
+                    </div>
+
                     <!-- Multi-Language Selector Dropdown -->
                     <div class="lang-selector">
                         <button class="lang-btn" id="langDropdownBtn">
@@ -208,7 +217,37 @@
         </main>
     </div>
 
+    <!-- Floating Interactive AI Career Copilot Assistant -->
+    <div id="aiCopilotBubble" style="position:fixed; bottom:24px; right:24px; z-index:999; display:flex; flex-direction:column; align-items:flex-end; gap:12px;">
+        <div id="aiCopilotPanel" class="glass-panel neon-glow-border" style="display:none; width:340px; padding:20px; border-radius:18px; box-shadow:0 20px 40px rgba(0,0,0,0.6);">
+            <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--glass-border); padding-bottom:10px; margin-bottom:12px;">
+                <div style="display:flex; align-items:center; gap:8px;">
+                    <div style="width:28px; height:28px; border-radius:50%; background:var(--brand-primary); display:flex; align-items:center; justify-content:center; color:#fff; font-size:14px;"><i class="bi bi-robot"></i></div>
+                    <strong style="font-size:14px;">CareerOS <span class="gradient-text">AI Copilot</span></strong>
+                </div>
+                <button onclick="document.getElementById('aiCopilotPanel').style.display='none'" class="btn-icon" style="width:24px; height:24px;"><i class="bi bi-x-lg"></i></button>
+            </div>
+            
+            <p style="font-size:12.5px; color:var(--text-muted); margin-bottom:14px;">
+                👋 Hi! I am your 24/7 AI Career Assistant. What would you like to achieve today?
+            </p>
+
+            <div style="display:flex; flex-direction:column; gap:8px;">
+                <a href="{{ url_for('resume.analyzer') }}" class="btn btn-secondary" style="font-size:12px; justify-content:flex-start; text-align:left;"><i class="bi bi-file-earmark-text" style="color:var(--brand-primary);"></i> Analyze Resume ATS Score</a>
+                <a href="{{ url_for('interviews.mock_interview') }}" class="btn btn-secondary" style="font-size:12px; justify-content:flex-start; text-align:left;"><i class="bi bi-mic-fill" style="color:var(--brand-secondary);"></i> Start Speech AI Mock Interview</a>
+                <a href="{{ url_for('coding.arena') }}" class="btn btn-secondary" style="font-size:12px; justify-content:flex-start; text-align:left;"><i class="bi bi-code-square" style="color:var(--brand-accent);"></i> Solve LeetCode Coding Challenge</a>
+                <a href="{{ url_for('student.readiness') }}" class="btn btn-secondary" style="font-size:12px; justify-content:flex-start; text-align:left;"><i class="bi bi-speedometer2" style="color:var(--state-warning);"></i> Check Google Readiness Index</a>
+            </div>
+        </div>
+
+        <button onclick="const p=document.getElementById('aiCopilotPanel'); p.style.display = p.style.display==='none' ? 'block' : 'none';" class="btn btn-gradient neon-glow-border" style="width:56px; height:56px; border-radius:50%; padding:0; display:flex; align-items:center; justify-content:center; font-size:24px; box-shadow:0 10px 25px rgba(16,185,129,0.4);" title="Open AI Career Copilot">
+            <i class="bi bi-robot"></i>
+        </button>
+    </div>
+
     <script src="{{ url_for('static', filename='js/theme.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/particles.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/card-tilt.js') }}"></script>
     <script>
     const translations = {
         en: {
