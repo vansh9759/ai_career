@@ -1,106 +1,317 @@
 {% extends 'layout.html' %}
 
-{% block title %}AI Resume & ATS Score Analyzer | CareerOS AI{% endblock %}
+{% block title %}AI Resume Engine & ATS Studio | CareerOS AI{% endblock %}
 
 {% block content %}
-<div style="margin-bottom: 24px;">
-    <h2>AI Resume & <span class="gradient-text">ATS Analyzer</span></h2>
-    <p style="color:var(--text-muted);">Powered by Google Gemini AI. Extract text from PDF/DOCX, analyze grammar, formatting, industry keywords, and ATS compatibility.</p>
+<!-- Top Executive Horizontal Toolbar -->
+<div style="margin-bottom: 24px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;">
+    <div>
+        <div style="display:flex; align-items:center; gap:10px;">
+            <h2>AI Resume Engine & <span class="gradient-text">ATS Studio</span></h2>
+            <span class="badge badge-verified"><i class="bi bi-cpu-fill"></i> Gemini 1.5 Pro Active</span>
+        </div>
+        <p style="color:var(--text-muted); font-size:13.5px; margin-top:2px;">
+            Real-time ATS parsing, keyword gap detection, metric impact scoring, and AI content rewrites in a side-by-side studio layout.
+        </p>
+    </div>
+
+    <!-- Quick Horizontal Actions Strip -->
+    <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+        <a href="{{ url_for('resume.match_jd') }}" class="btn btn-secondary" style="font-size:13px;">
+            <i class="bi bi-diagram-3-fill" style="color:var(--brand-primary);"></i> Compare vs Job Description
+        </a>
+        <a href="{{ url_for('resume.builder') }}" class="btn btn-gradient" style="font-size:13px;">
+            <i class="bi bi-magic"></i> AI Resume Builder Studio
+        </a>
+    </div>
 </div>
 
+<!-- Main Horizontal 2-Column Split Studio -->
 <div class="dashboard-grid">
-    <!-- Form Upload Section -->
-    <div class="col-span-5 glass-card">
-        <h3>Submit Resume Content</h3>
-        <form action="{{ url_for('resume.analyzer') }}" method="POST" enctype="multipart/form-data" style="margin-top:16px;">
-            <div class="form-group">
-                <label class="form-label">Upload Resume File (PDF / DOCX / TXT)</label>
-                <input type="file" name="file" accept=".pdf,.docx,.txt" class="form-control">
+
+    <!-- LEFT COLUMN: Source Input Studio (5 Columns) -->
+    <div class="col-span-5 glass-card" style="display:flex; flex-direction:column; justify-content:space-between;">
+        <div>
+            <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--glass-border); padding-bottom:12px; margin-bottom:16px;">
+                <h3 style="font-size:16px;"><i class="bi bi-file-earmark-arrow-up-fill" style="color:var(--brand-primary);"></i> Document Source</h3>
+                <span class="badge badge-purple" id="wordCountBadge">0 Words</span>
             </div>
 
-            <div class="form-group">
-                <label class="form-label">Or Paste Plain Resume Text</label>
-                <textarea name="resume_text" rows="8" class="form-control" placeholder="Paste your resume text here..."></textarea>
-            </div>
+            <form action="{{ url_for('resume.analyzer') }}" method="POST" enctype="multipart/form-data" id="resumeAnalyzerForm">
+                
+                <!-- Input Source Tabs (Upload File vs Paste Text) -->
+                <div style="display:flex; gap:8px; margin-bottom:16px; background:var(--bg-surface-elevated); padding:4px; border-radius:var(--radius-sm);">
+                    <button type="button" class="btn btn-primary input-tab-btn" id="btnTabFile" style="flex:1; font-size:12.5px; padding:6px 12px;" onclick="switchInputSource('file')">
+                        <i class="bi bi-file-earmark-pdf-fill"></i> Upload File
+                    </button>
+                    <button type="button" class="btn btn-secondary input-tab-btn" id="btnTabText" style="flex:1; font-size:12.5px; padding:6px 12px;" onclick="switchInputSource('text')">
+                        <i class="bi bi-body-text"></i> Paste Plain Text
+                    </button>
+                </div>
 
-            <button type="submit" class="btn btn-gradient" style="width:100%;">
-                <i class="bi bi-cpu-fill"></i> Run Gemini AI Analysis
-            </button>
-        </form>
+                <!-- File Upload Drag and Drop Zone -->
+                <div id="fileSourceBox" style="margin-bottom:16px;">
+                    <div style="border:2px dashed var(--brand-primary); background:var(--bg-surface-elevated); border-radius:12px; padding:24px; text-align:center; position:relative; cursor:pointer; transition:var(--transition-smooth);" id="dropZoneContainer">
+                        <i class="bi bi-cloud-arrow-up-fill" style="font-size:38px; color:var(--brand-primary);"></i>
+                        <h4 style="margin-top:8px; font-size:14px;">Drop PDF, DOCX or TXT File</h4>
+                        <p style="font-size:12px; color:var(--text-muted); margin-top:2px;">or click to browse from device</p>
+                        <input type="file" name="file" accept=".pdf,.docx,.txt" id="resumeFileInput" onchange="handleFileSelect(this)" style="position:absolute; inset:0; opacity:0; cursor:pointer; width:100%; height:100%;">
+                    </div>
+                    <div id="selectedFileNameDisplay" style="display:none; margin-top:10px; background:var(--glass-bg); padding:10px 14px; border-radius:8px; border:1px solid var(--brand-secondary); font-size:12.5px; color:var(--brand-secondary); font-weight:600;">
+                        <i class="bi bi-file-earmark-check-fill"></i> <span id="fileNameText">filename.pdf</span>
+                    </div>
+                </div>
 
-        <div style="margin-top:20px; border-top:1px solid var(--glass-border); padding-top:16px;">
-            <a href="{{ url_for('resume.match_jd') }}" class="btn btn-secondary" style="width:100%;">
-                <i class="bi bi-diagram-3-fill"></i> Compare Resume vs Job Description
-            </a>
+                <!-- Text Area Input Box -->
+                <div id="textSourceBox" style="display:none; margin-bottom:16px;">
+                    <label class="form-label" style="font-size:12px;">Resume Plain Text Content</label>
+                    <textarea name="resume_text" id="resumeTextArea" rows="10" class="form-control" placeholder="Paste your complete resume text here (Work experience, education, skills, projects)..." oninput="updateLiveWordCount(this.value)"></textarea>
+                </div>
+
+                <!-- Target Industry Role Selector -->
+                <div class="form-group" style="margin-bottom:20px;">
+                    <label class="form-label" style="font-size:12px;"><i class="bi bi-crosshair"></i> Target Tech Role Benchmark</label>
+                    <select class="form-control" style="font-size:13px;">
+                        <option value="swe">Full Stack Software Engineer (SWE)</option>
+                        <option value="ai">AI / Machine Learning Engineer</option>
+                        <option value="data">Data Scientist / Analyst</option>
+                        <option value="devops">Cloud & DevOps Engineer</option>
+                        <option value="pm">Technical Product Manager</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn btn-gradient neon-glow-border" style="width:100%; padding:12px; font-size:14px;">
+                    <i class="bi bi-cpu-fill"></i> Execute Gemini AI Analysis Report
+                </button>
+            </form>
+        </div>
+
+        <div style="margin-top:20px; border-top:1px solid var(--glass-border); padding-top:14px; text-align:center; font-size:12px; color:var(--text-subtle);">
+            <i class="bi bi-shield-lock-fill" style="color:var(--brand-secondary);"></i> 100% Confidential & Secure Parsing Engine
         </div>
     </div>
 
-    <!-- Report Display Section -->
-    <div class="col-span-7 glass-card">
+    <!-- RIGHT COLUMN: Horizontal Executive Scoreboard & Analytics Studio (7 Columns) -->
+    <div class="col-span-7 glass-card" style="display:flex; flex-direction:column;">
         {% if report %}
             {% if report.error %}
-            <div style="background:rgba(239, 68, 68, 0.15); border:1px solid rgba(239, 68, 68, 0.3); color:#fca5a5; padding:16px; border-radius:var(--radius-sm);">
-                <i class="bi bi-exclamation-triangle-fill"></i> <strong>Notice:</strong> {{ report.error }}
+            <div style="background:rgba(239, 68, 68, 0.15); border:1px solid rgba(239, 68, 68, 0.3); color:#fca5a5; padding:20px; border-radius:12px;">
+                <i class="bi bi-exclamation-triangle-fill" style="font-size:20px;"></i> <strong>Analysis Error:</strong> {{ report.error }}
             </div>
             {% else %}
-            <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--glass-border); padding-bottom:16px; margin-bottom:20px;">
+
+            <!-- 1. Horizontal Executive Scoreboard (3 Side-by-Side Gauges) -->
+            <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:16px; padding-bottom:20px; border-bottom:1px solid var(--glass-border); margin-bottom:20px;">
+                
+                <!-- Gauge 1: ATS Score -->
+                <div style="background:var(--bg-surface-elevated); padding:16px; border-radius:14px; text-align:center; border:1px solid var(--glass-border);">
+                    <div style="font-size:11px; font-weight:700; color:var(--text-subtle); text-transform:uppercase;">ATS COMPATIBILITY</div>
+                    <div style="font-size:42px; font-weight:800; color:var(--brand-primary); line-height:1.1; margin:6px 0;">
+                        {{ report.ats_score }}<span style="font-size:14px; color:var(--text-muted);">/100</span>
+                    </div>
+                    <span class="badge {% if report.ats_score >= 80 %}badge-verified{% elif report.ats_score >= 65 %}badge-purple{% else %}badge-orange{% endif %}">
+                        {% if report.ats_score >= 80 %}High Match{% elif report.ats_score >= 65 %}Good Candidate{% else %}Needs Polish{% endif %}
+                    </span>
+                </div>
+
+                <!-- Gauge 2: Impact Score -->
+                <div style="background:var(--bg-surface-elevated); padding:16px; border-radius:14px; text-align:center; border:1px solid var(--glass-border);">
+                    <div style="font-size:11px; font-weight:700; color:var(--text-subtle); text-transform:uppercase;">RESUME QUALITY</div>
+                    <div style="font-size:42px; font-weight:800; color:var(--brand-secondary); line-height:1.1; margin:6px 0;">
+                        {{ report.resume_score }}<span style="font-size:14px; color:var(--text-muted);">/100</span>
+                    </div>
+                    <span class="badge badge-verified"><i class="bi bi-star-fill"></i> Quality Index</span>
+                </div>
+
+                <!-- Gauge 3: Word Count & Structure -->
+                <div style="background:var(--bg-surface-elevated); padding:16px; border-radius:14px; text-align:center; border:1px solid var(--glass-border);">
+                    <div style="font-size:11px; font-weight:700; color:var(--text-subtle); text-transform:uppercase;">WORD COUNT</div>
+                    <div style="font-size:42px; font-weight:800; color:var(--brand-accent); line-height:1.1; margin:6px 0;">
+                        {{ report.word_count }}
+                    </div>
+                    <span class="badge badge-purple">Words Parsed</span>
+                </div>
+            </div>
+
+            <!-- 2. Horizontal Tab Switcher -->
+            <div style="display:flex; gap:8px; border-bottom:1px solid var(--glass-border); padding-bottom:12px; margin-bottom:20px; overflow-x:auto;">
+                <button class="btn btn-primary analyzer-tab-btn active" onclick="switchAnalyzerTab(this, 'analyzer-overview')" style="font-size:12.5px; padding:6px 14px;">
+                    <i class="bi bi-grid-1x2-fill"></i> Overview
+                </button>
+                <button class="btn btn-secondary analyzer-tab-btn" onclick="switchAnalyzerTab(this, 'analyzer-keywords')" style="font-size:12.5px; padding:6px 14px;">
+                    <i class="bi bi-key-fill"></i> Skills & Keywords
+                </button>
+                <button class="btn btn-secondary analyzer-tab-btn" onclick="switchAnalyzerTab(this, 'analyzer-rewrite')" style="font-size:12.5px; padding:6px 14px;">
+                    <i class="bi bi-magic"></i> AI Objective & Bullet Improver
+                </button>
+                <button class="btn btn-secondary analyzer-tab-btn" onclick="switchAnalyzerTab(this, 'analyzer-action')" style="font-size:12.5px; padding:6px 14px;">
+                    <i class="bi bi-check2-square"></i> Action Plan & Weaknesses
+                </button>
+            </div>
+
+            <!-- TAB 1: Executive Overview -->
+            <div id="analyzer-overview" class="analyzer-tab-pane">
+                <div style="background:var(--bg-surface-elevated); padding:18px; border-radius:12px; margin-bottom:16px; border-left:4px solid var(--brand-primary);">
+                    <div style="font-size:12px; font-weight:700; color:var(--brand-primary); text-transform:uppercase; margin-bottom:4px;">EXECUTIVE STRENGTH SUMMARY</div>
+                    <p style="font-size:14px; color:var(--text-main); line-height:1.6;">{{ report.strength_summary }}</p>
+                </div>
+
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:16px;">
+                    <div style="background:var(--bg-surface-elevated); padding:16px; border-radius:12px;">
+                        <div style="font-size:12px; font-weight:700; color:var(--brand-secondary); margin-bottom:6px;"><i class="bi bi-text-paragraph"></i> FORMATTING & HIERARCHY</div>
+                        <p style="font-size:13px; color:var(--text-muted);">{{ report.formatting_analysis }}</p>
+                    </div>
+
+                    <div style="background:var(--bg-surface-elevated); padding:16px; border-radius:12px;">
+                        <div style="font-size:12px; font-weight:700; color:var(--brand-accent); margin-bottom:6px;"><i class="bi bi-spellcheck"></i> GRAMMAR & TONE</div>
+                        <p style="font-size:13px; color:var(--text-muted);">{{ report.grammar_analysis }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 2: Skills & Keywords Breakdown -->
+            <div id="analyzer-keywords" class="analyzer-tab-pane" style="display:none;">
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:16px;">
+                    
+                    <!-- Extracted Detected Keywords (Green) -->
+                    <div style="background:var(--bg-surface-elevated); padding:18px; border-radius:12px; border:1px solid rgba(16,185,129,0.2);">
+                        <div style="font-size:12px; font-weight:700; color:var(--state-success); text-transform:uppercase; margin-bottom:10px; display:flex; align-items:center; gap:6px;">
+                            <i class="bi bi-check-circle-fill"></i> DETECTED SKILLS & KEYWORDS
+                        </div>
+                        <p style="font-size:13px; color:var(--text-muted); margin-bottom:12px;">{{ report.keyword_analysis }}</p>
+                    </div>
+
+                    <!-- Missing Critical Keywords (Orange) -->
+                    <div style="background:var(--bg-surface-elevated); padding:18px; border-radius:12px; border:1px solid rgba(245,158,11,0.2);">
+                        <div style="font-size:12px; font-weight:700; color:var(--state-warning); text-transform:uppercase; margin-bottom:10px; display:flex; align-items:center; gap:6px;">
+                            <i class="bi bi-exclamation-circle-fill"></i> RECOMMENDED KEYWORDS TO ADD
+                        </div>
+                        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                            {% for skill in report.missing_skills %}
+                            <span class="badge badge-orange" style="padding:6px 12px; font-size:12px;">+ {{ skill }}</span>
+                            {% else %}
+                            <span style="font-size:13px; color:var(--text-muted);">No major missing tech keywords detected. Excellent coverage!</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 3: AI Objective & Bullet Improver -->
+            <div id="analyzer-rewrite" class="analyzer-tab-pane" style="display:none;">
+                <div style="margin-bottom:18px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                        <strong style="font-size:13px; color:var(--brand-primary);"><i class="bi bi-quote"></i> Suggested Professional Objective Summary:</strong>
+                        <button onclick="copyToClipboard('suggestedSummaryText')" class="btn btn-secondary" style="font-size:11px; padding:4px 10px;">
+                            <i class="bi bi-clipboard"></i> Copy Text
+                        </button>
+                    </div>
+                    <div id="suggestedSummaryText" style="background:rgba(59,130,246,0.1); border-left:4px solid var(--brand-primary); padding:16px; font-size:13.5px; border-radius:0 10px 10px 0; color:var(--text-main); line-height:1.6;">
+                        "{{ report.suggested_summary }}"
+                    </div>
+                </div>
+
                 <div>
-                    <h3>Gemini AI Analysis Report</h3>
-                    <span class="badge badge-verified"><i class="bi bi-check-circle-fill"></i> Extracted {{ report.word_count }} Words</span>
-                </div>
-                <div style="text-align:right;">
-                    <div style="font-size:44px; font-weight:800; color:var(--brand-primary);">{{ report.ats_score }}<span style="font-size:14px; color:var(--text-muted);">/100</span></div>
-                    <div style="font-size:12px; color:var(--text-muted);">ATS Compatibility Score</div>
-                </div>
-            </div>
-
-            <div style="background:var(--bg-surface-elevated); padding:16px; border-radius:var(--radius-sm); margin-bottom:20px;">
-                <div style="font-size:12px; font-weight:700; color:var(--brand-secondary); margin-bottom:4px;">STRENGTH SUMMARY</div>
-                <p style="font-size:14px; color:var(--text-main);">{{ report.strength_summary }}</p>
-            </div>
-
-            <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:20px;">
-                <div style="background:var(--bg-surface-elevated); padding:14px; border-radius:var(--radius-sm);">
-                    <div style="font-size:12px; font-weight:700; color:var(--text-subtle);">FORMATTING ANALYSIS</div>
-                    <p style="font-size:13px; margin-top:4px;">{{ report.formatting_analysis }}</p>
-                </div>
-
-                <div style="background:var(--bg-surface-elevated); padding:14px; border-radius:var(--radius-sm);">
-                    <div style="font-size:12px; font-weight:700; color:var(--text-subtle);">GRAMMAR & TONE</div>
-                    <p style="font-size:13px; margin-top:4px;">{{ report.grammar_analysis }}</p>
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                        <strong style="font-size:13px; color:var(--brand-secondary);"><i class="bi bi-lightning-charge-fill"></i> High-Impact Measurable Bullet Rewrite:</strong>
+                        <button onclick="copyToClipboard('suggestedBulletText')" class="btn btn-secondary" style="font-size:11px; padding:4px 10px;">
+                            <i class="bi bi-clipboard"></i> Copy Bullet
+                        </button>
+                    </div>
+                    <div id="suggestedBulletText" style="background:rgba(16,185,129,0.1); border-left:4px solid var(--brand-secondary); padding:16px; font-size:13.5px; border-radius:0 10px 10px 0; color:var(--text-main); line-height:1.6;">
+                        "{{ report.suggested_bullet }}"
+                    </div>
                 </div>
             </div>
 
-            <div style="margin-bottom:20px;">
-                <strong>Suggested AI Objective Rewrite:</strong>
-                <div style="background:rgba(59,130,246,0.1); border-left:3px solid var(--brand-primary); padding:12px; font-size:13px; margin-top:6px; border-radius:0 8px 8px 0;">
-                    "{{ report.suggested_summary }}"
+            <!-- TAB 4: Action Plan & Weaknesses -->
+            <div id="analyzer-action" class="analyzer-tab-pane" style="display:none;">
+                <div style="background:var(--bg-surface-elevated); padding:18px; border-radius:12px; margin-bottom:16px;">
+                    <div style="font-size:12px; font-weight:700; color:var(--brand-primary); margin-bottom:8px;"><i class="bi bi-compass-fill"></i> STRATEGIC CAREER ADVICE</div>
+                    <p style="font-size:13.5px; color:var(--text-main);">{{ report.career_advice }}</p>
+                </div>
+
+                <div style="background:var(--bg-surface-elevated); padding:18px; border-radius:12px;">
+                    <div style="font-size:12px; font-weight:700; color:var(--state-warning); margin-bottom:10px;"><i class="bi bi-list-check"></i> RECOMMENDED IMPROVEMENT STEPS</div>
+                    <ul style="padding-left:20px; font-size:13px; color:var(--text-muted); display:flex; flex-direction:column; gap:8px;">
+                        {% for w in report.weaknesses %}
+                        <li>{{ w }}</li>
+                        {% else %}
+                        <li>Add quantifiable percentage increases and speed improvements to past experiences.</li>
+                        {% endfor %}
+                    </ul>
                 </div>
             </div>
 
-            <div style="margin-bottom:20px;">
-                <strong>Extracted Industry Keywords:</strong>
-                <div style="margin-top:6px; font-size:13px; color:var(--brand-secondary);">
-                    {{ report.keyword_analysis }}
-                </div>
-            </div>
-
-            <div>
-                <strong>Missing Industry Keywords to Add:</strong>
-                <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:8px;">
-                    {% for skill in report.missing_skills %}
-                    <span class="badge badge-orange">+ {{ skill }}</span>
-                    {% endfor %}
-                </div>
-            </div>
             {% endif %}
         {% else %}
-        <div style="text-align:center; padding:80px 20px; color:var(--text-muted);">
-            <i class="bi bi-file-earmark-pdf-fill" style="font-size:56px; opacity:0.3; color:var(--brand-primary);"></i>
-            <h4 style="margin-top:16px; color:var(--text-main);">Upload Resume File or Paste Text</h4>
-            <p style="font-size:13px; max-width:400px; margin:8px auto 0 auto;">Select a PDF or DOCX file on the left and click <strong>"Run Gemini AI Analysis"</strong> to generate your real-time report.</p>
+        <!-- Empty Placeholder Studio View -->
+        <div style="text-align:center; padding:90px 20px; color:var(--text-muted); margin:auto;">
+            <div style="width:72px; height:72px; border-radius:50%; background:var(--bg-surface-elevated); display:flex; align-items:center; justify-content:center; margin:0 auto 16px auto; color:var(--brand-primary); font-size:32px;">
+                <i class="bi bi-cpu-fill"></i>
+            </div>
+            <h3 style="color:var(--text-main); font-size:18px;">AI Resume Analyzer Studio</h3>
+            <p style="font-size:13px; max-width:420px; margin:8px auto 0 auto; line-height:1.5;">
+                Select a PDF/DOCX resume file or paste content on the left studio panel, then click <strong>"Execute Gemini AI Analysis Report"</strong> to generate your horizontal ATS report.
+            </p>
         </div>
         {% endif %}
     </div>
+
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function switchInputSource(type) {
+    const fileBox = document.getElementById('fileSourceBox');
+    const textBox = document.getElementById('textSourceBox');
+    const btnFile = document.getElementById('btnTabFile');
+    const btnText = document.getElementById('btnTabText');
+
+    if (type === 'file') {
+        fileBox.style.display = 'block';
+        textBox.style.display = 'none';
+        btnFile.classList.remove('btn-secondary'); btnFile.classList.add('btn-primary');
+        btnText.classList.remove('btn-primary'); btnText.classList.add('btn-secondary');
+    } else {
+        fileBox.style.display = 'none';
+        textBox.style.display = 'block';
+        btnText.classList.remove('btn-secondary'); btnText.classList.add('btn-primary');
+        btnFile.classList.remove('btn-primary'); btnFile.classList.add('btn-secondary');
+    }
+}
+
+function handleFileSelect(input) {
+    if (input.files && input.files[0]) {
+        const file = input.files[0];
+        document.getElementById('fileNameText').innerText = file.name + ' (' + Math.round(file.size / 1024) + ' KB)';
+        document.getElementById('selectedFileNameDisplay').style.display = 'block';
+    }
+}
+
+function updateLiveWordCount(text) {
+    const words = text.trim() ? text.trim().split(/\s+/).length : 0;
+    document.getElementById('wordCountBadge').innerText = words + ' Words';
+}
+
+function switchAnalyzerTab(btn, paneId) {
+    document.querySelectorAll('.analyzer-tab-btn').forEach(b => {
+        b.classList.remove('btn-primary', 'active');
+        b.classList.add('btn-secondary');
+    });
+    btn.classList.remove('btn-secondary');
+    btn.classList.add('btn-primary', 'active');
+
+    document.querySelectorAll('.analyzer-tab-pane').forEach(p => p.style.display = 'none');
+    document.getElementById(paneId).style.display = 'block';
+}
+
+function copyToClipboard(elementId) {
+    const text = document.getElementById(elementId).innerText;
+    navigator.clipboard.writeText(text).then(() => {
+        alert('Copied to clipboard!');
+    });
+}
+</script>
 {% endblock %}

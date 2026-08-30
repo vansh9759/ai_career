@@ -3,62 +3,108 @@
 {% block title %}Resume vs Job Description Matcher | CareerOS AI{% endblock %}
 
 {% block content %}
-<div style="margin-bottom: 24px;">
-    <h2>Resume vs <span class="gradient-text">Job Description Matcher</span></h2>
-    <p style="color:var(--text-muted);">Compare your resume against any target job description to compute instant ATS Match %, missing keywords, and interview call probability.</p>
+<!-- Top Executive Horizontal Toolbar -->
+<div style="margin-bottom: 24px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;">
+    <div>
+        <div style="display:flex; align-items:center; gap:10px;">
+            <h2>Resume vs <span class="gradient-text">Job Description Matcher</span></h2>
+            <span class="badge badge-purple"><i class="bi bi-diagram-3-fill"></i> Target Role Alignment</span>
+        </div>
+        <p style="color:var(--text-muted); font-size:13.5px; margin-top:2px;">
+            Compute instant ATS match %, interview call probability, and missing job keywords for your targeted tech role.
+        </p>
+    </div>
+
+    <a href="{{ url_for('resume.analyzer') }}" class="btn btn-secondary" style="font-size:13px;">
+        ← Back to AI Resume Engine
+    </a>
 </div>
 
+<!-- Main Horizontal 2-Column Split View -->
 <div class="dashboard-grid">
+
+    <!-- LEFT COLUMN: Dual Input Studio (Resume + Job Description) (6 Columns) -->
     <div class="col-span-6 glass-card">
-        <form action="{{ url_for('resume.match_jd') }}" method="POST">
+        <h3><i class="bi bi-[#10b981] bi-file-earmark-diff-fill" style="color:var(--brand-primary);"></i> Dual Comparison Source</h3>
+        <form action="{{ url_for('resume.match_jd') }}" method="POST" style="margin-top:16px;">
             <div class="form-group">
-                <label class="form-label">Your Resume Text</label>
-                <textarea name="resume_text" rows="6" class="form-control" placeholder="Paste your resume content here..." required></textarea>
+                <label class="form-label" style="font-size:12px;"><i class="bi bi-file-earmark-person-fill"></i> Your Resume Content</label>
+                <textarea name="resume_text" rows="7" class="form-control" placeholder="Paste your resume text here..." required></textarea>
             </div>
 
             <div class="form-group">
-                <label class="form-label">Target Job Description</label>
-                <textarea name="job_description" rows="6" class="form-control" placeholder="Paste the target job description requirements here..." required></textarea>
+                <label class="form-label" style="font-size:12px;"><i class="bi bi-briefcase-fill"></i> Target Job Description Requirements</label>
+                <textarea name="job_description" rows="7" class="form-control" placeholder="Paste the job description or requirements here..." required></textarea>
             </div>
 
-            <button type="submit" class="btn btn-gradient" style="width:100%;">
-                <i class="bi bi-cpu-fill"></i> Calculate ATS Match %
+            <button type="submit" class="btn btn-gradient neon-glow-border" style="width:100%; padding:12px; font-size:14px;">
+                <i class="bi bi-cpu-fill"></i> Calculate ATS Match & Interview Odds
             </button>
         </form>
     </div>
 
-    <div class="col-span-6 glass-card">
+    <!-- RIGHT COLUMN: Horizontal Match Results & Keyword Matrix (6 Columns) -->
+    <div class="col-span-6 glass-card" style="display:flex; flex-direction:column; justify-content:space-between;">
         {% if match_result %}
-        <div style="text-align:center; padding:20px 0; border-bottom:1px solid var(--glass-border);">
-            <div style="font-size:12px; font-weight:700; color:var(--text-subtle);">ATS MATCH COMPATIBILITY</div>
-            <div style="font-size:64px; font-weight:800; color:var(--brand-primary); margin:8px 0;">
-                {{ match_result.ats_match_percentage }}%
+            {% if match_result.error %}
+            <div style="background:rgba(239, 68, 68, 0.15); border:1px solid rgba(239, 68, 68, 0.3); color:#fca5a5; padding:16px; border-radius:12px;">
+                <i class="bi bi-exclamation-triangle-fill"></i> {{ match_result.error }}
             </div>
-            <span class="badge badge-verified">Interview Call Probability: {{ match_result.interview_probability }}</span>
-        </div>
+            {% else %}
+            
+            <!-- Horizontal Gauge & Scoreboard -->
+            <div style="text-align:center; padding-bottom:20px; border-bottom:1px solid var(--glass-border); margin-bottom:20px;">
+                <div style="font-size:11px; font-weight:700; color:var(--text-subtle); text-transform:uppercase;">ATS MATCH PERCENTAGE</div>
+                <div style="font-size:56px; font-weight:800; color:var(--brand-primary); margin:6px 0; line-height:1;">
+                    {{ match_result.ats_match_percentage }}%
+                </div>
+                <span class="badge badge-verified" style="font-size:13px; padding:6px 16px;">
+                    <i class="bi bi-telephone-inbound-fill"></i> Interview Call Probability: {{ match_result.interview_probability }}
+                </span>
+            </div>
 
-        <div style="margin-top:20px;">
-            <strong>Matched Industry Keywords:</strong>
-            <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:8px;">
-                {% for kw in match_result.matched_keywords %}
-                <span class="badge badge-purple"><i class="bi bi-check-lg"></i> {{ kw }}</span>
-                {% endfor %}
+            <!-- Matched Keywords Matrix -->
+            <div style="margin-bottom:18px;">
+                <strong style="font-size:13px; color:var(--state-success); display:flex; align-items:center; gap:6px; margin-bottom:8px;">
+                    <i class="bi bi-check-circle-fill"></i> Matched Job Requirements:
+                </strong>
+                <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                    {% for kw in match_result.matched_keywords %}
+                    <span class="badge badge-verified" style="padding:6px 12px; font-size:12px;"><i class="bi bi-check-lg"></i> {{ kw.title() }}</span>
+                    {% endfor %}
+                </div>
             </div>
-        </div>
 
-        <div style="margin-top:20px;">
-            <strong>Missing Job Description Keywords:</strong>
-            <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:8px;">
-                {% for kw in match_result.missing_keywords %}
-                <span class="badge badge-orange">+ {{ kw }}</span>
-                {% endfor %}
+            <!-- Missing Keywords Matrix -->
+            <div style="margin-bottom:18px;">
+                <strong style="font-size:13px; color:var(--state-warning); display:flex; align-items:center; gap:6px; margin-bottom:8px;">
+                    <i class="bi bi-exclamation-triangle-fill"></i> Missing Key Skills to Add:
+                </strong>
+                <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                    {% for kw in match_result.missing_keywords %}
+                    <span class="badge badge-orange" style="padding:6px 12px; font-size:12px;">+ {{ kw.title() }}</span>
+                    {% endfor %}
+                </div>
             </div>
-        </div>
+
+            <!-- Recommendations -->
+            <div style="background:var(--bg-surface-elevated); padding:16px; border-radius:12px; border-left:4px solid var(--brand-primary);">
+                <strong style="font-size:12px; color:var(--brand-primary); text-transform:uppercase;">RECOMMENDED ACTIONS:</strong>
+                <ul style="padding-left:18px; margin-top:6px; font-size:12.5px; color:var(--text-muted); display:flex; flex-direction:column; gap:4px;">
+                    {% for rec in match_result.recommended_improvements %}
+                    <li>{{ rec }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
         {% else %}
-        <div style="text-align:center; padding:80px 20px; color:var(--text-muted);">
-            <i class="bi bi-diagram-3-fill" style="font-size:48px; opacity:0.3;"></i>
-            <h4 style="margin-top:16px; color:var(--text-main);">No Match Executed Yet</h4>
-            <p style="font-size:13px;">Fill in your resume text and target job description on the left to run matching.</p>
+        <!-- Empty Placeholder -->
+        <div style="text-align:center; padding:80px 20px; color:var(--text-muted); margin:auto;">
+            <i class="bi bi-diagram-3-fill" style="font-size:52px; opacity:0.3; color:var(--brand-primary);"></i>
+            <h4 style="margin-top:16px; color:var(--text-main);">No Job Match Executed Yet</h4>
+            <p style="font-size:13px; max-width:380px; margin:8px auto 0 auto;">
+                Paste your resume text and target job description on the left panel, then click <strong>"Calculate ATS Match & Interview Odds"</strong>.
+            </p>
         </div>
         {% endif %}
     </div>
