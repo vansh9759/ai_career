@@ -40,9 +40,60 @@
             </div>
         </div>
 
-        <div class="col-span-12 glass-card">
+        <div class="col-span-12 glass-card" style="margin-bottom:24px;">
             <button type="submit" class="btn btn-primary" style="padding:12px 28px;"><i class="bi bi-save-fill"></i> Save Platform Settings</button>
         </div>
     </div>
 </form>
+
+<!-- Change Admin Email & Password Form Section -->
+<div class="glass-panel" style="padding:28px; border-radius:18px; margin-top:28px;">
+    <div style="border-bottom:1px solid var(--glass-border); padding-bottom:14px; margin-bottom:20px;">
+        <h3 style="display:flex; align-items:center; gap:10px;">
+            <i class="bi bi-shield-lock-fill" style="color:var(--brand-primary);"></i>
+            Change Administrator <span class="gradient-text">Email & Password</span>
+        </h3>
+        <p style="font-size:13px; color:var(--text-muted); margin-top:4px;">
+            Update your Super Admin login email and access password. Current account: <strong>{{ current_admin.email if current_admin else 'admin@careeros.ai' }}</strong>
+        </p>
+    </div>
+
+    <form action="{{ url_for('admin.update_credentials') }}" method="POST">
+        <div class="dashboard-grid">
+            <div class="col-span-6">
+                <div class="form-group">
+                    <label class="form-label"><i class="bi bi-lock-fill"></i> Current Administrator Password (Required)</label>
+                    <input type="password" name="current_password" class="form-control" placeholder="Enter current admin password..." required>
+                </div>
+            </div>
+
+            <div class="col-span-6">
+                <div class="form-group">
+                    <label class="form-label"><i class="bi bi-envelope-fill"></i> New Administrator Email</label>
+                    <input type="email" name="new_email" class="form-control" value="{{ current_admin.email if current_admin else 'admin@careeros.ai' }}" required>
+                </div>
+            </div>
+
+            <div class="col-span-6">
+                <div class="form-group">
+                    <label class="form-label"><i class="bi bi-key-fill"></i> New Password (Leave blank to keep unchanged)</label>
+                    <input type="password" name="new_password" class="form-control" placeholder="Enter new strong password...">
+                </div>
+            </div>
+
+            <div class="col-span-6">
+                <div class="form-group">
+                    <label class="form-label"><i class="bi bi-check-circle-fill"></i> Confirm New Password</label>
+                    <input type="password" name="confirm_password" class="form-control" placeholder="Re-enter new password...">
+                </div>
+            </div>
+
+            <div class="col-span-12">
+                <button type="submit" class="btn btn-gradient" style="padding:12px 28px;">
+                    Update Administrator Credentials <i class="bi bi-shield-check"></i>
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
 {% endblock %}

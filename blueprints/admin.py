@@ -423,4 +423,53 @@ def settings_page():
         return redirect(url_for('admin.settings_page'))
 
     settings = {s.setting_key: s.setting_value for s in AdminSetting.query.all()}
-    return render_template('admin/settings.html', settings=settings)
+    admin_id = session.get('admin_user_id') or session.get('user_id')
+    current_admin = User.query.get(admin_id) or User.query.filter(User.role.in_(['admin', 'super_admin'])).first()
+    return render_template('admin/settings.html', settings=settings, current_admin=current_admin)
+
+@admin_bp.route('/update-credentials', methods=['POST'])
+@admin_required
+def update_credentials():
+    admin_id = session.get('admin_user_id') or session.get('user_id')
+    admin_user = User.query.get(admin_id) or User.query.filter(User.role.in_(['admin', 'super_admin'])).first()
+    
+    if not admin_user:
+        flash("Admin user account not found.", "danger")
+        return redirect(url_for('admin.settings_page'))
+    
+    current_password = request.form.get('current_password', '').strip()
+    new_email = request.form.get('new_email', '').strip()
+    new_password = request.form.get('new_password', '').strip()
+    confirm_password = request.form.get('confirm_password', '').strip()
+
+    if not check_password_hash(admin_user.password, current_password):
+        flash("Current password verification failed. Credentials were not updated.", "danger")
+        return redirect(url_for('admin.settings_page'))
+
+    if new_password and new_password != confirm_password:
+        flash("New password and confirm password do not match.", "warning")
+        return redirect(url_for('admin.settings_page'))
+
+    changes = []
+    if new_email and new_email != admin_user.email:
+        existing = User.query.filter(User.email == new_email, User.id != admin_user.id).first()
+        if existing:
+            flash("That email address is already in use by another account.", "warning")
+            return redirect(url_for('admin.settings_page'))
+        admin_user.email = new_email
+        session['admin_user_email'] = new_email
+        changes.append(f"email to '{new_email}'")
+
+    if new_password:
+        admin_user.password = generate_password_hash(new_password)
+        changes.append("password")
+
+    if changes:
+        db.session.commit()
+        log_admin_action("Update Admin Credentials", "AdminUser", admin_user.id, f"Updated admin {', '.join(changes)}")
+        flash(f"🎉 Administrator credentials updated successfully! ({', '.join(changes)})", "success")
+    else:
+        flash("No changes made to administrator credentials.", "info")
+
+    return redirect(url_for('admin.settings_page'))
+

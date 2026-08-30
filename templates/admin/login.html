@@ -31,15 +31,15 @@
             <form action="{{ url_for('admin.admin_login') }}" method="POST">
                 <div class="form-group">
                     <label class="form-label"><i class="bi bi-envelope-fill" style="color:var(--brand-primary);"></i> Admin Email</label>
-                    <input type="email" name="email" class="form-control" value="admin@careeros.ai" placeholder="admin@careeros.ai" required>
+                    <input type="email" name="email" class="form-control" placeholder="admin@careeros.ai" required>
                 </div>
 
                 <div class="form-group">
                     <label class="form-label" style="display:flex; justify-content:space-between;">
                         <span><i class="bi bi-lock-fill" style="color:var(--brand-secondary);"></i> Password</span>
-                        <a href="javascript:void(0)" onclick="alert('Default Seed Password: Admin@12345')" style="font-size:12px; color:var(--brand-primary);">Forgot Password?</a>
+                        <a href="javascript:void(0)" onclick="alert('Contact System Administrator to reset access.')" style="font-size:12px; color:var(--brand-primary);">Forgot Password?</a>
                     </label>
-                    <input type="password" name="password" class="form-control" value="Admin@12345" placeholder="••••••••" required>
+                    <input type="password" name="password" class="form-control" placeholder="••••••••" required>
                 </div>
 
                 <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:20px; font-size:13px; color:var(--text-muted);">
