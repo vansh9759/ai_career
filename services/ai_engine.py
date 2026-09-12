@@ -79,11 +79,12 @@ class AICareerEngine:
         missing_sections = [s for s, present in sections.items() if not present]
         missing_skills = [s for s in ['System Design', 'Docker', 'CI/CD', 'Unit Testing', 'Redis', 'GraphQL', 'Kubernetes'] if s.lower() not in text_lower]
 
-        # Construct dynamic Gemini report
+        # Construct dynamic Gemini / Fallback report
         report = {
             "ats_score": total_ats,
             "resume_score": resume_score,
             "word_count": word_count,
+            "ai_engine_used": "Rule-Based NLP Engine (Fallback)",
             "strength_summary": f"Detected {len(found_keywords)} core technical skills ({', '.join(found_keywords[:6])}) and {metrics_found} quantifiable impact metrics.",
             "weaknesses": [
                 "Include more measurable metrics (percentages, speedups, user counts) in your bullet points." if metrics_found < 2 else "Ensure all GitHub repositories have live demo links.",
@@ -108,6 +109,7 @@ class AICareerEngine:
                 res = model.generate_content(prompt)
                 if res and res.text:
                     report["strength_summary"] = res.text[:250]
+                    report["ai_engine_used"] = "Google Gemini 1.5 Pro (Live LLM)"
             except Exception:
                 pass
 

@@ -24,48 +24,48 @@
             </a>
 
             <div class="nav-section">
-                <div class="nav-section-title">Core Ecosystem</div>
+                <div class="nav-section-title" data-i18n="nav_sec_core">Core Ecosystem</div>
                 <ul class="sidebar-nav">
                     <li class="nav-item {% if request.endpoint == 'student.dashboard' %}active{% endif %}">
                         <a href="{{ url_for('student.dashboard') }}">
                             <i class="bi bi-grid-1x2-fill"></i>
-                            <span>AI Mentor Hub</span>
+                            <span data-i18n="nav_hub">AI Mentor Hub</span>
                         </a>
                     </li>
                     <li class="nav-item {% if request.endpoint == 'student.readiness' %}active{% endif %}">
                         <a href="{{ url_for('student.readiness') }}">
                             <i class="bi bi-speedometer2"></i>
-                            <span>Company Readiness</span>
+                            <span data-i18n="nav_readiness">Company Readiness</span>
                         </a>
                     </li>
                     <li class="nav-item {% if 'resume' in request.path %}active{% endif %}">
                         <a href="{{ url_for('resume.analyzer') }}">
                             <i class="bi bi-file-earmark-person-fill"></i>
-                            <span>AI Resume Engine</span>
+                            <span data-i18n="nav_resume">AI Resume Engine</span>
                         </a>
                     </li>
                     <li class="nav-item {% if 'skills' in request.path %}active{% endif %}">
                         <a href="{{ url_for('skills.passport') }}">
                             <i class="bi bi-patch-check-fill"></i>
-                            <span>Skill Passport</span>
+                            <span data-i18n="nav_skills">Skill Passport</span>
                         </a>
                     </li>
                     <li class="nav-item {% if 'learning' in request.path %}active{% endif %}">
                         <a href="{{ url_for('learning.engine') }}">
                             <i class="bi bi-journal-code"></i>
-                            <span>AI Learning LMS</span>
+                            <span data-i18n="nav_learning">AI Learning LMS</span>
                         </a>
                     </li>
                     <li class="nav-item {% if 'coding' in request.path %}active{% endif %}">
                         <a href="{{ url_for('coding.arena') }}">
                             <i class="bi bi-code-square"></i>
-                            <span>Coding Arena</span>
+                            <span data-i18n="nav_coding">Coding Arena</span>
                         </a>
                     </li>
                     <li class="nav-item {% if 'interviews' in request.path %}active{% endif %}">
                         <a href="{{ url_for('interviews.mock_interview') }}">
                             <i class="bi bi-mic-fill"></i>
-                            <span>AI Mock Interview</span>
+                            <span data-i18n="nav_interviews">AI Mock Interview</span>
                         </a>
                     </li>
                 </ul>
@@ -248,6 +248,7 @@
     <script src="{{ url_for('static', filename='js/theme.js') }}"></script>
     <script src="{{ url_for('static', filename='js/particles.js') }}"></script>
     <script src="{{ url_for('static', filename='js/card-tilt.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/animations.js') }}"></script>
     <script>
     const translations = {
         en: {
@@ -257,7 +258,15 @@
             btn_launch: "Launch AI Mentor",
             btn_explore: "Explore Platform",
             why_diff: "Why CareerOS AI is Different",
-            diff_sub: "Not just another course provider or resume editor. CareerOS AI actively develops your career from day one."
+            diff_sub: "Not just another course provider or resume editor. CareerOS AI actively develops your career from day one.",
+            nav_sec_core: "Core Ecosystem",
+            nav_hub: "AI Mentor Hub",
+            nav_readiness: "Company Readiness",
+            nav_resume: "AI Resume Engine",
+            nav_skills: "Skill Passport",
+            nav_learning: "AI Learning LMS",
+            nav_coding: "Coding Arena",
+            nav_interviews: "AI Mock Interview"
         },
         hi: {
             hero_pill: "प्रस्तुत है विश्व का पहला AI करियर ऑपरेटिंग सिस्टम",
@@ -266,7 +275,15 @@
             btn_launch: "AI मेंटर शुरू करें",
             btn_explore: "प्लेटफ़ॉर्म खोजें",
             why_diff: "CareerOS AI क्यों अलग है",
-            diff_sub: "केवल एक पाठ्यक्रम प्रदाता या बायोडाटा संपादक नहीं। CareerOS AI पहले दिन से ही आपके करियर को सक्रिय रूप से विकसित करता है।"
+            diff_sub: "केवल एक पाठ्यक्रम प्रदाता या बायोडाटा संपादक नहीं। CareerOS AI पहले दिन से ही आपके करियर को सक्रिय रूप से विकसित करता है।",
+            nav_sec_core: "मुख्य पारिस्थितिकी तंत्र",
+            nav_hub: "AI मेंटर हब",
+            nav_readiness: "कंपनी तैयारी",
+            nav_resume: "AI रीज़्यूमे इंजन",
+            nav_skills: "कौशल पासपोर्ट",
+            nav_learning: "AI लर्निंग एलएमएस",
+            nav_coding: "कोडिंग एरिना",
+            nav_interviews: "AI मॉक इंटरव्यू"
         },
         es: {
             hero_pill: "Presentamos el primer sistema operativo de carrera de IA del mundo",
@@ -275,7 +292,15 @@
             btn_launch: "Lanzar Mentor de IA",
             btn_explore: "Explorar Plataforma",
             why_diff: "¿Por qué CareerOS AI es diferente?",
-            diff_sub: "No es solo otro editor de currículums. CareerOS AI desarrolla activamente tu carrera desde el primer día."
+            diff_sub: "No es solo otro editor de currículums. CareerOS AI desarrolla activamente tu carrera desde el primer día.",
+            nav_sec_core: "Ecosistema Principal",
+            nav_hub: "Centro Mentor IA",
+            nav_readiness: "Preparación de Empresa",
+            nav_resume: "Motor de CV IA",
+            nav_skills: "Pasaporte de Habilidades",
+            nav_learning: "LMS de Aprendizaje IA",
+            nav_coding: "Arena de Código",
+            nav_interviews: "Entrevista IA"
         },
         fr: {
             hero_pill: "Présentation du premier système d'exploitation de carrière IA au monde",
@@ -284,7 +309,15 @@
             btn_launch: "Lancer le Mentor IA",
             btn_explore: "Explorer la Plateforme",
             why_diff: "Pourquoi CareerOS AI est Différent",
-            diff_sub: "Pas seulement un autre éditeur de CV. CareerOS AI développe activement votre carrière dès le premier jour."
+            diff_sub: "Pas seulement un autre éditeur de CV. CareerOS AI développe activement votre carrière dès le premier jour.",
+            nav_sec_core: "Écosystème Principal",
+            nav_hub: "Hub Mentor IA",
+            nav_readiness: "Préparation d'Entreprise",
+            nav_resume: "Moteur de CV IA",
+            nav_skills: "Passeport de Compétences",
+            nav_learning: "LMS d'Apprentissage IA",
+            nav_coding: "Arène de Codage",
+            nav_interviews: "Entretien Simulé IA"
         },
         de: {
             hero_pill: "Das weltweit erste KI-Karriere-Betriebssystem",
@@ -293,7 +326,15 @@
             btn_launch: "KI-Mentor Starten",
             btn_explore: "Plattform Erkunden",
             why_diff: "Warum CareerOS AI anders ist",
-            diff_sub: "Nicht nur ein weiterer Lebenslauf-Editor. CareerOS AI entwickelt Ihre Karriere ab dem ersten Tag."
+            diff_sub: "Nicht nur ein weiterer Lebenslauf-Editor. CareerOS AI entwickelt Ihre Karriere ab dem ersten Tag.",
+            nav_sec_core: "Kern-Ökosystem",
+            nav_hub: "KI-Mentor-Hub",
+            nav_readiness: "Unternehmensbereitschaft",
+            nav_resume: "KI-Lebenslauf-Engine",
+            nav_skills: "Fähigkeiten-Pass",
+            nav_learning: "KI-Lern-LMS",
+            nav_coding: "Coding-Arena",
+            nav_interviews: "KI-Vorstellungsgespräch"
         }
     };
 

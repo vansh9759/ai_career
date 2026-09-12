@@ -20,7 +20,14 @@ class Config:
     except Exception:
         pass
 
-    SQLALCHEMY_DATABASE_URI = "sqlite:///" + db_path
+    # PostgreSQL Managed DB Support (Render, Supabase, Neon) or SQLite Fallback
+    raw_db_url = os.environ.get("DATABASE_URL") or os.environ.get("POSTGRES_URL")
+    if raw_db_url:
+        if raw_db_url.startswith("postgres://"):
+            raw_db_url = raw_db_url.replace("postgres://", "postgresql://", 1)
+        SQLALCHEMY_DATABASE_URI = raw_db_url
+    else:
+        SQLALCHEMY_DATABASE_URI = "sqlite:///" + db_path
 
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 

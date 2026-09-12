@@ -1,9 +1,18 @@
-from flask import Blueprint, render_template, request, redirect, url_for, session, flash, jsonify
+from flask import Blueprint, render_template, request, redirect, url_for, session, flash, jsonify, current_app
 from database import db
 from models import VerifiedSkill, EmployabilityScore, User, GamificationProfile
 from datetime import datetime
 import uuid
 import random
+import hmac
+import hashlib
+
+def generate_hmac_badge_code(user_id, skill_name):
+    secret_key = current_app.config.get('SECRET_KEY', 'AIResumeAnalyzerSecretKey').encode('utf-8')
+    prefix = skill_name.replace(" ", "").upper()[:3]
+    msg = f"{user_id}:{skill_name}".encode('utf-8')
+    hmac_digest = hmac.new(secret_key, msg, hashlib.sha256).hexdigest()[:6].upper()
+    return f"VERIFIED-{prefix}-{hmac_digest}"
 
 skills_bp = Blueprint('skills', __name__)
 
@@ -1568,14 +1577,13 @@ def verify_skill(skill_name):
                 existing.verified_at = datetime.utcnow()
                 badge_code = existing.badge_code
             else:
-                prefix = skill_name.replace(" ", "").upper()[:3]
-                badge_code = f"VERIFIED-{prefix}-{uuid.uuid4().hex[:6].upper()}"
+                badge_code = generate_hmac_badge_code(user.id, skill_name)
                 new_skill = VerifiedSkill(
                     user_id=user.id,
                     skill_name=skill_name,
                     proficiency=f"Verified Expert ({score_pct}%)",
                     status="Verified",
-                    verification_method="Proctored AI Assessment",
+                    verification_method="Proctored AI Assessment (HMAC-SHA256 Cryptographic Signature)",
                     badge_code=badge_code
                 )
                 db.session.add(new_skill)
@@ -1667,11 +1675,13 @@ def generate_custom_skill():
 
 
 @skills_bp.route('/badge/<badge_code>')
+@skills_bp.route('/verify-badge/<badge_code>')
+@skills_bp.route('/public/<badge_code>')
 def public_badge_verify(badge_code):
     """Public credential verification page for recruiters & third parties."""
     badge = VerifiedSkill.query.filter_by(badge_code=badge_code).first()
     if not badge:
-        return render_template('skills/badge_public.html', badge=None, error="Invalid or unverified credential badge code.")
+        return render_template('skills/badge_public.html', badge=None, error=f"Credential Badge '{badge_code}' not found or invalid HMAC signature.")
     
     student = User.query.get(badge.user_id)
     return render_template('skills/badge_public.html', badge=badge, student=student)

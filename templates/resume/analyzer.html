@@ -8,7 +8,9 @@
     <div>
         <div style="display:flex; align-items:center; gap:10px;">
             <h2>AI Resume Engine & <span class="gradient-text">ATS Studio</span></h2>
-            <span class="badge badge-verified"><i class="bi bi-cpu-fill"></i> Gemini 1.5 Pro Active</span>
+            <span class="badge {% if report and 'LLM' in report.ai_engine_used %}badge-verified{% else %}badge-purple{% endif %}">
+                <i class="bi bi-cpu-fill"></i> {{ report.ai_engine_used if report else 'Engine: Google Gemini 1.5 Pro / NLP Fallback' }}
+            </span>
         </div>
         <p style="color:var(--text-muted); font-size:13.5px; margin-top:2px;">
             Real-time ATS parsing, keyword gap detection, metric impact scoring, and AI content rewrites in a side-by-side studio layout.

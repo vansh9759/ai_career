@@ -10,6 +10,7 @@ interviews_bp = Blueprint('interviews', __name__)
 FILLER_WORDS = ["um", "uh", "like", "basically", "you know", "actually", "literally", "sort of", "kind of"]
 
 @interviews_bp.route('/mock', methods=['GET', 'POST'])
+@interviews_bp.route('/mock-interview', methods=['GET', 'POST'])
 def mock_interview():
     user_id = session.get('user_id', 1)
     user = User.query.get(user_id) or User.query.first()

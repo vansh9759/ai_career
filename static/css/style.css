@@ -918,3 +918,117 @@ h1, h2, h3, h4, h5, h6 {
     box-shadow: 0 0 35px rgba(59, 130, 246, 0.2);
     position: relative;
 }
+
+/* =========================================================================
+   ANIMATIONS SYSTEM (Keyframes, Scroll Reveals, Floating, Shimmers)
+   ========================================================================= */
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(24px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeInScale {
+    from {
+        opacity: 0;
+        transform: scale(0.94);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes pulseGlow {
+    0% {
+        transform: translateX(-50%) scale(0.95);
+        opacity: 0.6;
+    }
+    50% {
+        transform: translateX(-50%) scale(1.08);
+        opacity: 0.9;
+    }
+    100% {
+        transform: translateX(-50%) scale(0.95);
+        opacity: 0.6;
+    }
+}
+
+@keyframes floatBob {
+    0%, 100% {
+        transform: translateY(0px);
+    }
+    50% {
+        transform: translateY(-8px);
+    }
+}
+
+@keyframes shimmerGlow {
+    0% {
+        background-position: -200% 0;
+    }
+    100% {
+        background-position: 200% 0;
+    }
+}
+
+@keyframes pulseRing {
+    0% {
+        box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.5);
+    }
+    70% {
+        box-shadow: 0 0 0 14px rgba(16, 185, 129, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+    }
+}
+
+/* Scroll Reveal Classes */
+.animate-on-scroll {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.animate-on-scroll.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Floating Animations */
+.float-animation {
+    animation: floatBob 4s ease-in-out infinite;
+}
+
+.pulse-ring-animation {
+    animation: pulseRing 2.5s infinite;
+}
+
+/* Button & Card Micro-Interactions */
+.btn-gradient {
+    background-size: 200% auto;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btn-gradient:hover {
+    background-position: right center;
+    box-shadow: 0 8px 25px rgba(139, 92, 246, 0.45);
+    transform: translateY(-2px) scale(1.02);
+}
+
+.glass-card, .stat-card, .glass-panel {
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.glass-card:hover, .stat-card:hover {
+    transform: translateY(-5px);
+    border-color: rgba(59, 130, 246, 0.4);
+    box-shadow: 0 12px 30px rgba(59, 130, 246, 0.18);
+}

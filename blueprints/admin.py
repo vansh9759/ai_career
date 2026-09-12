@@ -12,6 +12,16 @@ from functools import wraps
 
 admin_bp = Blueprint('admin', __name__)
 
+# --- BLUEPRINT LEVEL SERVER-SIDE RBAC GUARD ---
+@admin_bp.before_request
+def check_admin_access():
+    allowed_endpoints = ['admin.admin_login', 'admin.admin_logout', 'static']
+    if request.endpoint in allowed_endpoints:
+        return None
+    if not session.get('admin_logged_in') and session.get('user_role') not in ['admin', 'super_admin']:
+        flash("🔒 Protected route. Please log in as Administrator.", "danger")
+        return redirect(url_for('admin.admin_login'))
+
 # --- ADMIN AUTHENTICATION DECORATOR ---
 def admin_required(f):
     @wraps(f)
