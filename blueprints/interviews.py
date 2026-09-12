@@ -9,6 +9,7 @@ interviews_bp = Blueprint('interviews', __name__)
 
 FILLER_WORDS = ["um", "uh", "like", "basically", "you know", "actually", "literally", "sort of", "kind of"]
 
+@interviews_bp.route('/')
 @interviews_bp.route('/mock', methods=['GET', 'POST'])
 @interviews_bp.route('/mock-interview', methods=['GET', 'POST'])
 def mock_interview():

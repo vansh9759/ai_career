@@ -1,0 +1,127 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4 pb-3 border-bottom border-secondary">
+        <div>
+            <h2 class="fw-bold text-white mb-1"><i class="bi bi-github text-cyan me-2"></i> GitHub Engineering Intelligence Studio</h2>
+            <p class="text-muted mb-0">Evaluates repository structure, commit consistency, documentation quality, test suites, and open-source impact.</p>
+        </div>
+    </div>
+
+    <!-- Search Form -->
+    <div class="card glass-card border-0 shadow p-4 mb-4">
+        <form method="POST" action="{{ url_for('github.index') }}" class="row g-3 align-items-center">
+            <div class="col-md-9">
+                <div class="input-group">
+                    <span class="input-group-text bg-dark border-secondary text-muted">github.com/</span>
+                    <input type="text" name="github_handle" class="form-control bg-dark text-white border-secondary" value="{{ analysis.username }}" placeholder="enter GitHub username">
+                </div>
+            </div>
+            <div class="col-md-3">
+                <button type="submit" class="btn btn-cyan w-100 rounded-pill"><i class="bi bi-search me-1"></i> Analyze Engineering Score</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Metrics Breakdown -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-3">
+            <div class="card glass-card border-0 shadow p-4 text-center">
+                <div class="text-cyan font-monospace small mb-1">GITHUB ENGINEERING SCORE</div>
+                <div class="display-3 fw-bold text-white">{{ analysis.github_engineering_score }}<span class="fs-4 text-muted">/100</span></div>
+                <span class="badge bg-success bg-opacity-25 text-success rounded-pill mt-2">Verified Developer</span>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card glass-card border-0 shadow p-4 text-center">
+                <div class="text-cyan font-monospace small mb-1">TOTAL REPOSITORIES</div>
+                <div class="display-4 fw-bold text-cyan">{{ analysis.repo_count }}</div>
+                <div class="text-muted small mt-2">Public Repositories</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card glass-card border-0 shadow p-4 text-center">
+                <div class="text-cyan font-monospace small mb-1">TOTAL COMMITS</div>
+                <div class="display-4 fw-bold text-info">{{ analysis.total_commits }}</div>
+                <div class="text-muted small mt-2">Annual Commit Contributions</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card glass-card border-0 shadow p-4 text-center">
+                <div class="text-cyan font-monospace small mb-1">STARS & PRs</div>
+                <div class="display-4 fw-bold text-warning">{{ analysis.stars_received }}<span class="fs-6 text-muted"> Stars</span></div>
+                <div class="text-muted small mt-2">{{ analysis.pr_merged }} Pull Requests Merged</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Category Breakdown Bars -->
+    <div class="row g-4 mb-4">
+        <div class="col-lg-6">
+            <div class="card glass-card border-0 shadow p-4 h-100">
+                <h5 class="fw-bold text-white mb-3"><i class="bi bi-bar-chart-line text-cyan me-2"></i> Category Evaluation</h5>
+                
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between text-white small mb-1">
+                        <span>Code Architecture & Clean Code</span>
+                        <span class="fw-bold text-cyan">{{ analysis.breakdown.code_architecture }}%</span>
+                    </div>
+                    <div class="progress bg-dark" style="height: 8px;">
+                        <div class="progress-bar bg-cyan" style="width: {{ analysis.breakdown.code_architecture }}%;"></div>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between text-white small mb-1">
+                        <span>Commit Consistency & Streaks</span>
+                        <span class="fw-bold text-info">{{ analysis.breakdown.commit_consistency }}%</span>
+                    </div>
+                    <div class="progress bg-dark" style="height: 8px;">
+                        <div class="progress-bar bg-info" style="width: {{ analysis.breakdown.commit_consistency }}%;"></div>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between text-white small mb-1">
+                        <span>Documentation & README Quality</span>
+                        <span class="fw-bold text-warning">{{ analysis.breakdown.documentation_readme }}%</span>
+                    </div>
+                    <div class="progress bg-dark" style="height: 8px;">
+                        <div class="progress-bar bg-warning" style="width: {{ analysis.breakdown.documentation_readme }}%;"></div>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between text-white small mb-1">
+                        <span>Test Suites & CI/CD Workflows</span>
+                        <span class="fw-bold text-success">{{ analysis.breakdown.test_coverage }}%</span>
+                    </div>
+                    <div class="progress bg-dark" style="height: 8px;">
+                        <div class="progress-bar bg-success" style="width: {{ analysis.breakdown.test_coverage }}%;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6">
+            <div class="card glass-card border-0 shadow p-4 h-100">
+                <h5 class="fw-bold text-white mb-3"><i class="bi bi-star-fill text-warning me-2"></i> Top Repositories</h5>
+                {% for repo in analysis.top_repositories %}
+                <div class="p-3 bg-dark bg-opacity-50 rounded mb-3 border border-secondary">
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                        <span class="fw-bold text-cyan">{{ repo.name }}</span>
+                        <span class="badge bg-secondary">{{ repo.badge }}</span>
+                    </div>
+                    <p class="text-muted small mb-2">{{ repo.description }}</p>
+                    <div class="d-flex justify-content-between text-muted small">
+                        <span><i class="bi bi-code-slash me-1"></i> {{ repo.language }}</span>
+                        <span><i class="bi bi-star me-1"></i> {{ repo.stars }} stars &bull; {{ repo.forks }} forks</span>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

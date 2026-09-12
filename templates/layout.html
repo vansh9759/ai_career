@@ -32,6 +32,24 @@
                             <span data-i18n="nav_hub">AI Mentor Hub</span>
                         </a>
                     </li>
+                    <li class="nav-item {% if 'career' in request.path %}active{% endif %}">
+                        <a href="{{ url_for('career_twin.index') }}">
+                            <i class="bi bi-cpu"></i>
+                            <span>AI Career Twin</span>
+                        </a>
+                    </li>
+                    <li class="nav-item {% if 'github' in request.path %}active{% endif %}">
+                        <a href="{{ url_for('github.index') }}">
+                            <i class="bi bi-github"></i>
+                            <span>GitHub Intelligence</span>
+                        </a>
+                    </li>
+                    <li class="nav-item {% if 'assessment' in request.path %}active{% endif %}">
+                        <a href="{{ url_for('assessment.index') }}">
+                            <i class="bi bi-award-fill"></i>
+                            <span>Skill Assessments</span>
+                        </a>
+                    </li>
                     <li class="nav-item {% if request.endpoint == 'student.readiness' %}active{% endif %}">
                         <a href="{{ url_for('student.readiness') }}">
                             <i class="bi bi-speedometer2"></i>

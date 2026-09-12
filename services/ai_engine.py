@@ -273,3 +273,36 @@ class AICareerEngine:
             return "Use the STAR method (Situation, Task, Action, Result) for behavioral questions. Practice technical questions out loud in our AI Mock Interview module to receive real-time tone and confidence scoring."
         else:
             return f"Great question! Based on your target goal of {user_context or 'Software Development'}, I recommend focusing on verifying your Python and SQL skills today and building 1 production project."
+
+
+def query_ai_engine(prompt, system_instruction=None):
+    """
+    Top-level helper to query Gemini AI model with transparent badge fallback metadata.
+    """
+    genai = get_genai_client()
+    badge = "⚡ Fallback Local Rule Engine"
+    output_text = ""
+
+    if genai and os.getenv("GOOGLE_API_KEY"):
+        try:
+            model = genai.GenerativeModel('gemini-pro')
+            full_prompt = f"{system_instruction}\n\n{prompt}" if system_instruction else prompt
+            response = model.generate_content(full_prompt)
+            if response and response.text:
+                output_text = response.text
+                badge = "🤖 Gemini 1.5 Pro Live LLM"
+        except Exception:
+            pass
+
+    if not output_text:
+        output_text = AICareerEngine.ask_ai_mentor(prompt, system_instruction or "")
+
+    return {
+        "text": output_text,
+        "badge": badge,
+        "meta": {
+            "is_live_llm": "Gemini" in badge,
+            "engine": badge
+        }
+    }
+

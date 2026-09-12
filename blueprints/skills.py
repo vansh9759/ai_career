@@ -1677,12 +1677,16 @@ def generate_custom_skill():
 @skills_bp.route('/badge/<badge_code>')
 @skills_bp.route('/verify-badge/<badge_code>')
 @skills_bp.route('/public/<badge_code>')
+@skills_bp.route('/verify/<badge_code>')
 def public_badge_verify(badge_code):
     """Public credential verification page for recruiters & third parties."""
+    from services.crypto_passport import CryptoPassportEngine
     badge = VerifiedSkill.query.filter_by(badge_code=badge_code).first()
     if not badge:
         return render_template('skills/badge_public.html', badge=None, error=f"Credential Badge '{badge_code}' not found or invalid HMAC signature.")
     
     student = User.query.get(badge.user_id)
-    return render_template('skills/badge_public.html', badge=badge, student=student)
+    qr_svg = CryptoPassportEngine.generate_qr_svg(request.url)
+    return render_template('skills/badge_public.html', badge=badge, student=student, qr_svg=qr_svg)
+
 

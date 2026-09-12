@@ -374,3 +374,107 @@ class AIUsageLog(db.Model):
     response_time_ms = db.Column(db.Integer, default=320)
     status_code = db.Column(db.Integer, default=200)
     timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+
+
+# ---------------- CAREER TWIN & ASSESSMENTS ---------------- #
+class CareerTwin(db.Model):
+    __tablename__ = "career_twins"
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
+    target_role = db.Column(db.String(150), default="Software Engineer")
+    target_companies = db.Column(db.String(300), default="Google, Microsoft, Amazon")
+    readiness_json = db.Column(db.Text, default="{}")
+    daily_plan_json = db.Column(db.Text, default="[]")
+    last_synced = db.Column(db.DateTime, default=datetime.utcnow)
+
+
+class SkillAssessment(db.Model):
+    __tablename__ = "skill_assessments"
+
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(200), nullable=False)
+    topic = db.Column(db.String(100), default="Python") # C++, Python, Java, JS, React, SQL, DBMS, OS, CN, DSA, System Design
+    difficulty = db.Column(db.String(50), default="Intermediate")
+    questions_json = db.Column(db.Text, default="[]")
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+
+class AssessmentResult(db.Model):
+    __tablename__ = "assessment_results"
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
+    assessment_id = db.Column(db.Integer, nullable=True)
+    topic = db.Column(db.String(100), default="Python")
+    score_pct = db.Column(db.Integer, default=85)
+    accuracy_pct = db.Column(db.Integer, default=85)
+    strong_topics = db.Column(db.String(250), default="Core Syntax, Functions")
+    weak_topics = db.Column(db.String(250), default="Multithreading")
+    completed_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+
+class GitHubProfile(db.Model):
+    __tablename__ = "github_profiles"
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
+    username = db.Column(db.String(100), nullable=False)
+    engineering_score = db.Column(db.Integer, default=78)
+    repo_count = db.Column(db.Integer, default=14)
+    commit_count = db.Column(db.Integer, default=320)
+    top_languages = db.Column(db.String(200), default="Python, JavaScript, C++")
+    readme_quality_score = db.Column(db.Integer, default=85)
+    open_source_contributions = db.Column(db.Integer, default=5)
+    last_audited = db.Column(db.DateTime, default=datetime.utcnow)
+
+
+class UserCredential(db.Model):
+    __tablename__ = "user_credentials"
+
+    id = db.Column(db.Integer, primary_key=True)
+    credential_id = db.Column(db.String(100), unique=True, nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
+    skill_name = db.Column(db.String(100), nullable=False)
+    score_pct = db.Column(db.Integer, default=90)
+    issuer = db.Column(db.String(100), default="CareerOS AI Verification Engine")
+    verification_signature = db.Column(db.Text, nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+
+class UserNotification(db.Model):
+    __tablename__ = "user_notifications"
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
+    title = db.Column(db.String(200), nullable=False)
+    message = db.Column(db.Text, nullable=False)
+    type = db.Column(db.String(50), default="info") # info, reminder, milestone, job
+    is_read = db.Column(db.Boolean, default=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+
+class ProjectGeneratorResult(db.Model):
+    __tablename__ = "project_generator_results"
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
+    title = db.Column(db.String(200), nullable=False)
+    target_role = db.Column(db.String(100), default="Software Engineer")
+    tech_stack = db.Column(db.String(250), default="Python, Flask, React, PostgreSQL")
+    architecture_text = db.Column(db.Text)
+    db_schema_text = db.Column(db.Text)
+    api_structure_text = db.Column(db.Text)
+    readme_markdown = db.Column(db.Text)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+
+class RoadmapNodeProgress(db.Model):
+    __tablename__ = "roadmap_node_progress"
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
+    node_id = db.Column(db.String(50), nullable=False)
+    status = db.Column(db.String(50), default="In Progress") # Start, Complete, Skip, Revisit, Mark Difficult
+    notes = db.Column(db.Text, default="")
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow)

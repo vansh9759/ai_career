@@ -1,0 +1,145 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4 pb-3 border-bottom border-secondary">
+        <div>
+            <h2 class="fw-bold text-white mb-1"><i class="bi bi-cpu text-cyan me-2"></i> AI Career Twin Studio</h2>
+            <p class="text-muted mb-0">Autonomous AI Agent analyzing your employability velocity, projections & daily career plan.</p>
+        </div>
+        <div>
+            <a href="{{ url_for('career_twin.export_report') }}" target="_blank" class="btn btn-outline-info rounded-pill px-4 me-2">
+                <i class="bi bi-file-earmark-pdf me-1"></i> Print / PDF Report
+            </a>
+            <button class="btn btn-cyan rounded-pill px-4" onclick="document.getElementById('twinQueryInput').focus();">
+                <i class="bi bi-chat-dots me-1"></i> Query Career Twin
+            </button>
+        </div>
+    </div>
+
+    <!-- Overview Cards -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-3">
+            <div class="card glass-card border-0 shadow-sm p-4 text-center">
+                <div class="text-cyan font-monospace fs-6 mb-1">TOTAL EMPLOYABILITY INDEX</div>
+                <div class="display-4 fw-bold text-white">{{ snapshot.employability_score }}<span class="fs-4 text-muted">/100</span></div>
+                <div class="badge bg-success bg-opacity-25 text-success rounded-pill mt-2">Level {{ snapshot.level }} Candidate</div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card glass-card border-0 shadow-sm p-4 text-center">
+                <div class="text-cyan font-monospace fs-6 mb-1">30-DAY PROJECTION</div>
+                <div class="display-4 fw-bold text-info">{{ projections['30_day'] }}<span class="fs-4 text-muted">/100</span></div>
+                <div class="text-muted small mt-2">+{{ projections['30_day'] - snapshot.employability_score }} points projected</div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card glass-card border-0 shadow-sm p-4 text-center">
+                <div class="text-cyan font-monospace fs-6 mb-1">60-DAY PROJECTION</div>
+                <div class="display-4 fw-bold text-warning">{{ projections['60_day'] }}<span class="fs-4 text-muted">/100</span></div>
+                <div class="text-muted small mt-2">+{{ projections['60_day'] - snapshot.employability_score }} points projected</div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card glass-card border-0 shadow-sm p-4 text-center">
+                <div class="text-cyan font-monospace fs-6 mb-1">90-DAY PROJECTION</div>
+                <div class="display-4 fw-bold text-success">{{ projections['90_day'] }}<span class="fs-4 text-muted">/100</span></div>
+                <div class="text-muted small mt-2">+{{ projections['90_day'] - snapshot.employability_score }} points projected</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Two-column Layout: Interactive Twin Agent & Daily Plan -->
+    <div class="row g-4">
+        <!-- Interactive Career Twin Agent -->
+        <div class="col-lg-7">
+            <div class="card glass-card border-0 shadow p-4 h-100">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="fw-bold text-white mb-0"><i class="bi bi-robot text-cyan me-2"></i> Ask Your AI Career Twin</h5>
+                    <span class="badge bg-dark border border-cyan text-cyan">Transparent LLM Engine</span>
+                </div>
+                <p class="text-muted small mb-3">Ask questions about your career readiness, target role preparation, project recommendations, or skill gaps.</p>
+
+                <div class="bg-dark bg-opacity-50 rounded p-3 mb-3 border border-secondary" style="min-height: 240px; max-height: 320px; overflow-y: auto;" id="twinChatBox">
+                    <div class="mb-3">
+                        <div class="badge bg-cyan text-dark mb-1">Career Twin Agent</div>
+                        <div class="p-3 rounded bg-secondary bg-opacity-25 text-white small">
+                            Hello {{ user.name }}! I am your AI Career Twin. Based on your current score of {{ twin.employability_score }}/100 targeting <strong>{{ user.dream_job or 'Software Engineer' }}</strong> at <strong>{{ user.dream_company or 'Google' }}</strong>, how can I guide your preparation today?
+                        </div>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <input type="text" id="twinQueryInput" class="form-control bg-dark text-white border-secondary" placeholder="e.g. What project should I build next to reach 90+ score?">
+                    <button class="btn btn-cyan" id="sendTwinBtn" onclick="sendTwinQuery()"><i class="bi bi-send-fill me-1"></i> Send</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Today's Career Plan -->
+        <div class="col-lg-5">
+            <div class="card glass-card border-0 shadow p-4 h-100">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="fw-bold text-white mb-0"><i class="bi bi-calendar-check text-cyan me-2"></i> Today's Career Plan</h5>
+                    <span class="badge bg-info text-dark">5 Tasks</span>
+                </div>
+
+                <div class="list-group list-group-flush bg-transparent">
+                    {% for task in plan %}
+                    <div class="list-group-item bg-transparent text-white border-secondary px-0 py-3 d-flex align-items-start">
+                        <div class="form-check me-3 mt-1">
+                            <input class="form-check-input bg-dark border-secondary" type="checkbox" id="taskCheck{{ loop.index }}">
+                        </div>
+                        <div class="flex-grow-1">
+                            <div class="d-flex justify-content-between">
+                                <span class="fw-bold text-white small">{{ task.title }}</span>
+                                <span class="badge bg-secondary rounded-pill small">{{ task.est_time }}</span>
+                            </div>
+                            <p class="text-muted small mb-0 mt-1">{{ task.desc }}</p>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function sendTwinQuery() {
+    const input = document.getElementById('twinQueryInput');
+    const q = input.value.trim();
+    if (!q) return;
+
+    const chatBox = document.getElementById('twinChatBox');
+    
+    // User message
+    const uDiv = document.createElement('div');
+    uDiv.className = 'mb-3 text-end';
+    uDiv.innerHTML = `<div class="badge bg-secondary mb-1">You</div><div class="p-3 rounded bg-cyan text-dark small d-inline-block text-start">${q}</div>`;
+    chatBox.appendChild(uDiv);
+
+    input.value = '';
+    chatBox.scrollTop = chatBox.scrollHeight;
+
+    // Fetch response
+    fetch('{{ url_for("career_twin.ask") }}', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({question: q})
+    })
+    .then(res => res.json())
+    .then(data => {
+        const aDiv = document.createElement('div');
+        aDiv.className = 'mb-3';
+        aDiv.innerHTML = `<div class="badge bg-cyan text-dark mb-1">Career Twin Agent</div><div class="p-3 rounded bg-secondary bg-opacity-25 text-white small">${data.answer || data.error}</div>`;
+        chatBox.appendChild(aDiv);
+        chatBox.scrollTop = chatBox.scrollHeight;
+    });
+}
+</script>
+{% endblock %}

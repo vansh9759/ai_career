@@ -23,6 +23,9 @@ from blueprints.university import university_bp
 from blueprints.portfolio import portfolio_bp
 from blueprints.admin import admin_bp
 from blueprints.admin_api import admin_api_bp
+from blueprints.career_twin import career_twin_bp
+from blueprints.assessment import assessment_bp
+from blueprints.github import github_bp
 
 app = Flask(__name__)
 app.config.from_object(Config)
@@ -46,6 +49,9 @@ app.register_blueprint(university_bp, url_prefix='/university')
 app.register_blueprint(portfolio_bp, url_prefix='/portfolio')
 app.register_blueprint(admin_bp, url_prefix='/admin')
 app.register_blueprint(admin_api_bp, url_prefix='/api/admin')
+app.register_blueprint(career_twin_bp, url_prefix='/career')
+app.register_blueprint(assessment_bp, url_prefix='/assessment')
+app.register_blueprint(github_bp, url_prefix='/github')
 
 
 # Global Context Processors
@@ -76,7 +82,7 @@ def upgrade_plan():
     return redirect(url_for('student.dashboard'))
 
 
-# Backward compatibility redirects
+# Backward compatibility & convenient root redirects
 @app.route('/dashboard')
 def dashboard_redirect():
     return redirect(url_for('student.dashboard'))
@@ -88,6 +94,22 @@ def login_redirect():
 @app.route('/register')
 def register_redirect():
     return redirect(url_for('auth.register'))
+
+@app.route('/career-twin')
+def career_twin_redirect():
+    return redirect(url_for('career_twin.index'))
+
+@app.route('/verify/<badge_code>')
+def verify_credential_redirect(badge_code):
+    return redirect(url_for('skills.public_badge_verify', badge_code=badge_code))
+
+@app.route('/linkedin')
+def linkedin_redirect():
+    return redirect(url_for('portfolio.linkedin_optimizer'))
+
+@app.route('/roadmap')
+def roadmap_redirect():
+    return redirect(url_for('learning.engine'))
 
 
 # Database Setup & Schema Migration Helper
