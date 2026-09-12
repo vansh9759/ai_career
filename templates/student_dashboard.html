@@ -115,9 +115,14 @@
             </div>
         </div>
 
-        <div style="margin-top:20px; display:flex; justify-content:space-between; align-items:center; border-top:1px solid var(--glass-border); padding-top:12px;">
-            <span style="font-size:13px; color:var(--text-muted);">Level {{ gamification.level if gamification else 4 }} Scholar</span>
-            <span style="font-size:13px; font-weight:700; color:var(--brand-primary);">{{ gamification.xp if gamification else 1450 }} / 2000 XP</span>
+        <div style="margin-top:20px; border-top:1px solid var(--glass-border); padding-top:14px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                <span style="font-size:13px; color:var(--text-muted);">Level {{ level_info.level if level_info else (gamification.level if gamification else 2) }} Scholar</span>
+                <span style="font-size:13px; font-weight:700; color:var(--brand-primary);">{{ level_info.xp if level_info else (gamification.xp if gamification else 500) }} / {{ level_info.next_level_min_xp if level_info else 900 }} XP</span>
+            </div>
+            <div style="height:8px; background:var(--bg-surface-elevated); border-radius:4px; overflow:hidden;">
+                <div style="height:100%; width:{{ level_info.progress_pct if level_info else 50 }}%; background:var(--brand-gradient);"></div>
+            </div>
         </div>
     </div>
 </div>

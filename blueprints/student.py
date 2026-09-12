@@ -13,21 +13,19 @@ def get_current_user():
 
 @student_bp.route('/dashboard')
 def dashboard():
+    from services.scoring import DynamicScoringEngine
     user = get_current_user()
     if not user:
-        # Default mock demo user if guest
         user = User.query.first()
         if not user:
             return redirect(url_for('auth.login'))
 
+    # Calculate real unified score and level bounds from DB
+    score_info = DynamicScoringEngine.update_user_score(user.id)
     emp_record = EmployabilityScore.query.filter_by(user_id=user.id).first()
-    if not emp_record:
-        emp_record = EmployabilityScore(user_id=user.id, total_score=68)
-        db.session.add(emp_record)
-        db.session.commit()
 
     emp_data = AICareerEngine.calculate_employability_index(user, emp_record)
-    company_readiness = AICareerEngine.calculate_company_readiness(user.dream_company, emp_data['total_score'])
+    company_readiness = AICareerEngine.calculate_company_readiness(user.dream_company, emp_record.total_score)
     
     verified_skills = VerifiedSkill.query.filter_by(user_id=user.id).all()
     recent_submissions = CodingSubmission.query.filter_by(user_id=user.id).order_by(CodingSubmission.submitted_at.desc()).limit(5).all()
@@ -35,16 +33,20 @@ def dashboard():
     applications = JobApplication.query.filter_by(user_id=user.id).limit(5).all()
     gamification = GamificationProfile.query.filter_by(user_id=user.id).first()
 
+    level_info = score_info["level_info"] if score_info else DynamicScoringEngine.calculate_user_level(gamification.xp if gamification else 500)
+
     return render_template(
         'student_dashboard.html',
         user=user,
         emp_data=emp_data,
+        emp_record=emp_record,
         company_readiness=company_readiness,
         verified_skills=verified_skills,
         recent_submissions=recent_submissions,
         mock_interviews=mock_interviews,
         applications=applications,
-        gamification=gamification
+        gamification=gamification,
+        level_info=level_info
     )
 
 @student_bp.route('/profile', methods=['GET', 'POST'])

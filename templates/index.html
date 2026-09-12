@@ -1,206 +1,430 @@
 {% extends 'layout.html' %}
 
-{% block title %}CareerOS AI - The World's First AI Career Operating System{% endblock %}
+{% block title %}Your Career. Powered by AI. | CareerOS AI{% endblock %}
 
 {% block content %}
+<!-- SECTION 1: HERO SECTION WITH 3D AI CAREER DASHBOARD VISUALIZATION -->
 <div class="hero-section" style="position:relative; overflow:hidden;">
-    <!-- Interactive 3D Particle Network Canvas -->
     <canvas id="particle-canvas" style="position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:0;"></canvas>
-
-    <!-- Ambient Mesh Glow -->
     <div class="hero-mesh-glow"></div>
 
-    <div class="hero-pill float-animation" data-i18n="hero_pill" style="position:relative; z-index:2;">
-        <i class="bi bi-stars"></i> Introducing The World's First AI Career Operating System
-    </div>
-    
-    <h1 class="hero-title" data-i18n="hero_title" style="position:relative; z-index:2;">
-        Learn • Build • Improve • <span class="gradient-text">Get Hired</span>
-    </h1>
-    
-    <p class="hero-subtitle" data-i18n="hero_sub" style="position:relative; z-index:2;">
-        One unified AI ecosystem designed to continuously analyze your skills, optimize your resume, verify your code, conduct mock interviews, and land your dream job.
-    </p>
-
-    <div style="display:flex; justify-content:center; gap:16px; margin-bottom:48px; position:relative; z-index:2;">
-        <a href="{{ url_for('student.dashboard') }}" class="btn btn-gradient neon-glow-border" style="padding: 14px 32px; font-size:16px;" data-i18n="btn_launch">
-            Launch AI Mentor <i class="bi bi-arrow-right"></i>
-        </a>
-        <a href="{{ url_for('auth.register') }}" class="btn btn-secondary" style="padding: 14px 28px; font-size:16px;" data-i18n="btn_explore">
-            Explore Platform
-        </a>
-    </div>
-
-    <!-- Live Employability Index & Instant AI Resume Scanner Preview -->
-    <div class="glass-panel neon-glow-border" style="max-width: 900px; margin: 0 auto; padding: 32px; text-align:left; position:relative; z-index:2;">
-        <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--glass-border); padding-bottom:16px; margin-bottom:24px;">
-            <div>
-                <span class="badge badge-purple"><i class="bi bi-lightning-charge-fill"></i> INSTANT AI ENGINE DEMO</span>
-                <h3 style="margin-top:6px;">Continuous AI Employability & Resume Scanner</h3>
+    <div class="hero-split-grid" style="position:relative; z-index:2;">
+        <!-- Left Side: Headline & Call To Actions -->
+        <div>
+            <div class="hero-pill float-animation" data-i18n="hero_pill">
+                <i class="bi bi-stars"></i> Next-Gen AI Career Operating System
             </div>
-            <div style="display:flex; align-items:center; gap:8px;">
-                <span class="badge badge-verified"><i class="bi bi-shield-check"></i> Real-time AI Analysis</span>
-            </div>
-        </div>
+            
+            <h1 class="hero-title" data-i18n="hero_title">
+                Your Career.<br><span class="gradient-text">Powered by AI.</span>
+            </h1>
+            
+            <p class="hero-subtitle" data-i18n="hero_sub">
+                Build skills. Track progress. Prepare smarter. Become placement-ready.
+            </p>
 
-        <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:20px; margin-bottom:28px;">
-            <div class="glass-card" style="text-align:center;">
-                <div style="font-size:13px; color:var(--text-muted); font-weight:700;">AI EMPLOYABILITY INDEX</div>
-                <div style="font-size:44px; font-weight:800; color:var(--brand-primary); margin:8px 0;"><span data-counter="78">78</span><span style="font-size:18px; color:var(--text-muted);">/100</span></div>
-                <span class="badge badge-verified">+5 pts this week</span>
+            <div style="display:flex; gap:16px; flex-wrap:wrap; margin-bottom:28px;">
+                <a href="{{ url_for('auth.register') }}" class="btn btn-gradient neon-glow-border" style="padding:14px 32px; font-size:16px;" data-i18n="btn_launch">
+                    Start Your Career Journey <i class="bi bi-arrow-right"></i>
+                </a>
+                <a href="{{ url_for('student.dashboard') }}" class="btn btn-secondary" style="padding:14px 28px; font-size:16px;" data-i18n="btn_explore">
+                    Explore Platform
+                </a>
             </div>
 
-            <div class="glass-card" style="text-align:center;">
-                <div style="font-size:13px; color:var(--text-muted); font-weight:700;">TARGET COMPANY READINESS</div>
-                <div style="font-size:44px; font-weight:800; color:var(--brand-secondary); margin:8px 0;"><span data-counter="86" data-suffix="%">86%</span></div>
-                <span class="badge badge-purple">Google Ready</span>
-            </div>
-
-            <div class="glass-card" style="text-align:center;">
-                <div style="font-size:13px; color:var(--text-muted); font-weight:700;">VERIFIED SKILL PASSPORT</div>
-                <div style="font-size:44px; font-weight:800; color:var(--brand-accent); margin:8px 0;"><span data-counter="4" data-suffix=" Badges">4 Badges</span></div>
-                <span class="badge badge-orange">Python • SQL • ML</span>
-            </div>
-        </div>
-
-        <!-- Instant Drag & Drop AI Resume Tester Widget -->
-        <div style="background:var(--bg-surface-elevated); border:2px dashed var(--brand-primary); border-radius:14px; padding:24px; text-align:center; transition:var(--transition-smooth);" id="dropZoneHero">
-            <i class="bi bi-cloud-arrow-up-fill" style="font-size:36px; color:var(--brand-primary);"></i>
-            <h4 style="margin-top:8px;">Instant AI Resume Score Check</h4>
-            <p style="font-size:13px; color:var(--text-muted); margin-bottom:14px;">Paste your resume text below or upload a PDF to get your instant ATS score!</p>
-
-            <div style="max-width:600px; margin:0 auto; display:flex; gap:10px;">
-                <input type="text" id="instantResumeInput" class="form-control" placeholder="Paste your resume text or job title (e.g. Python Developer with SQL experience)..." style="font-size:13px;">
-                <button class="btn btn-gradient" onclick="runInstantScan()" style="padding:10px 20px; font-size:13px; whitespace:nowrap;">Scan AI ATS <i class="bi bi-cpu-fill"></i></button>
-            </div>
-
-            <div id="instantScanResult" style="display:none; margin-top:20px; text-align:left; background:var(--glass-bg); padding:16px; border-radius:10px; border:1px solid var(--brand-secondary);">
-                <div style="display:flex; justify-content:space-between; align-items:center;">
-                    <strong style="color:var(--brand-secondary);"><i class="bi bi-check-circle-fill"></i> Instant ATS Score: 84/100 (Strong Match)</strong>
-                    <a href="{{ url_for('resume.analyzer') }}" class="btn btn-secondary" style="font-size:11px;">View Detailed AI Report →</a>
+            <div style="display:flex; align-items:center; gap:16px; font-size:13px; color:var(--text-muted);">
+                <div style="display:flex; align-items:center; gap:6px;">
+                    <i class="bi bi-check-circle-fill" style="color:var(--brand-secondary);"></i> No Credit Card Required
                 </div>
-                <p style="font-size:12px; color:var(--text-muted); margin-top:6px;">Detected Key Skills: Python, SQL, REST APIs, Git. Recommendation: Add 1 Cloud Deployment project (Docker/GCP) to hit 90+ score.</p>
+                <div style="display:flex; align-items:center; gap:6px;">
+                    <i class="bi bi-check-circle-fill" style="color:var(--brand-secondary);"></i> Verified Skill Passport
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Side: Impressive Animated AI Career Dashboard Visualization -->
+        <div class="hero-viz-container float-animation">
+            <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--glass-border); padding-bottom:14px; margin-bottom:18px;">
+                <div style="display:flex; align-items:center; gap:10px;">
+                    <div class="avatar" style="width:36px; height:36px; font-size:14px;">AR</div>
+                    <div>
+                        <div style="font-size:14px; font-weight:700;">Alex Rivera</div>
+                        <div style="font-size:11px; color:var(--text-muted);">Target: <strong style="color:var(--brand-primary);">Software Engineer at Google</strong></div>
+                    </div>
+                </div>
+                <span class="badge badge-verified pulse-ring-animation"><i class="bi bi-cpu-fill"></i> Gemini 1.5 Pro</span>
+            </div>
+
+            <!-- Readiness Score & Skill Meters -->
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px; margin-bottom:14px;">
+                <div class="hero-viz-card">
+                    <div style="font-size:11px; font-weight:700; color:var(--text-subtle);">CAREER READINESS SCORE</div>
+                    <div style="font-size:36px; font-weight:800; color:var(--brand-primary); margin:4px 0;"><span data-counter="84">84</span><span style="font-size:14px; color:var(--text-muted);">/100</span></div>
+                    <span class="badge badge-verified">+6 pts this week</span>
+                </div>
+
+                <div class="hero-viz-card">
+                    <div style="font-size:11px; font-weight:700; color:var(--text-subtle);">RESUME ATS SCORE</div>
+                    <div style="font-size:36px; font-weight:800; color:var(--brand-secondary); margin:4px 0;"><span data-counter="88">88</span><span style="font-size:14px; color:var(--text-muted);">/100</span></div>
+                    <span class="badge badge-purple">High Match</span>
+                </div>
+            </div>
+
+            <!-- Skill Progress Bars -->
+            <div class="hero-viz-card">
+                <div style="display:flex; justify-content:space-between; font-size:12px; font-weight:700; margin-bottom:6px;">
+                    <span>DSA & Algorithms Progress</span>
+                    <span style="color:var(--brand-primary);">21/25 Solved (84%)</span>
+                </div>
+                <div style="background:var(--bg-surface); height:8px; border-radius:4px; overflow:hidden;">
+                    <div style="width:84%; height:100%; background:var(--brand-primary); border-radius:4px;"></div>
+                </div>
+            </div>
+
+            <div class="hero-viz-card" style="margin-bottom:0;">
+                <div style="display:flex; justify-content:space-between; font-size:12px; font-weight:700; margin-bottom:6px;">
+                    <span>AI & ML Engineering</span>
+                    <span style="color:var(--brand-secondary);">Advanced Mastery (92%)</span>
+                </div>
+                <div style="background:var(--bg-surface); height:8px; border-radius:4px; overflow:hidden;">
+                    <div style="width:92%; height:100%; background:var(--brand-secondary); border-radius:4px;"></div>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
-<script>
-function runInstantScan() {
-    const input = document.getElementById('instantResumeInput').value;
-    if (!input.trim()) { alert('Please enter your resume text or skills first!'); return; }
-    const res = document.getElementById('instantScanResult');
-    res.style.display = 'block';
-}
-</script>
-
-<!-- Company Hiring Partner Marquee Ticker -->
-<div class="marquee-container">
-    <div class="marquee-track">
-        <span class="marquee-brand"><i class="bi bi-google"></i> GOOGLE</span>
-        <span class="marquee-brand"><i class="bi bi-microsoft"></i> MICROSOFT</span>
-        <span class="marquee-brand"><i class="bi bi-amazon"></i> AMAZON</span>
-        <span class="marquee-brand"><i class="bi bi-meta"></i> META</span>
-        <span class="marquee-brand"><i class="bi bi-cpu-fill"></i> NVIDIA</span>
-        <span class="marquee-brand"><i class="bi bi-apple"></i> APPLE</span>
-        <span class="marquee-brand"><i class="bi bi-triangle-fill"></i> ADOBE</span>
-        <span class="marquee-brand"><i class="bi bi-film"></i> NETFLIX</span>
-        <!-- Duplicate for Infinite Loop -->
-        <span class="marquee-brand"><i class="bi bi-google"></i> GOOGLE</span>
-        <span class="marquee-brand"><i class="bi bi-microsoft"></i> MICROSOFT</span>
-        <span class="marquee-brand"><i class="bi bi-amazon"></i> AMAZON</span>
-        <span class="marquee-brand"><i class="bi bi-meta"></i> META</span>
-        <span class="marquee-brand"><i class="bi bi-cpu-fill"></i> NVIDIA</span>
-        <span class="marquee-brand"><i class="bi bi-apple"></i> APPLE</span>
-        <span class="marquee-brand"><i class="bi bi-triangle-fill"></i> ADOBE</span>
-        <span class="marquee-brand"><i class="bi bi-film"></i> NETFLIX</span>
+<!-- SECTION 2: PLATFORM STATISTICS BAR -->
+<div class="section-wrapper animate-on-scroll" style="padding:40px 0;">
+    <div class="dashboard-grid" style="margin-bottom:0;">
+        <div class="col-span-3 stat-card text-center">
+            <div>
+                <div class="stat-val" style="color:var(--brand-primary);"><span data-counter="14200" data-suffix="+">14,200+</span></div>
+                <div class="stat-label">Active Candidates</div>
+            </div>
+        </div>
+        <div class="col-span-3 stat-card text-center">
+            <div>
+                <div class="stat-val" style="color:var(--brand-secondary);"><span data-counter="38500" data-suffix="+">38,500+</span></div>
+                <div class="stat-label">Resumes Analyzed</div>
+            </div>
+        </div>
+        <div class="col-span-3 stat-card text-center">
+            <div>
+                <div class="stat-val" style="color:var(--brand-accent);"><span data-counter="982" data-suffix="%">98.2%</span></div>
+                <div class="stat-label">Placement Accuracy</div>
+            </div>
+        </div>
+        <div class="col-span-3 stat-card text-center">
+            <div>
+                <div class="stat-val" style="color:var(--state-success);"><span data-counter="450" data-suffix="+">450+</span></div>
+                <div class="stat-label">Partner Companies</div>
+            </div>
+        </div>
     </div>
 </div>
 
-<!-- NextGenGrowth Style Category Skill Pills Bar -->
-<div style="text-align:center; margin: 30px 0 50px 0;">
-    <div style="font-size:12px; text-transform:uppercase; letter-spacing:0.1em; color:var(--text-subtle); margin-bottom:16px; font-weight:700;">EXPLORE VERIFIED CAREER TRACKS</div>
-    <div style="display:flex; justify-content:center; gap:10px; flex-wrap:wrap; max-width:900px; margin:0 auto;">
-        <a href="{{ url_for('skills.passport') }}" class="badge badge-purple" style="padding:10px 18px; font-size:13px; text-decoration:none;">🐍 Python 3 Master</a>
-        <a href="{{ url_for('coding.arena') }}" class="badge badge-verified" style="padding:10px 18px; font-size:13px; text-decoration:none;">💻 21 LeetCode Challenges</a>
-        <a href="{{ url_for('skills.passport') }}" class="badge badge-orange" style="padding:10px 18px; font-size:13px; text-decoration:none;">🛢️ SQL Analytics Specialist</a>
-        <a href="{{ url_for('interviews.mock_interview') }}" class="badge badge-purple" style="padding:10px 18px; font-size:13px; text-decoration:none;">🎙️ Mic Web Speech Mock</a>
-        <a href="{{ url_for('projects.project_builder') }}" class="badge badge-verified" style="padding:10px 18px; font-size:13px; text-decoration:none;">🤖 GenAI Project Builder</a>
+<!-- SECTION 3: AI CAREER DASHBOARD PREVIEW -->
+<div class="section-wrapper animate-on-scroll">
+    <div class="section-header">
+        <span class="badge badge-purple"><i class="bi bi-speedometer2"></i> UNIFIED DASHBOARD</span>
+        <h2 style="margin-top:10px;">One Dashboard. <span class="gradient-text">Complete Clarity.</span></h2>
+        <p>Continuous AI skill tracking, resume scores, coding progress, and mock interview performance in one unified view.</p>
+    </div>
+
+    <div class="glass-panel" style="padding:32px; border-radius:18px;">
+        <div class="dashboard-grid" style="margin-bottom:0;">
+            <div class="col-span-4 glass-card">
+                <i class="bi bi-bar-chart-line-fill" style="font-size:32px; color:var(--brand-primary);"></i>
+                <h3 style="margin-top:12px;">Unified Career Index</h3>
+                <p style="color:var(--text-muted); font-size:14px; margin-top:6px;">Calculated dynamically from real coding submissions, ATS parsing, and interview performance.</p>
+            </div>
+            <div class="col-span-4 glass-card">
+                <i class="bi bi-shield-lock-fill" style="font-size:32px; color:var(--brand-secondary);"></i>
+                <h3 style="margin-top:12px;">Cryptographic Passport</h3>
+                <p style="color:var(--text-muted); font-size:14px; margin-top:6px;">HMAC-SHA256 verified skill badges that recruiters can independently audit.</p>
+            </div>
+            <div class="col-span-4 glass-card">
+                <i class="bi bi-robot" style="font-size:32px; color:var(--brand-accent);"></i>
+                <h3 style="margin-top:12px;">Autonomous AI Mentor</h3>
+                <p style="color:var(--text-muted); font-size:14px; margin-top:6px;">Personalized AI recommendations telling you exactly what skill or challenge to tackle next.</p>
+            </div>
+        </div>
     </div>
 </div>
 
-<!-- Key Platform Features Grid -->
-<div style="margin-top: 40px;">
-    <div style="text-align:center; margin-bottom:48px;">
-        <h2 style="font-size:36px;" data-i18n="why_diff">Why CareerOS AI is <span class="gradient-text">Different</span></h2>
-        <p style="color:var(--text-muted); max-width:600px; margin:10px auto 0 auto;" data-i18n="diff_sub">
-            Not just another course provider or resume editor. CareerOS AI actively develops your career from day one.
+<!-- SECTION 4: HOW THE PLATFORM WORKS -->
+<div class="section-wrapper animate-on-scroll">
+    <div class="section-header">
+        <span class="badge badge-verified"><i class="bi bi-diagram-3-fill"></i> SIMPLE 3-STEP WORKFLOW</span>
+        <h2 style="margin-top:10px;">How CareerOS AI <span class="gradient-text">Works</span></h2>
+        <p>From resume upload to corporate placement in 3 automated steps.</p>
+    </div>
+
+    <div class="dashboard-grid" style="margin-bottom:0;">
+        <div class="col-span-4 step-card">
+            <div class="step-number">1</div>
+            <h3>Scan & Analyze</h3>
+            <p style="color:var(--text-muted); font-size:14px; margin-top:8px;">Upload your resume to extract text, calculate ATS scores, and detect missing technical keywords.</p>
+        </div>
+        <div class="col-span-4 step-card">
+            <div class="step-number">2</div>
+            <h3>Practice & Verify</h3>
+            <p style="color:var(--text-muted); font-size:14px; margin-top:8px;">Solve proctored LeetCode-style coding challenges and earn cryptographic skill passport badges.</p>
+        </div>
+        <div class="col-span-4 step-card">
+            <div class="step-number">3</div>
+            <h3>Interview & Get Hired</h3>
+            <p style="color:var(--text-muted); font-size:14px; margin-top:8px;">Conduct voice AI mock interviews, optimize your profile, and match with top tech recruiters.</p>
+        </div>
+    </div>
+</div>
+
+<!-- SECTION 5: 24/7 AI CAREER ASSISTANT -->
+<div class="section-wrapper animate-on-scroll">
+    <div class="dashboard-grid" style="align-items:center;">
+        <div class="col-span-6">
+            <span class="badge badge-purple"><i class="bi bi-robot"></i> 24/7 COPILOT</span>
+            <h2 style="font-size:38px; font-weight:800; margin-top:12px;">Your Personal <span class="gradient-text">AI Mentor</span></h2>
+            <p style="color:var(--text-muted); font-size:16px; margin-top:12px; line-height:1.6;">
+                Ask your personal AI mentor what to learn next, why you were rejected, or how to prepare for your Google technical interview round.
+            </p>
+            <div style="margin-top:24px;">
+                <a href="{{ url_for('mentor.chat') }}" class="btn btn-gradient" style="padding:12px 28px;">Chat with AI Mentor →</a>
+            </div>
+        </div>
+        <div class="col-span-6 glass-panel" style="padding:24px;">
+            <div style="background:var(--bg-surface-elevated); padding:16px; border-radius:12px; margin-bottom:12px;">
+                <strong style="color:var(--brand-primary); font-size:13px;"><i class="bi bi-person-fill"></i> Candidate:</strong>
+                <p style="font-size:14px; margin-top:4px;">How can I improve my ATS score from 78 to 90+ for Google SWE?</p>
+            </div>
+            <div style="background:rgba(16,185,129,0.1); border-left:3px solid var(--brand-secondary); padding:16px; border-radius:0 12px 12px 0;">
+                <strong style="color:var(--brand-secondary); font-size:13px;"><i class="bi bi-robot"></i> Gemini AI Copilot:</strong>
+                <p style="font-size:14px; margin-top:4px; color:var(--text-main);">Add 1 cloud deployment project with Docker & GCP, and solve 3 System Design questions in the Coding Arena.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SECTION 6: RESUME ANALYZER SHOWCASE -->
+<div class="section-wrapper animate-on-scroll">
+    <div class="section-header">
+        <span class="badge badge-verified"><i class="bi bi-file-earmark-code-fill"></i> AI RESUME ENGINE</span>
+        <h2 style="margin-top:10px;">Horizontal <span class="gradient-text">ATS Studio</span></h2>
+        <p>Real-time ATS parsing, keyword gap analysis, and 1-click AI content rewrites in a split studio view.</p>
+    </div>
+
+    <div class="glass-card" style="padding:32px; text-align:center;">
+        <i class="bi bi-layout-split" style="font-size:48px; color:var(--brand-primary);"></i>
+        <h3 style="margin-top:16px;">Side-by-Side Resume & ATS Workspace</h3>
+        <p style="color:var(--text-muted); max-width:550px; margin:8px auto 24px auto;">Paste your plain resume text or drop PDF/DOCX files on the left to see your 3 horizontal score meters on the right.</p>
+        <a href="{{ url_for('resume.analyzer') }}" class="btn btn-primary" style="padding:12px 28px;">Open AI Resume Studio →</a>
+    </div>
+</div>
+
+<!-- SECTION 7: SKILL GAP ANALYZER -->
+<div class="section-wrapper animate-on-scroll">
+    <div class="dashboard-grid" style="align-items:center;">
+        <div class="col-span-6 glass-panel" style="padding:28px;">
+            <div style="font-size:12px; font-weight:700; color:var(--state-success); margin-bottom:8px;">DETECTED SKILLS</div>
+            <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:20px;">
+                <span class="badge badge-verified">Python 3</span>
+                <span class="badge badge-verified">SQL & Relational DBs</span>
+                <span class="badge badge-verified">Machine Learning</span>
+            </div>
+            <div style="font-size:12px; font-weight:700; color:var(--state-warning); margin-bottom:8px;">RECOMMENDED SKILLS TO ADD</div>
+            <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                <span class="badge badge-orange">+ System Design</span>
+                <span class="badge badge-orange">+ Docker & CI/CD</span>
+                <span class="badge badge-orange">+ Redis Caching</span>
+            </div>
+        </div>
+        <div class="col-span-6">
+            <span class="badge badge-orange"><i class="bi bi-crosshair"></i> SKILL GAP ANALYSIS</span>
+            <h2 style="font-size:38px; font-weight:800; margin-top:12px;">Know Exactly What <span class="gradient-text">Skills Are Missing</span></h2>
+            <p style="color:var(--text-muted); font-size:16px; margin-top:12px; line-height:1.6;">
+                Compare your current portfolio against target corporate job descriptions to identify missing technical keywords before applying.
+            </p>
+        </div>
+    </div>
+</div>
+
+<!-- SECTION 8: DSA & SKILL LEARNING ARENA -->
+<div class="section-wrapper animate-on-scroll">
+    <div class="section-header">
+        <span class="badge badge-purple"><i class="bi bi-code-square"></i> CODING ARENA</span>
+        <h2 style="margin-top:10px;">Proctored <span class="gradient-text">Coding Challenges</span></h2>
+        <p>Solve 21+ LeetCode-style challenges with automated test execution and instant AI feedback.</p>
+    </div>
+
+    <div class="dashboard-grid" style="margin-bottom:0;">
+        <div class="col-span-4 glass-card">
+            <span class="badge badge-purple">Two Sum (Hash Map)</span>
+            <h3 style="margin-top:12px;">Algorithms Track</h3>
+            <p style="color:var(--text-muted); font-size:13px; margin-top:6px;">Master O(1) time complexity hash table lookups in Python & C++.</p>
+            <a href="{{ url_for('coding.arena') }}" class="btn btn-secondary" style="margin-top:16px; font-size:12px;">Solve Challenge →</a>
+        </div>
+        <div class="col-span-4 glass-card">
+            <span class="badge badge-verified">Reverse Linked List</span>
+            <h3 style="margin-top:12px;">Data Structures</h3>
+            <p style="color:var(--text-muted); font-size:13px; margin-top:6px;">In-place pointer manipulation and iterative/recursive traversal.</p>
+            <a href="{{ url_for('coding.arena') }}" class="btn btn-secondary" style="margin-top:16px; font-size:12px;">Solve Challenge →</a>
+        </div>
+        <div class="col-span-4 glass-card">
+            <span class="badge badge-orange">SQL Top N Salary</span>
+            <h3 style="margin-top:12px;">Database Analytics</h3>
+            <p style="color:var(--text-muted); font-size:13px; margin-top:6px;">Window functions, DENSE_RANK(), and subquery optimizations.</p>
+            <a href="{{ url_for('coding.arena') }}" class="btn btn-secondary" style="margin-top:16px; font-size:12px;">Solve Challenge →</a>
+        </div>
+    </div>
+</div>
+
+<!-- SECTION 9: AI MOCK INTERVIEW SIMULATOR -->
+<div class="section-wrapper animate-on-scroll">
+    <div class="dashboard-grid" style="align-items:center;">
+        <div class="col-span-6">
+            <span class="badge badge-verified"><i class="bi bi-mic-fill"></i> SPEECH ANALYTICS</span>
+            <h2 style="font-size:38px; font-weight:800; margin-top:12px;">Voice-Enabled <span class="gradient-text">Mock Interviews</span></h2>
+            <p style="color:var(--text-muted); font-size:16px; margin-top:12px; line-height:1.6;">
+                Practice speaking technical answers aloud using browser Speech-to-Text. Receive ratings for technical depth, communication clarity, and filler words.
+            </p>
+            <div style="margin-top:24px;">
+                <a href="{{ url_for('interviews.mock_interview') }}" class="btn btn-gradient" style="padding:12px 28px;">Start AI Speech Mock →</a>
+            </div>
+        </div>
+        <div class="col-span-6 glass-card text-center" style="padding:40px;">
+            <i class="bi bi-mic-fill" style="font-size:64px; color:var(--brand-secondary);"></i>
+            <h3 style="margin-top:16px;">Real-Time Speech & WPM Rating</h3>
+            <div style="font-size:42px; font-weight:800; color:var(--brand-primary); margin:12px 0;">85<span style="font-size:14px; color:var(--text-muted);">/100</span></div>
+            <span class="badge badge-verified">Technical Rating: 88% | Comm: 82%</span>
+        </div>
+    </div>
+</div>
+
+<!-- SECTION 10: CAREER ROADMAP ENGINE -->
+<div class="section-wrapper animate-on-scroll">
+    <div class="section-header">
+        <span class="badge badge-purple"><i class="bi bi-journal-code"></i> ROADMAP ENGINE</span>
+        <h2 style="margin-top:10px;">Structured <span class="gradient-text">Learning Paths</span></h2>
+        <p>Interactive step-by-step career roadmaps tailored to your target job role.</p>
+    </div>
+
+    <div class="glass-panel" style="padding:32px; border-radius:18px;">
+        <div class="roadmap-timeline">
+            <div class="timeline-step completed">
+                <div class="timeline-node"><i class="bi bi-check-lg"></i></div>
+                <h4>Phase 1: Core Python & SQL Foundations</h4>
+                <p style="font-size:13px; color:var(--text-muted);">Data types, OOP concepts, SQL joins, and relational schema design.</p>
+            </div>
+            <div class="timeline-step active">
+                <div class="timeline-node">2</div>
+                <h4>Phase 2: Full Stack Web Architecture & REST APIs</h4>
+                <p style="font-size:13px; color:var(--text-muted);">Building microservices with Flask, PostgreSQL, and LLM API integrations.</p>
+            </div>
+            <div class="timeline-step">
+                <div class="timeline-node">3</div>
+                <h4>Phase 3: System Design & Production Deployment</h4>
+                <p style="font-size:13px; color:var(--text-muted);">Load balancing, Redis caching, Docker containerization, and GCP/Render deployment.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SECTION 11: PLACEMENT READINESS BENCHMARK -->
+<div class="section-wrapper animate-on-scroll">
+    <div class="section-header">
+        <span class="badge badge-verified"><i class="bi bi-building"></i> CORPORATE BENCHMARKS</span>
+        <h2 style="margin-top:10px;">Placement <span class="gradient-text">Readiness Matrix</span></h2>
+        <p>Compare your readiness against corporate hiring requirements.</p>
+    </div>
+
+    <div class="dashboard-grid" style="margin-bottom:0;">
+        <div class="col-span-4 glass-card">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+                <h3 style="display:flex; align-items:center; gap:8px;"><i class="bi bi-google"></i> Google</h3>
+                <span class="badge badge-verified">84% Match</span>
+            </div>
+            <p style="font-size:13px; color:var(--text-muted);">SWE Role • Minimum 80+ Employability Score required.</p>
+        </div>
+        <div class="col-span-4 glass-card">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+                <h3 style="display:flex; align-items:center; gap:8px;"><i class="bi bi-microsoft"></i> Microsoft</h3>
+                <span class="badge badge-purple">88% Match</span>
+            </div>
+            <p style="font-size:13px; color:var(--text-muted);">Cloud Engineer • Minimum 75+ Employability Score required.</p>
+        </div>
+        <div class="col-span-4 glass-card">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+                <h3 style="display:flex; align-items:center; gap:8px;"><i class="bi bi-amazon"></i> Amazon</h3>
+                <span class="badge badge-verified">82% Match</span>
+            </div>
+            <p style="font-size:13px; color:var(--text-muted);">SDE-1 Role • Minimum 78+ Employability Score required.</p>
+        </div>
+    </div>
+</div>
+
+<!-- SECTION 12: ACHIEVEMENTS & VERIFIED BADGES -->
+<div class="section-wrapper animate-on-scroll">
+    <div class="section-header">
+        <span class="badge badge-purple"><i class="bi bi-patch-check-fill"></i> VERIFIED PASSPORT</span>
+        <h2 style="margin-top:10px;">Cryptographic <span class="gradient-text">Skill Badges</span></h2>
+        <p>Earn HMAC-SHA256 signed badges verified on public recruiter audit endpoints.</p>
+    </div>
+
+    <div style="display:flex; justify-content:center; gap:16px; flex-wrap:wrap;">
+        <span class="badge badge-purple" style="padding:12px 24px; font-size:14px;"><i class="bi bi-shield-check"></i> Python 3 Expert (HMAC-SHA256)</span>
+        <span class="badge badge-verified" style="padding:12px 24px; font-size:14px;"><i class="bi bi-shield-check"></i> SQL Specialist (HMAC-SHA256)</span>
+        <span class="badge badge-orange" style="padding:12px 24px; font-size:14px;"><i class="bi bi-shield-check"></i> Machine Learning (HMAC-SHA256)</span>
+    </div>
+</div>
+
+<!-- SECTION 13: TESTIMONIALS & PLACEMENT STORIES -->
+<div class="section-wrapper animate-on-scroll">
+    <div class="section-header">
+        <span class="badge badge-verified"><i class="bi bi-quote"></i> SUCCESS STORIES</span>
+        <h2 style="margin-top:10px;">Candidate <span class="gradient-text">Placement Reviews</span></h2>
+        <p>Hear from candidates who transformed their technical interview readiness.</p>
+    </div>
+
+    <div class="dashboard-grid" style="margin-bottom:0;">
+        <div class="col-span-6 glass-card">
+            <p style="font-size:14px; color:var(--text-muted); line-height:1.6;">
+                "CareerOS AI's resume analyzer increased my ATS score from 62 to 88. I landed my first technical round at Google within 2 weeks!"
+            </p>
+            <div style="display:flex; align-items:center; gap:12px; margin-top:16px;">
+                <div class="avatar">AR</div>
+                <div>
+                    <strong style="font-size:14px;">Alex Rivera</strong>
+                    <div style="font-size:12px; color:var(--text-subtle);">Software Engineer at Google</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-span-6 glass-card">
+            <p style="font-size:14px; color:var(--text-muted); line-height:1.6;">
+                "The speech mock interview engine helped me eliminate filler words and structure my answers cleanly using the STAR framework."
+            </p>
+            <div style="display:flex; align-items:center; gap:12px; margin-top:16px;">
+                <div class="avatar" style="background:var(--brand-gradient-alt);">SK</div>
+                <div>
+                    <strong style="font-size:14px;">Sarah Kapoor</strong>
+                    <div style="font-size:12px; color:var(--text-subtle);">AI Specialist at Microsoft</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SECTION 14: FINAL HIGH-IMPACT CONVERSION CTA -->
+<div class="section-wrapper animate-on-scroll text-center" style="border-bottom:none;">
+    <div class="glass-panel" style="padding:60px 20px; border-radius:24px; max-width:850px; margin:0 auto; background:linear-gradient(135deg, rgba(16,185,129,0.15) 0%, rgba(139,92,246,0.15) 100%);">
+        <h2 style="font-size:42px; font-weight:800;">Ready to Become <span class="gradient-text">Placement Ready?</span></h2>
+        <p style="color:var(--text-muted); font-size:16px; max-width:550px; margin:12px auto 28px auto;">
+            Join thousands of candidates continuously building skills and landing tech offers.
         </p>
-    </div>
-
-    <div class="dashboard-grid">
-        <div class="col-span-4 glass-card">
-            <div class="stat-icon-wrapper" style="margin-bottom:16px;">
-                <i class="bi bi-speedometer2"></i>
-            </div>
-            <h3>AI Employability Index</h3>
-            <p style="color:var(--text-muted); margin-top:8px; font-size:14px;">
-                A single live score (0-100) reflecting your true placement readiness across coding, resume, projects, and interviews.
-            </p>
-        </div>
-
-        <div class="col-span-4 glass-card">
-            <div class="stat-icon-wrapper" style="margin-bottom:16px; background:rgba(16,185,129,0.12); color:var(--brand-secondary);">
-                <i class="bi bi-patch-check"></i>
-            </div>
-            <h3>Verified Skill Passport</h3>
-            <p style="color:var(--text-muted); margin-top:8px; font-size:14px;">
-                No unverified claims. Earn official AI-verified badges by completing proctored coding challenges and AI technical reviews.
-            </p>
-        </div>
-
-        <div class="col-span-4 glass-card">
-            <div class="stat-icon-wrapper" style="margin-bottom:16px; background:rgba(139,92,246,0.12); color:var(--brand-accent);">
-                <i class="bi bi-cpu"></i>
-            </div>
-            <h3>24/7 Gemini Career Mentor</h3>
-            <p style="color:var(--text-muted); margin-top:8px; font-size:14px;">
-                Ask your personal AI mentor what to learn next, why you were rejected, or how to prepare for your Google technical round.
-            </p>
-        </div>
-    </div>
-</div>
-
-<!-- Enterprise Platform Comparison Section -->
-<div style="margin-top: 80px;">
-    <div style="text-align:center; margin-bottom:40px;">
-        <h2 style="font-size:32px;">Traditional Portals vs. <span class="gradient-text">CareerOS AI</span></h2>
-        <p style="color:var(--text-muted);">See why top university candidates choose CareerOS AI over static job boards.</p>
-    </div>
-
-    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:24px;">
-        <div class="comparison-card">
-            <h3 style="color:var(--text-subtle); margin-bottom:16px;"><i class="bi bi-x-circle-fill" style="color:var(--state-danger);"></i> Traditional Job Portals</h3>
-            <ul style="list-style:none; padding:0; display:flex; flex-direction:column; gap:12px; font-size:14px; color:var(--text-muted);">
-                <li>❌ Static resume uploads with zero feedback</li>
-                <li>❌ Generic rejection emails with no reason provided</li>
-                <li>❌ Unverified skill claims on candidate profiles</li>
-                <li>❌ No mock interview preparation or speech analytics</li>
-            </ul>
-        </div>
-
-        <div class="comparison-card recommended">
-            <div style="position:absolute; top:-12px; right:20px;" class="badge badge-verified">
-                <i class="bi bi-star-fill"></i> RECOMMENDED
-            </div>
-            <h3 style="color:var(--brand-primary); margin-bottom:16px;"><i class="bi bi-check-circle-fill" style="color:var(--brand-secondary);"></i> CareerOS AI Platform</h3>
-            <ul style="list-style:none; padding:0; display:flex; flex-direction:column; gap:12px; font-size:14px; color:var(--text-main);">
-                <li>✅ Continuous 0-100 Employability Index score tracking</li>
-                <li>✅ Gemini AI resume feedback with instant JD match score</li>
-                <li>✅ Cryptographically verified skill badges (Python, SQL, ML)</li>
-                <li>✅ Web Speech API mic mock interviews with WPM & filler word analytics</li>
-            </ul>
-        </div>
+        <a href="{{ url_for('auth.register') }}" class="btn btn-gradient neon-glow-border" style="padding:16px 36px; font-size:16px;">
+            Start Your Career Journey <i class="bi bi-arrow-right"></i>
+        </a>
     </div>
 </div>
 {% endblock %}
