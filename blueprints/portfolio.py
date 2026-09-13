@@ -13,7 +13,7 @@ def generator():
         flash("Please log in to view your portfolio builder.", "warning")
         return redirect(url_for('auth.login'))
         
-    user = User.query.get(user_id)
+    user = db.session.get(User, user_id)
     built_resume = BuiltResume.query.filter_by(user_id=user.id).first()
     uploaded_resume = Resume.query.filter_by(user_id=user.id).order_by(Resume.upload_date.desc()).first()
     skills = VerifiedSkill.query.filter_by(user_id=user.id).all()
@@ -33,7 +33,7 @@ def import_resume():
     user_id = session.get('user_id')
     if not user_id:
         return redirect(url_for('auth.login'))
-    user = User.query.get(user_id)
+    user = db.session.get(User, user_id)
     uploaded_resume = Resume.query.filter_by(user_id=user.id).order_by(Resume.upload_date.desc()).first()
     
     if uploaded_resume and uploaded_resume.raw_text:
@@ -49,7 +49,7 @@ def import_resume():
 @portfolio_bp.route('/linkedin', methods=['GET', 'POST'])
 def linkedin_optimizer():
     user_id = session.get('user_id')
-    user = User.query.get(user_id) if user_id else None
+    user = db.session.get(User, user_id) if user_id else None
     optimized = None
     
     if request.method == 'POST':

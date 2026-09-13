@@ -59,7 +59,7 @@ app.register_blueprint(github_bp, url_prefix='/github')
 def inject_global_vars():
     user = None
     if 'user_id' in session:
-        user = User.query.get(session['user_id'])
+        user = db.session.get(User, session['user_id'])
     return dict(current_user=user)
 
 

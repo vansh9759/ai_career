@@ -93,7 +93,7 @@ INITIAL_CHALLENGES = [
 @coding_bp.route('/arena')
 def arena():
     user_id = session.get('user_id', 1)
-    user = User.query.get(user_id) or User.query.first()
+    user = db.session.get(User, user_id) or User.query.first()
 
     challenges = CodingChallenge.query.all()
     if len(challenges) < len(INITIAL_CHALLENGES):
@@ -168,7 +168,7 @@ def run_code():
     challenge_id = data.get('challenge_id')
     user_id = session.get('user_id', 1)
 
-    challenge = CodingChallenge.query.get(challenge_id)
+    challenge = db.session.get(CodingChallenge, challenge_id)
 
     status = "Passed"
     time_complexity = "O(N)"

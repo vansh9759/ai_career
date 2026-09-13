@@ -11,7 +11,7 @@ learning_bp = Blueprint('learning', __name__)
 @learning_bp.route('/roadmap')
 def engine():
     user_id = session.get('user_id')
-    user = User.query.get(user_id) if user_id else User.query.first()
+    user = db.session.get(User, user_id) if user_id else User.query.first()
     
     target_role = user.career_goal or "Full Stack AI Engineer" if user else "Full Stack AI Engineer"
     

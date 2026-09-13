@@ -14,7 +14,7 @@ FILLER_WORDS = ["um", "uh", "like", "basically", "you know", "actually", "litera
 @interviews_bp.route('/mock-interview', methods=['GET', 'POST'])
 def mock_interview():
     user_id = session.get('user_id', 1)
-    user = User.query.get(user_id) or User.query.first()
+    user = db.session.get(User, user_id) or User.query.first()
 
     if request.method == 'POST':
         interview_type = request.form.get('interview_type', 'Technical')

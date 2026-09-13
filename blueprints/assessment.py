@@ -233,7 +233,7 @@ def index():
         flash("Please log in to take skill assessments.", "warning")
         return redirect(url_for('auth.login'))
     
-    user = User.query.get(user_id)
+    user = db.session.get(User, user_id)
     history = AssessmentResult.query.filter_by(user_id=user_id).order_by(AssessmentResult.completed_at.desc()).all()
     
     return render_template('assessment/index.html', user=user, tracks=ASSESSMENT_BANK, history=history)
@@ -245,7 +245,7 @@ def take(track_id):
         flash("Please log in to take the assessment.", "warning")
         return redirect(url_for('auth.login'))
 
-    user = User.query.get(user_id)
+    user = db.session.get(User, user_id)
     track = ASSESSMENT_BANK.get(track_id)
     if not track:
         flash(f"Assessment track '{track_id}' not found.", "danger")

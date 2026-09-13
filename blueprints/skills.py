@@ -1514,7 +1514,7 @@ SKILL_QUESTION_BANK = {
 @skills_bp.route('/passport')
 def passport():
     user_id = session.get('user_id', 1)
-    user = User.query.get(user_id) or User.query.first()
+    user = db.session.get(User, user_id) or User.query.first()
     skills = VerifiedSkill.query.filter_by(user_id=user.id).all()
 
     # Available test catalog with question counts
@@ -1536,7 +1536,7 @@ def passport():
 @skills_bp.route('/verify/<skill_name>', methods=['GET', 'POST'])
 def verify_skill(skill_name):
     user_id = session.get('user_id', 1)
-    user = User.query.get(user_id) or User.query.first()
+    user = db.session.get(User, user_id) or User.query.first()
 
     # Fetch pool for the target skill or fallback to Python
     test_data = SKILL_QUESTION_BANK.get(skill_name)
@@ -1685,7 +1685,7 @@ def public_badge_verify(badge_code):
     if not badge:
         return render_template('skills/badge_public.html', badge=None, error=f"Credential Badge '{badge_code}' not found or invalid HMAC signature.")
     
-    student = User.query.get(badge.user_id)
+    student = db.session.get(User, badge.user_id)
     qr_svg = CryptoPassportEngine.generate_qr_svg(request.url)
     return render_template('skills/badge_public.html', badge=badge, student=student, qr_svg=qr_svg)
 

@@ -89,7 +89,7 @@ def admin_logout():
 @admin_required
 def dashboard():
     user_id = session.get('admin_user_id') or session.get('user_id', 1)
-    current_user_obj = User.query.get(user_id) or User.query.first()
+    current_user_obj = db.session.get(User, user_id) or User.query.first()
 
     stats = {
         "total_users": User.query.count(),
@@ -434,14 +434,14 @@ def settings_page():
 
     settings = {s.setting_key: s.setting_value for s in AdminSetting.query.all()}
     admin_id = session.get('admin_user_id') or session.get('user_id')
-    current_admin = User.query.get(admin_id) or User.query.filter(User.role.in_(['admin', 'super_admin'])).first()
+    current_admin = db.session.get(User, admin_id) or User.query.filter(User.role.in_(['admin', 'super_admin'])).first()
     return render_template('admin/settings.html', settings=settings, current_admin=current_admin)
 
 @admin_bp.route('/update-credentials', methods=['POST'])
 @admin_required
 def update_credentials():
     admin_id = session.get('admin_user_id') or session.get('user_id')
-    admin_user = User.query.get(admin_id) or User.query.filter(User.role.in_(['admin', 'super_admin'])).first()
+    admin_user = db.session.get(User, admin_id) or User.query.filter(User.role.in_(['admin', 'super_admin'])).first()
     
     if not admin_user:
         flash("Admin user account not found.", "danger")

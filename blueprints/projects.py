@@ -38,7 +38,7 @@ STATIC_PROJECTS = [
 @projects_bp.route('/builder')
 def project_builder():
     user_id = session.get('user_id')
-    user = User.query.get(user_id) if user_id else None
+    user = db.session.get(User, user_id) if user_id else None
     saved_projects = ProjectGeneratorResult.query.filter_by(user_id=user_id).all() if user_id else []
     
     return render_template(
@@ -55,7 +55,7 @@ def generate_project():
         flash("Please log in to generate custom AI project blueprints.", "warning")
         return redirect(url_for('auth.login'))
 
-    user = User.query.get(user_id)
+    user = db.session.get(User, user_id)
     domain = request.form.get('domain', 'Full Stack AI').strip()
     tech_stack = request.form.get('tech_stack', 'Python, React, PostgreSQL').strip()
     difficulty = request.form.get('difficulty', 'Intermediate').strip()

@@ -2,7 +2,7 @@ import hmac
 import hashlib
 import json
 import base64
-from datetime import datetime
+from datetime import datetime, timezone
 from flask import current_app
 
 class CryptoPassportEngine:
@@ -21,7 +21,7 @@ class CryptoPassportEngine:
 
     @classmethod
     def generate_credential(cls, user_id, skill_name, score=85, issuer="CAREER_OS_AI"):
-        timestamp = datetime.utcnow().isoformat()
+        timestamp = datetime.now(timezone.utc).isoformat()
         prefix = skill_name.replace(" ", "").upper()[:4]
         raw_msg = f"{user_id}:{skill_name}:{score}:{timestamp}:{issuer}"
         

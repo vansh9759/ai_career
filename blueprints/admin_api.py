@@ -188,7 +188,7 @@ def get_resumes():
     resumes = Resume.query.order_by(Resume.upload_date.desc()).all()
     out = []
     for r in resumes:
-        u = User.query.get(r.user_id)
+        u = db.session.get(User, r.user_id)
         out.append({
             "id": r.id,
             "user_name": u.name if u else "Unknown Candidate",

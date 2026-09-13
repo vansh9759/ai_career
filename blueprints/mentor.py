@@ -1,4 +1,5 @@
 from flask import Blueprint, render_template, request, session, jsonify
+from database import db
 from models import User
 from services.ai_engine import query_ai_engine
 from services.career_twin import AICareerTwinEngine
@@ -16,7 +17,7 @@ PERSONA_PROMPTS = {
 @mentor_bp.route('/chat')
 def chat():
     user_id = session.get('user_id')
-    user = User.query.get(user_id) if user_id else None
+    user = db.session.get(User, user_id) if user_id else None
     return render_template('mentor/chat.html', user=user, personas=PERSONA_PROMPTS)
 
 @mentor_bp.route('/api/ask', methods=['POST'])
@@ -26,7 +27,7 @@ def api_ask():
     persona = data.get('persona', 'Career Advisor')
     
     user_id = session.get('user_id')
-    user = User.query.get(user_id) if user_id else None
+    user = db.session.get(User, user_id) if user_id else None
     user_name = user.name if user else 'Candidate'
 
     sys_instruction = PERSONA_PROMPTS.get(persona, PERSONA_PROMPTS["Career Advisor"])

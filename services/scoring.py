@@ -4,7 +4,7 @@ from models import (
     User, EmployabilityScore, GamificationProfile, VerifiedSkill,
     CodingSubmission, Resume, MockInterviewSession, JobApplication
 )
-from datetime import datetime
+from datetime import datetime, timezone
 
 class DynamicScoringEngine:
     """
@@ -47,7 +47,7 @@ class DynamicScoringEngine:
         """
         Re-calculates and persists unified EmployabilityScore & GamificationProfile for a candidate.
         """
-        user = User.query.get(user_id)
+        user = db.session.get(User, user_id)
         if not user:
             return None
 
@@ -103,7 +103,7 @@ class DynamicScoringEngine:
         emp.interview_performance = interview_score
         emp.communication = communication_score
         emp.score_delta = total_score - old_score
-        emp.last_updated = datetime.utcnow()
+        emp.last_updated = datetime.now(timezone.utc).replace(tzinfo=None)
 
         # Update Gamification Profile Level
         gam = GamificationProfile.query.filter_by(user_id=user_id).first()

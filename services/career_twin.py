@@ -1,5 +1,5 @@
 import json
-from datetime import datetime
+from datetime import datetime, timezone
 from database import db
 from models import (
     User, CareerTwin, EmployabilityScore, VerifiedSkill,
@@ -17,7 +17,7 @@ class AICareerTwinEngine:
 
     @staticmethod
     def get_or_create_twin(user_id):
-        user = User.query.get(user_id)
+        user = db.session.get(User, user_id)
         if not user:
             return None
 
@@ -52,7 +52,7 @@ class AICareerTwinEngine:
         }
 
         twin.readiness_json = json.dumps(readiness_snapshot)
-        twin.last_synced = datetime.utcnow()
+        twin.last_synced = datetime.now(timezone.utc).replace(tzinfo=None)
         db.session.commit()
 
         return {
@@ -84,7 +84,7 @@ class AICareerTwinEngine:
         """
         Generates dynamic 'Today's Career Plan' (5 daily actionable tasks).
         """
-        user = User.query.get(user_id)
+        user = db.session.get(User, user_id)
         role = user.dream_job if user else "Software Engineer"
         
         return [

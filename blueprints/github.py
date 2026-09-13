@@ -13,7 +13,7 @@ def index():
         flash("Please log in to evaluate your GitHub Engineering Score.", "warning")
         return redirect(url_for('auth.login'))
 
-    user = User.query.get(user_id)
+    user = db.session.get(User, user_id)
     analysis = None
     username = user.github or "alexrivera"
 

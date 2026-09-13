@@ -14,7 +14,7 @@ def index():
         flash("Please log in to access your AI Career Twin.", "warning")
         return redirect(url_for('auth.login'))
 
-    user = User.query.get(user_id)
+    user = db.session.get(User, user_id)
     if not user:
         return redirect(url_for('auth.login'))
 
@@ -58,7 +58,7 @@ def export_report():
         flash("Please log in to export your career report.", "warning")
         return redirect(url_for('auth.login'))
 
-    user = User.query.get(user_id)
+    user = db.session.get(User, user_id)
     scoring_data = DynamicScoringEngine.update_user_score(user_id)
     twin_res = AICareerTwinEngine.get_or_create_twin(user_id)
     projections = AICareerTwinEngine.get_projections(user_id)
