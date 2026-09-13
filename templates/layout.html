@@ -160,9 +160,9 @@
         <main class="app-main">
             <!-- Top Header -->
             <header class="app-header">
-                <div class="header-search">
+                <div class="header-search" onclick="openSearchModal();">
                     <i class="bi bi-search"></i>
-                    <input type="text" placeholder="Search skills, companies, courses, challenges...">
+                    <input type="text" id="globalSearchInput" placeholder="Search skills, GitHub score, twin, challenges... (Ctrl + K)" readonly style="cursor:pointer;">
                 </div>
 
                 <div class="header-actions">
@@ -377,7 +377,107 @@
         document.getElementById('langDropdown')?.classList.remove('show');
     });
 
-    // Auto-restore saved language
+    <!-- Global Search Modal (Ctrl + K) -->
+    <div id="searchModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.75); backdrop-filter:blur(8px); z-index:99999; padding-top:80px;" onclick="if(event.target===this) closeSearchModal();">
+        <div style="max-width:640px; margin:0 auto; background:var(--bg-surface-elevated, #0f172a); border:1px solid var(--brand-primary, #10b981); border-radius:16px; padding:24px; box-shadow:0 25px 50px rgba(0,0,0,0.8); color:#fff;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+                <h5 style="margin:0; font-weight:700;"><i class="bi bi-search me-2" style="color:var(--brand-primary, #10b981);"></i> Global Platform Navigation</h5>
+                <span class="badge bg-secondary" style="cursor:pointer;" onclick="closeSearchModal();">ESC to close</span>
+            </div>
+            <input type="text" id="modalSearchQuery" onkeyup="filterSearchLinks();" class="form-control bg-dark text-white border-secondary mb-3" placeholder="Type module name e.g. twin, github, assessment, resume..." autofocus>
+            <div id="searchLinkList" style="max-height:360px; overflow-y:auto; display:flex; flex-direction:column; gap:8px;">
+                <a href="{{ url_for('career_twin.index') }}" class="search-item-link" style="display:flex; align-items:center; gap:12px; padding:12px; background:rgba(255,255,255,0.05); border-radius:8px; color:#fff; text-decoration:none;">
+                    <i class="bi bi-cpu fs-4" style="color:#00f2fe;"></i>
+                    <div>
+                        <div style="font-weight:700;">AI Career Twin Studio</div>
+                        <div style="font-size:12px; color:#94a3b8;">Autonomous AI agent, 30/60/90-day projections & daily career plan</div>
+                    </div>
+                </a>
+                <a href="{{ url_for('github.index') }}" class="search-item-link" style="display:flex; align-items:center; gap:12px; padding:12px; background:rgba(255,255,255,0.05); border-radius:8px; color:#fff; text-decoration:none;">
+                    <i class="bi bi-github fs-4" style="color:#fff;"></i>
+                    <div>
+                        <div style="font-weight:700;">GitHub Engineering Intelligence</div>
+                        <div style="font-size:12px; color:#94a3b8;">Analyze repository commit velocity, code structure & README score</div>
+                    </div>
+                </a>
+                <a href="{{ url_for('assessment.index') }}" class="search-item-link" style="display:flex; align-items:center; gap:12px; padding:12px; background:rgba(255,255,255,0.05); border-radius:8px; color:#fff; text-decoration:none;">
+                    <i class="bi bi-award-fill fs-4" style="color:#f59e0b;"></i>
+                    <div>
+                        <div style="font-weight:700;">Proctored Skill Assessments</div>
+                        <div style="font-size:12px; color:#94a3b8;">11 Technical tracks with cryptographic HMAC credential signing</div>
+                    </div>
+                </a>
+                <a href="{{ url_for('resume.analyzer') }}" class="search-item-link" style="display:flex; align-items:center; gap:12px; padding:12px; background:rgba(255,255,255,0.05); border-radius:8px; color:#fff; text-decoration:none;">
+                    <i class="bi bi-file-earmark-person-fill fs-4" style="color:#10b981;"></i>
+                    <div>
+                        <div style="font-weight:700;">AI Resume Engine</div>
+                        <div style="font-size:12px; color:#94a3b8;">ATS keyword optimization, version diffs & formatted PDF export</div>
+                    </div>
+                </a>
+                <a href="{{ url_for('skills.passport') }}" class="search-item-link" style="display:flex; align-items:center; gap:12px; padding:12px; background:rgba(255,255,255,0.05); border-radius:8px; color:#fff; text-decoration:none;">
+                    <i class="bi bi-patch-check-fill fs-4" style="color:#3b82f6;"></i>
+                    <div>
+                        <div style="font-weight:700;">Cryptographic Skill Passport</div>
+                        <div style="font-size:12px; color:#94a3b8;">Public verification endpoints and QR code badges</div>
+                    </div>
+                </a>
+                <a href="{{ url_for('coding.arena') }}" class="search-item-link" style="display:flex; align-items:center; gap:12px; padding:12px; background:rgba(255,255,255,0.05); border-radius:8px; color:#fff; text-decoration:none;">
+                    <i class="bi bi-code-square fs-4" style="color:#8b5cf6;"></i>
+                    <div>
+                        <div style="font-weight:700;">Coding Arena</div>
+                        <div style="font-size:12px; color:#94a3b8;">LeetCode-style challenges across Python, C++, Java, and JS</div>
+                    </div>
+                </a>
+                <a href="{{ url_for('interviews.mock_interview') }}" class="search-item-link" style="display:flex; align-items:center; gap:12px; padding:12px; background:rgba(255,255,255,0.05); border-radius:8px; color:#fff; text-decoration:none;">
+                    <i class="bi bi-mic-fill fs-4" style="color:#ec4899;"></i>
+                    <div>
+                        <div style="font-weight:700;">Voice AI Mock Interview</div>
+                        <div style="font-size:12px; color:#94a3b8;">Speech analytics, WPM speed counter & filler word detector</div>
+                    </div>
+                </a>
+                <a href="{{ url_for('projects.project_builder') }}" class="search-item-link" style="display:flex; align-items:center; gap:12px; padding:12px; background:rgba(255,255,255,0.05); border-radius:8px; color:#fff; text-decoration:none;">
+                    <i class="bi bi-box-seam-fill fs-4" style="color:#06b6d4;"></i>
+                    <div>
+                        <div style="font-weight:700;">AI Project Builder Studio</div>
+                        <div style="font-size:12px; color:#94a3b8;">Generates tech stack, DB schema, REST API structure & README</div>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    function openSearchModal() {
+        const modal = document.getElementById('searchModal');
+        if (modal) {
+            modal.style.display = 'block';
+            setTimeout(() => document.getElementById('modalSearchQuery')?.focus(), 50);
+        }
+    }
+    function closeSearchModal() {
+        const modal = document.getElementById('searchModal');
+        if (modal) modal.style.display = 'none';
+    }
+    function filterSearchLinks() {
+        const q = (document.getElementById('modalSearchQuery')?.value || '').toLowerCase();
+        document.querySelectorAll('.search-item-link').forEach(el => {
+            const text = el.innerText.toLowerCase();
+            el.style.display = text.includes(q) ? 'flex' : 'none';
+        });
+    }
+    document.addEventListener('keydown', (e) => {
+        if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+            e.preventDefault();
+            openSearchModal();
+        }
+        if (e.key === 'Escape') {
+            closeSearchModal();
+        }
+    });
+    </script>
+
+    <!-- Auto-restore saved language -->
+    <script>
     const savedLang = localStorage.getItem('careeros_lang');
     if (savedLang) {
         changeLanguage(savedLang);

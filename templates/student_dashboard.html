@@ -14,7 +14,9 @@
             </p>
         </div>
 
-        <div style="display:flex; gap:12px;">
+        <div style="display:flex; gap:10px; flex-wrap:wrap;">
+            <a href="{{ url_for('career_twin.index') }}" class="btn btn-outline-cyan"><i class="bi bi-cpu"></i> AI Career Twin</a>
+            <a href="{{ url_for('github.index') }}" class="btn btn-outline-info"><i class="bi bi-github"></i> GitHub Score</a>
             <a href="{{ url_for('coding.arena') }}" class="btn btn-primary"><i class="bi bi-play-circle-fill"></i> Today's Challenge</a>
             <a href="{{ url_for('resume.analyzer') }}" class="btn btn-secondary"><i class="bi bi-magic"></i> AI Resume Review</a>
         </div>
