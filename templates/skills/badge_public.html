@@ -5,12 +5,24 @@
 {% block content %}
 <div style="max-width:700px; margin:40px auto;" class="glass-panel">
     <div style="padding:40px; text-align:center;">
-        {% if badge %}
+        {% if badge and not (is_revoked or badge.is_revoked) %}
         <div style="width:90px; height:90px; border-radius:50%; background:linear-gradient(135deg, rgba(16,185,129,0.2) 0%, rgba(59,130,246,0.2) 100%); border:3px solid var(--brand-secondary); display:flex; align-items:center; justify-content:center; margin:0 auto 20px auto; font-size:48px; color:var(--brand-secondary); box-shadow:var(--glow-shadow);">
             <i class="bi bi-patch-check-fill"></i>
         </div>
 
-        <span class="badge badge-verified" style="font-size:14px; padding:6px 18px; margin-bottom:12px;">OFFICIALLY VERIFIED CREDENTIAL</span>
+        <span class="badge badge-verified" style="font-size:14px; padding:6px 18px; margin-bottom:12px;">OFFICIALLY VERIFIED CREDENTIAL (HMAC KEY: {{ key_id if key_id else 'K1' }})</span>
+        {% elif badge and (is_revoked or badge.is_revoked) %}
+        <div style="width:90px; height:90px; border-radius:50%; background:rgba(239,68,68,0.2); border:3px solid var(--state-danger); display:flex; align-items:center; justify-content:center; margin:0 auto 20px auto; font-size:48px; color:var(--state-danger); box-shadow:0 0 25px rgba(239,68,68,0.4);">
+            <i class="bi bi-shield-slash-fill"></i>
+        </div>
+        <span class="badge badge-danger" style="font-size:14px; padding:6px 18px; margin-bottom:12px; background:#ef4444; color:#fff;">🚨 REVOKED & INVALIDATED CREDENTIAL</span>
+        <h2 style="color:#ef4444; margin-top:8px;">SECURITY ALERT: BADGE REVOKED</h2>
+        <p style="color:var(--text-muted); font-size:14px; margin-top:6px;">
+            This credential badge <strong>{{ badge.badge_code }}</strong> was officially REVOKED by security system administration.
+        </p>
+        {% endif %}
+
+        {% if badge and not (is_revoked or badge.is_revoked) %}
 
         <h1 style="font-size:36px; font-weight:800; margin-top:8px;">Verified {{ badge.skill_name }}</h1>
         <p style="color:var(--text-muted); font-size:16px; margin-top:6px;">

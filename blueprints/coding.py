@@ -160,6 +160,90 @@ def problem_view(challenge_id):
     return render_template('coding/problem_view.html', challenge=challenge, starters=LANGUAGE_STARTERS)
 
 
+import concurrent.futures
+
+BLOCKED_MODULES = {"os", "sys", "subprocess", "shutil", "importlib", "socket", "builtins", "ctypes", "pickle", "pathlib", "urllib", "requests"}
+BLOCKED_ATTRIBUTES = {"__subclasses__", "__builtins__", "__import__", "eval", "exec", "open"}
+
+def execute_sandboxed_python(code, timeout_seconds=3.0):
+    """
+    Sandboxed Python execution environment enforcing restricted builtins,
+    blocked dangerous module imports, and a hard 3-second thread timeout.
+    """
+    output_buffer = io.StringIO()
+    
+    # 1. AST Security Analysis
+    try:
+        parsed = ast.parse(code)
+    except SyntaxError as e:
+        return "Failed", f"Syntax Error: {e}", "O(N)", "O(1)"
+
+    for node in ast.walk(parsed):
+        if isinstance(node, ast.Import):
+            for alias in node.names:
+                if alias.name.split('.')[0] in BLOCKED_MODULES:
+                    return "Failed", f"Security Violation: Import of restricted module '{alias.name}' is blocked by Sandbox Policy.", "O(1)", "O(1)"
+        elif isinstance(node, ast.ImportFrom):
+            if node.module and node.module.split('.')[0] in BLOCKED_MODULES:
+                return "Failed", f"Security Violation: Import from restricted module '{node.module}' is blocked by Sandbox Policy.", "O(1)", "O(1)"
+        elif isinstance(node, ast.Attribute):
+            if node.attr in BLOCKED_ATTRIBUTES:
+                return "Failed", f"Security Violation: Access to restricted attribute '{node.attr}' is blocked by Sandbox Policy.", "O(1)", "O(1)"
+        elif isinstance(node, ast.Name):
+            if node.id in BLOCKED_ATTRIBUTES:
+                return "Failed", f"Security Violation: Access to restricted builtin '{node.id}' is blocked by Sandbox Policy.", "O(1)", "O(1)"
+        elif isinstance(node, ast.While):
+            if isinstance(node.test, ast.Constant) and bool(node.test.value) is True:
+                has_break = any(isinstance(child, ast.Break) for child in ast.walk(node))
+                if not has_break:
+                    return "Failed", "Execution Timed Out: Infinite loop detected without break condition.", "O(N)", "O(1)"
+
+    # Calculate complexity heuristics
+    for_count = sum(1 for node in ast.walk(parsed) if isinstance(node, (ast.For, ast.While)))
+    time_complexity = "O(N^2)" if for_count >= 2 else ("O(N)" if for_count == 1 else "O(1)")
+    space_complexity = "O(N)" if ("dict" in code or "set" in code or "{" in code or "list" in code) else "O(1)"
+
+    # Restricted builtins sandbox
+    def safe_print(*args, **kwargs):
+        kwargs['file'] = output_buffer
+        print(*args, **kwargs)
+
+    safe_builtins = {
+        'abs': abs, 'all': all, 'any': any, 'bin': bin, 'bool': bool,
+        'chr': chr, 'dict': dict, 'enumerate': enumerate, 'filter': filter,
+        'float': float, 'format': format, 'frozenset': frozenset,
+        'getattr': getattr, 'hasattr': hasattr, 'hash': hash, 'hex': hex,
+        'int': int, 'isinstance': isinstance, 'issubclass': issubclass,
+        'iter': iter, 'len': len, 'list': list, 'map': map, 'max': max,
+        'min': min, 'next': next, 'oct': oct, 'ord': ord, 'pow': pow,
+        'print': safe_print, 'range': range, 'repr': repr, 'reversed': reversed,
+        'round': round, 'set': set, 'slice': slice, 'sorted': sorted,
+        'str': str, 'sum': sum, 'tuple': tuple, 'zip': zip,
+        'True': True, 'False': False, 'None': None,
+        'Exception': Exception, 'ValueError': ValueError, 'TypeError': TypeError, 'IndexError': IndexError, 'KeyError': KeyError
+    }
+
+    exec_globals = {"__builtins__": safe_builtins}
+    exec_locals = {}
+
+    def worker():
+        exec(code, exec_globals, exec_locals)
+        return output_buffer.getvalue()
+
+    with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
+        future = executor.submit(worker)
+        try:
+            executed_out = future.result(timeout=timeout_seconds)
+            if not executed_out.strip():
+                executed_out = "Code executed cleanly with 0 console output errors."
+            return "Passed", executed_out, time_complexity, space_complexity
+        except concurrent.futures.TimeoutError:
+            return "Failed", f"Execution Timed Out: Code exceeded hard sandbox time limit of {timeout_seconds}s.", time_complexity, space_complexity
+        except Exception as e:
+            err = traceback.format_exc(limit=2)
+            return "Failed", f"Python Sandbox Error:\n{err}", time_complexity, space_complexity
+
+
 @coding_bp.route('/run-code', methods=['POST'])
 def run_code():
     data = request.get_json() or {}
@@ -176,32 +260,7 @@ def run_code():
     executed_output = ""
 
     if language == "Python":
-        old_stdout = sys.stdout
-        redirected_output = io.StringIO()
-        sys.stdout = redirected_output
-
-        try:
-            parsed = ast.parse(code)
-            for_count = sum(1 for node in ast.walk(parsed) if isinstance(node, (ast.For, ast.While)))
-            if for_count >= 2:
-                time_complexity = "O(N^2)"
-            elif for_count == 1:
-                time_complexity = "O(N)"
-
-            if "dict" in code or "set" in code or "{" in code:
-                space_complexity = "O(N)"
-
-            exec_scope = {}
-            exec(code, exec_scope)
-            executed_output = redirected_output.getvalue()
-            if not executed_output.strip():
-                executed_output = "Code executed cleanly with 0 console output errors."
-        except Exception as e:
-            status = "Failed"
-            error_output = traceback.format_exc(limit=2)
-            executed_output = f"Python Execution Error:\n{error_output}"
-        finally:
-            sys.stdout = old_stdout
+        status, executed_output, time_complexity, space_complexity = execute_sandboxed_python(code)
 
     elif language in ["JavaScript", "C++", "Java"]:
         executed_output = f"[{language} Compiler Engine] Evaluated syntax successfully.\nCompiled in 18ms. Passed all unit test cases!"
@@ -215,7 +274,7 @@ def run_code():
 
     submission = CodingSubmission(
         user_id=user_id,
-        challenge_id=challenge_id,
+        challenge_id=challenge_id if challenge_id else 1,
         language=language,
         code=code,
         status=status,
@@ -243,5 +302,6 @@ def run_code():
         "memory_kb": 13200,
         "time_complexity": time_complexity,
         "space_complexity": space_complexity,
-        "ai_feedback": f"Language: {language}. Time: {time_complexity}, Space: {space_complexity}. Optimal solution passed!" if status == "Passed" else "Execution encountered runtime error. Fix syntax and re-run."
+        "ai_feedback": f"Language: {language}. Time: {time_complexity}, Space: {space_complexity}. Optimal solution passed!" if status == "Passed" else f"Execution failed: {executed_output}"
     })
+

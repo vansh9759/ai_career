@@ -27,6 +27,31 @@ from blueprints.career_twin import career_twin_bp
 from blueprints.assessment import assessment_bp
 from blueprints.github import github_bp
 
+import logging
+
+# Configure structured logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s [%(levelname)s] %(name)s: %(message)s'
+)
+logger = logging.getLogger("career_os")
+
+# Sentry Monitoring Integration
+sentry_dsn = os.environ.get("SENTRY_DSN")
+if sentry_dsn:
+    try:
+        import sentry_sdk
+        from sentry_sdk.integrations.flask import FlaskIntegration
+        sentry_sdk.init(
+            dsn=sentry_dsn,
+            integrations=[FlaskIntegration()],
+            traces_sample_rate=1.0,
+            profiles_sample_rate=1.0,
+        )
+        logger.info("Sentry monitoring SDK initialized successfully.")
+    except Exception as e:
+        logger.warning(f"Sentry SDK initialization bypassed: {e}")
+
 app = Flask(__name__)
 app.config.from_object(Config)
 

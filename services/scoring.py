@@ -1,4 +1,5 @@
 import math
+import json
 from database import db
 from models import (
     User, EmployabilityScore, GamificationProfile, VerifiedSkill,
@@ -94,6 +95,29 @@ class DynamicScoringEngine:
             db.session.add(emp)
 
         old_score = emp.total_score or 65
+        old_coding = emp.coding_performance or 50
+        old_skills = emp.verified_skills or 50
+        old_interview = emp.interview_performance or 65
+        old_resume = emp.resume_quality or 65
+
+        dsa_delta = coding_performance - old_coding
+        skills_delta = verified_skills_score - old_skills
+        interview_delta = interview_score - old_interview
+        resume_delta = resume_quality - old_resume
+
+        reasons = []
+        if dsa_delta != 0:
+            reasons.append(f"DSA {'+' if dsa_delta > 0 else ''}{dsa_delta} ({passed_submissions} solved)")
+        if skills_delta != 0:
+            reasons.append(f"Skills {'+' if skills_delta > 0 else ''}{skills_delta} ({verified_count} verified)")
+        if interview_delta != 0:
+            reasons.append(f"Interview {'+' if interview_delta > 0 else ''}{interview_delta}")
+        if resume_delta != 0:
+            reasons.append(f"Resume {'+' if resume_delta > 0 else ''}{resume_delta}")
+
+        score_delta = total_score - old_score
+        explanation_str = f"Score {total_score} ({'+' if score_delta >= 0 else ''}{score_delta} pts): " + (", ".join(reasons) if reasons else "Score updated based on candidate assessment activity.")
+
         emp.total_score = total_score
         emp.resume_quality = resume_quality
         emp.ats_score = ats_score
@@ -102,7 +126,15 @@ class DynamicScoringEngine:
         emp.project_quality = project_quality
         emp.interview_performance = interview_score
         emp.communication = communication_score
-        emp.score_delta = total_score - old_score
+        emp.score_delta = score_delta
+        emp.explanation = explanation_str
+        emp.breakdown_json = json.dumps({
+            "dsa_delta": dsa_delta,
+            "skills_delta": skills_delta,
+            "interview_delta": interview_delta,
+            "resume_delta": resume_delta,
+            "reasons": reasons
+        })
         emp.last_updated = datetime.now(timezone.utc).replace(tzinfo=None)
 
         # Update Gamification Profile Level
@@ -118,5 +150,13 @@ class DynamicScoringEngine:
         return {
             "total_score": total_score,
             "level_info": level_info,
+            "score_delta": score_delta,
+            "explanation": explanation_str,
+            "breakdown": {
+                "dsa_delta": dsa_delta,
+                "skills_delta": skills_delta,
+                "interview_delta": interview_delta,
+                "resume_delta": resume_delta
+            },
             "employability_record": emp
         }

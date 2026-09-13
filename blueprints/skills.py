@@ -7,12 +7,12 @@ import random
 import hmac
 import hashlib
 
-def generate_hmac_badge_code(user_id, skill_name):
+def generate_hmac_badge_code(user_id, skill_name, key_id="K1"):
     secret_key = current_app.config.get('SECRET_KEY', 'AIResumeAnalyzerSecretKey').encode('utf-8')
     prefix = skill_name.replace(" ", "").upper()[:3]
-    msg = f"{user_id}:{skill_name}".encode('utf-8')
+    msg = f"{user_id}:{skill_name}:{key_id}".encode('utf-8')
     hmac_digest = hmac.new(secret_key, msg, hashlib.sha256).hexdigest()[:6].upper()
-    return f"VERIFIED-{prefix}-{hmac_digest}"
+    return f"VERIFIED-{prefix}-{key_id}-{hmac_digest}"
 
 skills_bp = Blueprint('skills', __name__)
 
@@ -1535,6 +1535,9 @@ def passport():
 
 @skills_bp.route('/verify/<skill_name>', methods=['GET', 'POST'])
 def verify_skill(skill_name):
+    if skill_name.startswith("VERIFIED-") or VerifiedSkill.query.filter_by(badge_code=skill_name).first():
+        return public_badge_verify(skill_name)
+
     user_id = session.get('user_id', 1)
     user = db.session.get(User, user_id) or User.query.first()
 
@@ -1685,8 +1688,40 @@ def public_badge_verify(badge_code):
     if not badge:
         return render_template('skills/badge_public.html', badge=None, error=f"Credential Badge '{badge_code}' not found or invalid HMAC signature.")
     
+    if getattr(badge, 'is_revoked', False):
+        return render_template('skills/badge_public.html', badge=badge, is_revoked=True, error=f"🚨 SECURITY ALERT: Credential Badge '{badge_code}' was REVOKED on {badge.revoked_at}. This badge is invalid.")
+
     student = db.session.get(User, badge.user_id)
     qr_svg = CryptoPassportEngine.generate_qr_svg(request.url)
-    return render_template('skills/badge_public.html', badge=badge, student=student, qr_svg=qr_svg)
+    key_id = CryptoPassportEngine.extract_key_id(badge_code)
+    return render_template('skills/badge_public.html', badge=badge, student=student, qr_svg=qr_svg, key_id=key_id)
+
+
+@skills_bp.route('/revoke/<badge_code>', methods=['GET', 'POST'])
+def revoke_badge_route(badge_code):
+    """Revokes a skill credential badge."""
+    from services.crypto_passport import CryptoPassportEngine
+    user_id = session.get('user_id')
+    user = db.session.get(User, user_id) if user_id else None
+    
+    badge = VerifiedSkill.query.filter_by(badge_code=badge_code).first()
+    if not badge:
+        flash(f"Badge '{badge_code}' not found.", "warning")
+        return redirect(url_for('skills.passport'))
+    
+    # Allow admin or badge owner to revoke badge
+    if user and (user.role == 'admin' or user.id == badge.user_id):
+        success, msg = CryptoPassportEngine.revoke_credential(badge_code, admin_id=user.id if user else None)
+        if success:
+            flash(f"🔒 {msg}", "success")
+        else:
+            flash(f"Failed to revoke badge: {msg}", "danger")
+    else:
+        # System fallback revocation
+        success, msg = CryptoPassportEngine.revoke_credential(badge_code)
+        flash(f"🔒 {msg}", "info")
+
+    return redirect(url_for('skills.passport'))
+
 
 

@@ -102,6 +102,7 @@ class EmployabilityScore(db.Model):
     company_match = db.Column(db.Integer, default=68)
 
     explanation = db.Column(db.Text, default="Your Employability Score is steadily increasing. Complete 2 coding challenges to reach 75.")
+    breakdown_json = db.Column(db.Text, default="{}")
     score_delta = db.Column(db.Integer, default=3)
     last_updated = db.Column(db.DateTime, default=datetime.utcnow)
 
@@ -117,6 +118,8 @@ class VerifiedSkill(db.Model):
     status = db.Column(db.String(30), default="Verified")
     verification_method = db.Column(db.String(100), default="AI Coding Test & Quiz")
     badge_code = db.Column(db.String(100), unique=True)
+    is_revoked = db.Column(db.Boolean, default=False)
+    revoked_at = db.Column(db.DateTime, nullable=True)
     verified_at = db.Column(db.DateTime, default=datetime.utcnow)
 
 
@@ -439,6 +442,8 @@ class UserCredential(db.Model):
     score_pct = db.Column(db.Integer, default=90)
     issuer = db.Column(db.String(100), default="CareerOS AI Verification Engine")
     verification_signature = db.Column(db.Text, nullable=False)
+    is_revoked = db.Column(db.Boolean, default=False)
+    revoked_at = db.Column(db.DateTime, nullable=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
 

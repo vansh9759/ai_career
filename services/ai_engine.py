@@ -3,12 +3,24 @@ import json
 import random
 import re
 import warnings
+import logging
+
+# Configure structured logging for AI engine monitoring
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger("ai_engine")
 
 # Suppress deprecation and runtime import warnings
 warnings.filterwarnings("ignore")
 
-# Lazy-loaded GenAI module reference to prevent IPython/Jedi startup blocking
+# Lazy-loaded GenAI module reference
 _genai = None
+
+# Model Priority Fallback List
+PREFERRED_GEMINI_MODELS = [
+    os.getenv("GEMINI_MODEL", "gemini-2.5-flash"),
+    "gemini-2.0-flash",
+    "gemini-1.5-flash"
+]
 
 def get_genai_client():
     """Lazy imports and configures Gemini AI client on-demand."""
@@ -19,10 +31,24 @@ def get_genai_client():
             api_key = os.getenv("GOOGLE_API_KEY")
             if api_key:
                 genai.configure(api_key=api_key)
+                logger.info("Gemini AI API Key configured successfully.")
             _genai = genai
-        except Exception:
+        except Exception as err:
+            logger.error(f"Failed to configure Gemini AI client: {err}")
             _genai = False
     return _genai if _genai is not False else None
+
+def get_generative_model(genai_client):
+    """Iterates through model fallback list to instantiate an active Gemini model."""
+    if not genai_client:
+        return None, None
+    for model_name in PREFERRED_GEMINI_MODELS:
+        try:
+            model = genai_client.GenerativeModel(model_name)
+            return model, model_name
+        except Exception as err:
+            logger.warning(f"Gemini model '{model_name}' instantiation fallback: {err}")
+    return None, None
 
 
 class AICareerEngine:
@@ -104,14 +130,15 @@ class AICareerEngine:
         genai = get_genai_client()
         if genai and os.getenv("GOOGLE_API_KEY"):
             try:
-                model = genai.GenerativeModel('gemini-pro')
-                prompt = f"Analyze this resume text and return brief ATS score (0-100), missing keywords, formatting tips:\n{resume_text[:1500]}"
-                res = model.generate_content(prompt)
-                if res and res.text:
-                    report["strength_summary"] = res.text[:250]
-                    report["ai_engine_used"] = "Google Gemini 1.5 Pro (Live LLM)"
-            except Exception:
-                pass
+                model, model_name = get_generative_model(genai)
+                if model:
+                    prompt = f"Analyze this resume text and return brief ATS score (0-100), missing keywords, formatting tips:\n{resume_text[:1500]}"
+                    res = model.generate_content(prompt)
+                    if res and res.text:
+                        report["strength_summary"] = res.text[:250]
+                        report["ai_engine_used"] = f"Google Gemini 2.5 Flash ({model_name})"
+            except Exception as err:
+                logger.error(f"Gemini API error during resume analysis: {err}")
 
         return report
 
@@ -257,13 +284,14 @@ class AICareerEngine:
 
         if genai and os.getenv("GOOGLE_API_KEY"):
             try:
-                model = genai.GenerativeModel('gemini-pro')
-                prompt = f"You are CareerOS AI Mentor. Help the student who asks: '{query}'. Context: {user_context}"
-                response = model.generate_content(prompt)
-                if response and response.text:
-                    return response.text
-            except Exception:
-                pass
+                model, model_name = get_generative_model(genai)
+                if model:
+                    prompt = f"You are CareerOS AI Mentor. Help the student who asks: '{query}'. Context: {user_context}"
+                    response = model.generate_content(prompt)
+                    if response and response.text:
+                        return response.text
+            except Exception as err:
+                logger.error(f"Gemini AI Mentor API error: {err}")
 
         if 'resume' in query_lower:
             return "To make your resume ATS-friendly, use standard section titles like 'Work Experience' and 'Technical Skills'. Avoid graphics, tables, or non-standard fonts. Make sure every project includes measurable impact metrics!"
@@ -285,14 +313,15 @@ def query_ai_engine(prompt, system_instruction=None):
 
     if genai and os.getenv("GOOGLE_API_KEY"):
         try:
-            model = genai.GenerativeModel('gemini-pro')
-            full_prompt = f"{system_instruction}\n\n{prompt}" if system_instruction else prompt
-            response = model.generate_content(full_prompt)
-            if response and response.text:
-                output_text = response.text
-                badge = "🤖 Gemini 1.5 Pro Live LLM"
-        except Exception:
-            pass
+            model, model_name = get_generative_model(genai)
+            if model:
+                full_prompt = f"{system_instruction}\n\n{prompt}" if system_instruction else prompt
+                response = model.generate_content(full_prompt)
+                if response and response.text:
+                    output_text = response.text
+                    badge = f"🤖 Gemini 2.5 Flash ({model_name})"
+        except Exception as err:
+            logger.error(f"Gemini API query_ai_engine error: {err}")
 
     if not output_text:
         output_text = AICareerEngine.ask_ai_mentor(prompt, system_instruction or "")
